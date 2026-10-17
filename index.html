@@ -468,9 +468,10 @@ body.calm .hub-bg *{animation:none!important}
 /* shield cards */
 .fut{position:relative;width:156px;height:175px;padding:0;background:none;clip-path:none;margin:0;display:block;color:#2a1d03}
 .fut .shield{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 10px 18px rgba(10,4,50,.5))}
-.fut .fpos{position:absolute;left:0;right:0;top:20px;text-align:center;font-family:var(--f-display);font-weight:800;font-size:18px;letter-spacing:.12em}
-.fut .fnum{position:absolute;left:0;right:0;top:34px;text-align:center;font-family:var(--f-display);font-weight:900;font-size:78px;line-height:1;opacity:.28}
-.fut .nm{position:absolute;left:24px;right:24px;top:112px;width:auto;font-size:19px;margin:0}
+.fut .nm{position:absolute;left:26px;right:26px;top:34px;width:auto;margin:0;font-size:20px;color:#fff;text-shadow:0 1px 0 #1a0b40,0 0 6px rgba(26,11,64,.85);border-bottom:1px dashed rgba(255,255,255,.55)}
+.fut .nm:focus{border-bottom:2px solid #fff;background:rgba(26,11,64,.25)}
+.fut .fnum{position:absolute;left:0;right:0;top:60px;text-align:center;font-family:var(--f-display);font-weight:900;font-size:66px;line-height:1;opacity:.18}
+.fut .fpos{position:absolute;left:0;right:0;top:128px;text-align:center;font-family:var(--f-display);font-weight:800;font-size:17px;letter-spacing:.12em}
 .fut .edit{display:none}
 .tok{width:44px;height:50px;background:none!important;clip-path:none;padding:0;color:#1b1203}
 .tok svg{position:absolute;inset:0;width:100%;height:100%}
@@ -481,18 +482,18 @@ body.calm .hub-bg *{animation:none!important}
 /* moment tree */
 .tree{position:relative;height:350px;margin-top:4px}
 .tree-lines{position:absolute;inset:0;width:100%;height:100%}
-.tn{position:absolute;transform:translate(-50%,-50%);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0;font-family:var(--f-display);text-transform:uppercase;line-height:1}
-.tn.base{width:78px;height:78px;background:var(--tile);border:2px solid #fff;font-weight:800;font-size:18px;letter-spacing:.06em}
-.tn.path{width:86px;height:86px;gap:2px;background:rgba(20,10,72,.95);border:3px solid var(--pc);color:#fff}
-.tn.path b{font-size:22px;font-weight:900}
-.tn.path span{font-weight:800;font-size:14px;letter-spacing:.06em;color:var(--pc)}
-.tn.path.on span{color:#140a40}
-.tn.path.on{background:var(--pc);color:#140a40;box-shadow:0 0 0 4px rgba(255,255,255,.18),0 0 22px var(--pc)}
-.tn.mom{width:88px;height:88px;background:var(--tile);border:2px solid rgba(255,255,255,.75);color:#fff;padding:6px}
-.tn.mom b{font-weight:800;font-size:15px;letter-spacing:.03em}
-.tn.mom.on{background:linear-gradient(160deg,#fff3c4,#c99a2e);color:#1c1402;border-color:#fff3c4;box-shadow:0 0 22px rgba(242,207,107,.6)}
-.tn.mom.locked{opacity:.38;border-style:dashed;cursor:not-allowed}
-.tn:not(.base):not(.locked):hover{filter:brightness(1.15)}
+.tnode{position:absolute;transform:translate(-50%,-50%);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0;font-family:var(--f-display);text-transform:uppercase;line-height:1}
+.tnode.base{width:78px;height:78px;background:var(--tile);border:2px solid #fff;font-weight:800;font-size:18px;letter-spacing:.06em}
+.tnode.path{width:86px;height:86px;gap:2px;background:rgba(20,10,72,.95);border:3px solid var(--pc);color:#fff}
+.tnode.path b{font-size:22px;font-weight:900}
+.tnode.path span{font-weight:800;font-size:14px;letter-spacing:.06em;color:var(--pc)}
+.tnode.path.on span{color:#140a40}
+.tnode.path.on{background:var(--pc);color:#140a40;box-shadow:0 0 0 4px rgba(255,255,255,.18),0 0 22px var(--pc)}
+.tnode.mom{width:88px;height:88px;background:var(--tile);border:2px solid rgba(255,255,255,.75);color:#fff;padding:6px}
+.tnode.mom b{font-weight:800;font-size:15px;letter-spacing:.03em}
+.tnode.mom.on{background:linear-gradient(160deg,#fff3c4,#c99a2e);color:#1c1402;border-color:#fff3c4;box-shadow:0 0 22px rgba(242,207,107,.6)}
+.tnode.mom.locked{opacity:.38;border-style:dashed;cursor:not-allowed}
+.tnode:not(.base):not(.locked):hover{filter:brightness(1.15)}
 /* balancing */
 .bal-pw{display:flex;gap:8px;margin-top:10px;max-width:420px}
 .bal-pw input{flex:1;min-width:0;background:#0e0640;border:1px solid var(--line);color:var(--text);font:inherit;font-size:16px;padding:8px 12px}
@@ -788,6 +789,7 @@ table.bal input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent)
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <linearGradient id="cardGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3c4"/><stop offset=".45" stop-color="#e2b94e"/><stop offset="1" stop-color="#9a6d1c"/></linearGradient>
+  <linearGradient id="frameGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c99a2e"/><stop offset="1" stop-color="#5e400c"/></linearGradient>
   <linearGradient id="tokGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6dc8a"/><stop offset="1" stop-color="#b98a2a"/></linearGradient>
   <linearGradient id="tokSel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#9a5cff"/></linearGradient>
 </defs></svg>
@@ -2362,7 +2364,7 @@ function renderSquad(){
   $('#corner-note').textContent=cornerSide==='att'?'Your corner, taken from the top right. Drag a dot to make it Custom.':'Their corner, your goal on the right. Drag a dot to make it Custom.';
   drawCornerEditor(q);
   const c=q.cards[sqSlot],sum=c.st.reduce((a,b)=>a+b,0);
-  $('#fut').innerHTML=shieldSVG('url(#cardGold)','#1a0b40')+`<div class="fpos">${F.lab[sqSlot]}</div><div class="fnum">${NUMS[sqSlot]}</div><input class="nm" id="fut-name" maxlength="16" spellcheck="false" autocomplete="off" aria-label="Player name" title="Tap to rename">`;
+  $('#fut').innerHTML=shieldSVG('url(#cardGold)','#1a0b40')+`<div class="fnum">${NUMS[sqSlot]}</div><div class="fpos">${F.lab[sqSlot]}</div><input class="nm" id="fut-name" maxlength="16" spellcheck="false" autocomplete="off" aria-label="Player name" title="Tap to rename">`;
   {const ni=$('#fut-name');ni.value=myNames[sqTeam][sqSlot];const slot=sqSlot,team=sqTeam;ni.oninput=()=>{const v=ni.value.trim();myNames[team][slot]=v||NAMES[team][slot];saveNames(team);const tk=$('#mini').querySelectorAll('.tok')[slot];if(tk){tk.title=myNames[team][slot];tk.setAttribute('aria-label',`${F.lab[slot]} ${myNames[team][slot]}`);}};ni.onkeydown=e=>{if(e.key==='Enter')ni.blur();};ni.onblur=()=>{if(!ni.value.trim())ni.value=NAMES[team][slot];};}
   $('#pts-left').textContent=5-sum;
   const box=$('#stats');box.innerHTML='';
@@ -2378,9 +2380,9 @@ function renderSquad(){
   if(net.named)net.named.presence({sq:serSquad(mySquads[0])}).catch(()=>{});
 }
 function shieldSVG(fill,edge,cls){
-  return `<svg class="${cls||'shield'}" viewBox="0 0 100 112" aria-hidden="true"><path d="M50 3 L96 19 L91 71 L50 108 L9 71 L4 19 Z" fill="${fill}" stroke="${edge}" stroke-width="5" stroke-linejoin="miter"/>`+
-  `<path d="M50 12 L87 25 L83 67 L50 97 L17 67 L13 25 Z" fill="none" stroke="${edge}" stroke-opacity=".28" stroke-width="1.6"/>`+
-  `<path d="M6 44 L12 74 L46 106 L15 72 Z M94 44 L88 74 L54 106 L85 72 Z" fill="${edge}"/></svg>`;
+  // one gold shield with a clean inner line
+  return `<svg class="${cls||'shield'}" viewBox="0 0 100 112" aria-hidden="true"><path d="M50 3 L96 19 L91 71 L50 108 L9 71 L4 19 Z" fill="${fill}"/>`+
+  `<path d="M50 12 L87 25 L83 66 L50 96 L17 66 L13 25 Z" fill="none" stroke="${edge}" stroke-opacity=".32" stroke-width="2" stroke-linejoin="miter"/></svg>`;
 }
 function bonusText(p){const b=BAL.paths[p];return STAT_KEYS.filter(k=>b[k]).map(k=>`${b[k]>0?'+':''}${b[k]} ${STATS[STAT_KEYS.indexOf(k)].name}`).join(', ')||'No bonus';}
 function renderTree(q){
@@ -2390,11 +2392,11 @@ function renderTree(q){
   const ln=(a,b,col,on)=>{lines+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${on?col:'rgba(255,255,255,.18)'}" stroke-width="${on?3:2}" vector-effect="non-scaling-stroke"/>`;};
   PATH_KEYS.forEach(p=>{ln(P.base,P[p],'#ffffff',q.path===p);BAL.unlock[p].forEach(m=>ln(P[p],M[m],PATHS[p].col,q.path===p));});
   let h=`<svg class="tree-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg>`;
-  h+=`<div class="tn base" style="left:${P.base[0]}%;top:${P.base[1]}%" title="Always unlocked. No bonus."><b>Base</b></div>`;
-  PATH_KEYS.forEach(p=>{const on=q.path===p;h+=`<button class="tn path${on?' on':''}" data-path="${p}" style="left:${P[p][0]}%;top:${P[p][1]}%;--pc:${PATHS[p].col}" aria-pressed="${on}" title="${bonusText(p)}"><b>+1</b><span>${PATHS[p].name}</span></button>`;});
+  h+=`<div class="tnode base" style="left:${P.base[0]}%;top:${P.base[1]}%" title="Always unlocked. No bonus."><b>Base</b></div>`;
+  PATH_KEYS.forEach(p=>{const on=q.path===p;h+=`<button class="tnode path${on?' on':''}" data-path="${p}" style="left:${P[p][0]}%;top:${P[p][1]}%;--pc:${PATHS[p].col}" aria-pressed="${on}" title="${bonusText(p)}"><b>+1</b><span>${PATHS[p].name}</span></button>`;});
   const open=BAL.unlock[q.path]||[];
   MOMENT_ORDER.forEach(m=>{const ok=open.includes(m),on=ok&&q.special===m,who=PATH_KEYS.filter(p=>BAL.unlock[p].includes(m)).map(p=>PATHS[p].name).join(' or ')||'no path';
-    h+=`<button class="tn mom${on?' on':''}${ok?'':' locked'}" data-m="${m}" style="left:${M[m][0]}%;top:${M[m][1]}%" aria-pressed="${on}" ${ok?'':'aria-disabled="true"'} title="${ok?SPECIALS[m].desc:'Unlocked by the '+who+' path'}"><b>${SPECIALS[m].name}</b></button>`;});
+    h+=`<button class="tnode mom${on?' on':''}${ok?'':' locked'}" data-m="${m}" style="left:${M[m][0]}%;top:${M[m][1]}%" aria-pressed="${on}" ${ok?'':'aria-disabled="true"'} title="${ok?SPECIALS[m].desc:'Unlocked by the '+who+' path'}"><b>${SPECIALS[m].name}</b></button>`;});
   box.innerHTML=h;
   box.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{q.path=b.dataset.path;fitSpecial(q);saveSquads();renderSquad();});
   box.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const m=b.dataset.m;if(!(BAL.unlock[q.path]||[]).includes(m)){squadNote('Pick a path that unlocks '+SPECIALS[m].name+' first.');return;}q.special=m;saveSquads();renderSquad();});
@@ -2554,6 +2556,20 @@ function renderTracks(){
     li.append(tog,pb,tt,du);ul.appendChild(li);
   });
 }
+// On GitHub Pages, any audio file pushed into music/ joins the playlist (named "Title + Version - Artist.mp3")
+(async function findRepoTracks(){
+  const h=location.hostname;if(!/\.github\.io$/i.test(h))return;
+  const owner=h.split('.')[0],seg=location.pathname.split('/').filter(Boolean)[0];
+  const repo=seg&&!/\.html?$/i.test(seg)?seg:h;
+  let list;try{const r=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/music`);if(!r.ok)return;list=await r.json();}catch(e){return;}
+  if(!Array.isArray(list))return;
+  const known=new Set(TRACKS.map(t=>decodeURIComponent(String(t.src).split('/').pop())));
+  let added=0;
+  list.filter(f=>f&&f.type==='file'&&/\.(mp3|ogg|m4a|wav)$/i.test(f.name)&&!/^stadium-ambience\./i.test(f.name)&&!known.has(f.name)).forEach(f=>{
+    const t=Object.assign({id:'gh_'+f.name,src:'music/'+encodeURIComponent(f.name),dur:0},parseTrackName(f.name));TRACKS.push(t);added++;
+    const a=new Audio();a.preload='metadata';a.src=t.src;a.onloadedmetadata=()=>{t.dur=a.duration;renderTracks();};});
+  if(added)renderTracks();
+})();
 $('#add-tracks').addEventListener('change',e=>{
   const files=Array.from(e.target.files||[]);
   files.forEach((f,i)=>{const t=Object.assign({id:'u'+Date.now()+'_'+i,src:URL.createObjectURL(f),user:true,dur:0},parseTrackName(f.name));TRACKS.push(t);
