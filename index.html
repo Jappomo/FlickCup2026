@@ -2,7 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Baize Cup: table football with pull-and-flick controls.">
+<meta name="description" content="Flick Cup: table football with pull-and-flick controls.">
 <title>Baize Cup</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -525,6 +525,42 @@ table.bal input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent)
 @keyframes breath{0%,100%{transform:scale(1);box-shadow:inset 6px 0 0 var(--orange),0 0 0 0 rgba(154,92,255,.0),0 10px 26px rgba(20,6,80,.45)}50%{transform:scale(1.045);box-shadow:inset 6px 0 0 var(--orange),0 0 0 10px rgba(154,92,255,.22),0 14px 34px rgba(20,6,80,.55)}}
 body.calm #btn-start{animation:none}
 @media (prefers-reduced-motion:reduce){#btn-start{animation:none}}
+
+/* tournament */
+.rt-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.tour-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;margin-top:12px}
+.tset-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line)}
+.tset-row:first-of-type{border-top:0}
+.tset-l{font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.05em;text-transform:uppercase}
+.tset-row .chip{padding:4px 10px;font-size:14px}
+.tsel{background:#0e0640;color:var(--text);border:1px solid var(--line);padding:5px 8px;font:inherit;font-size:14px;max-width:190px}
+.tcount{color:var(--muted);letter-spacing:.06em;font-weight:600;text-transform:none}
+.tteams{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.tteam{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid var(--line);padding:6px 8px;min-width:0}
+.tteam b{font-family:var(--f-display);font-weight:700;font-size:15px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.tteam small{font-size:11px;color:var(--gold);font-weight:600}
+.tteam.cpu{opacity:.65;border-style:dashed}
+.tteam.me{box-shadow:inset 3px 0 0 var(--orange)}
+.tkit{width:12px;height:12px;flex:none;border:1px solid rgba(255,255,255,.4)}
+.bracket{display:flex;gap:12px;overflow-x:auto;margin-top:14px;padding-bottom:6px}
+.bcol{display:flex;flex-direction:column;justify-content:space-around;gap:8px;min-width:190px}
+.bmatch{background:var(--tile);border:1px solid var(--line);padding:6px 8px;display:flex;flex-direction:column;gap:3px}
+.bmatch.st-live{border-color:var(--orange);box-shadow:0 0 0 1px var(--orange)}
+.bmatch.mine{box-shadow:inset 3px 0 0 var(--cyan)}
+.bteam{display:flex;align-items:center;gap:6px;font-size:14px}
+.bteam span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bteam b{font-family:var(--f-display);font-weight:800;font-size:16px;min-width:14px;text-align:right}
+.bteam.win span,.bteam.win b{color:var(--gold);font-weight:700}
+.bfoot{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:2px}
+.bfoot small{flex:1;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.chip.mini{padding:2px 6px;font-size:11px}
+.bchamp{background:linear-gradient(160deg,#fff3c4,#c99a2e);color:#1c1402;padding:14px;text-align:center}
+.bchamp b{display:block;font-family:var(--f-display);font-weight:900;font-size:22px;text-transform:uppercase}
+.bchamp small{font-size:12px;font-weight:600}
+.tour-cta{justify-content:center;margin-top:12px}
+#tour-start,#tour-play{animation:breath 2.4s ease-in-out infinite}
+.big.concede{background:rgba(255,106,85,.16);color:#ffd2cb;box-shadow:inset 6px 0 0 var(--warn)}
+@media (max-width:820px){.tour-grid{grid-template-columns:1fr}}
 /* play modes */
 .modes{display:grid;grid-template-columns:1.15fr 1fr 1fr 1fr;grid-template-rows:auto auto;gap:10px}
 .modes .tile{min-height:112px}
@@ -671,6 +707,8 @@ body.calm .setup{animation:none}
         </div>
       </div>
       <div class="cardbox" id="online-panel" hidden>
+        <div class="rt-row"><p class="h" style="margin:0">Room type</p><div class="seg" id="room-type"><button class="chip" type="button" data-rt="match" aria-pressed="true">Match</button><button class="chip" type="button" data-rt="tour" aria-pressed="false">Tournament</button></div></div>
+        <div id="rt-match">
         <p class="h">Room code</p>
         <div class="field">
           <input id="room-code" maxlength="6" autocomplete="off" spellcheck="false" placeholder="ABCD" aria-label="Room code">
@@ -680,9 +718,28 @@ body.calm .setup{animation:none}
         </div>
         <p class="status" id="room-status">Make a room and send the code, or type the code you were sent.</p>
         <div class="seats" id="seats" hidden><div class="seat"><span>Home</span><b id="seat0">Open</b></div><div class="seat"><span>Away</span><b id="seat1">Open</b></div></div>
+        </div>
+        <div id="rt-tour" hidden>
+          <p class="h">Tournament code</p>
+          <div class="field">
+            <input id="tour-code" maxlength="6" autocomplete="off" spellcheck="false" placeholder="CUP1" aria-label="Tournament code">
+            <button class="chip" id="tour-join" type="button">Join</button>
+            <button class="chip" id="tour-create" type="button">Create tournament</button>
+            <button class="chip" id="tour-leave" type="button" hidden>Leave</button>
+          </div>
+          <p class="status" id="tour-status">Create a tournament and share the code, or join with a code you were sent. Drawn games go to golden goal.</p>
+          <div id="tour-body" hidden>
+            <div class="tour-grid">
+              <div class="tour-set" id="tour-set"></div>
+              <div class="tour-teams"><p class="h">Teams <span class="tcount" id="tour-count"></span></p><div class="tteams" id="tour-teams"></div></div>
+            </div>
+            <div class="bracket" id="tour-bracket" hidden></div>
+            <div class="cta tour-cta"><button class="big go" id="tour-start" type="button" hidden><span>Start tournament</span></button><button class="big go" id="tour-play" type="button" hidden><span class="glyph a">A</span><span>Play your match</span></button></div>
+          </div>
+        </div>
       </div>
       <div class="cta">
-        <button class="big alt" id="btn-resume" hidden><span class="glyph b">B</span>Resume</button>
+        <span class="seg" id="concede-row" hidden></span><button class="big alt" id="btn-resume" hidden><span class="glyph b">B</span>Resume</button>
         <button class="big go" id="btn-start"><span class="glyph a">A</span><span id="start-lbl">Kick off</span></button>
       </div>
       </div>
@@ -1054,15 +1111,7 @@ function parseTrackName(n){
   const parts=n.split(/\s\+\s|\+/);
   return{title:parts[0].trim()||'Untitled',alt:parts.slice(1).map(x=>x.trim()).filter(Boolean).join(' · '),artist};
 }
-const TRACKS=[
-  ['home-end-reply','Home End Reply - SnoopSnoop',176],
-  ['right-move','Right Move - Serablings',148],
-  ['hear-us-roar','Hear Us Roar - Rhoanna',175],
-  ['flick-it','Flick It - Mild Girls',209],
-  ['we-are-one','We Are One - OnFocus',198],
-  ['roar-of-this-town-remix','Roar of This Town + Remix - Jonny Bovor',202],
-  ['roar-of-this-town','Roar of This Town - Jonny Bovor',199]
-].map(([id,name,dur])=>Object.assign({id,src:'music/'+id+'.mp3',dur},parseTrackName(name)));
+const TRACKS=[]; // filled from the files in music/ when the page loads
 const music=(()=>{
   const decks=[0,1].map(()=>{const el=new Audio();el.preload='none';el.crossOrigin='anonymous';return{el,g:null};});
   let cur=-1,deck=0,lastTrack=null,npT=0;
@@ -1364,26 +1413,29 @@ function kickoff(team){
   formation(team);resetPossession(team);S.armed='';
   S.msg={t:'Kick-off',s:`${N(team)} get the game going.`,w:1,c:team};selPrefer=team*10+FORMATIONS[matchSquads[team].form].ko;commit();
 }
-function newMatch(){
-  leaveDrills();
-  S.ballV=BALL.mine||((BALL.variants[0]||{}).id||'');showBall();S.lookV=lookStr(LOOKSEL);showLook();
-  S.score=[0,0];S.half=1;S.clock=S.halfLen;S.running=true;S.paused=false;S.ko1=0;S.bar=[0,0];S.armed='';S.armedTeam=-1;
+function newMatch(o){
+  leaveDrills();o=o||{};
+  S.ballV=o.ball||BALL.mine||((BALL.variants[0]||{}).id||'');showBall();S.lookV=o.look||lookStr(LOOKSEL);showLook();
+  S.golden=false;S.score=[0,0];S.half=1;S.clock=S.halfLen;S.running=true;S.paused=false;S.ko1=0;S.bar=[0,0];S.armed='';S.armedTeam=-1;
   MBAL=BAL;applySquadStats();$('#ft').hidden=true;kickoff(0);ambience.update();
 }
-function addBar(t,v){if(t===0||t===1)S.bar[t]=Math.min(BAR_MAX,S.bar[t]+v);}
+function addBar(t,v){if(S.noMoments)return;if(t===0||t===1)S.bar[t]=Math.min(BAR_MAX,S.bar[t]+v);}
 function turnover(team,title,sub){resetPossession(team);S.msg={t:title,s:sub,c:team};commit();}
 function scoreGoal(team,own){
   S.score[team]++;S.phase='goal';if(!own)addBar(team,20);
   S.msg={t:'Goal!',s:own?`Own goal. ${N(team)} take it, ${S.score[0]}-${S.score[1]}.`:`${N(team)} score. ${S.score[0]}-${S.score[1]}.`,g:1,c:team};
   commit();const q=S.seq;
-  setTimeout(()=>{if(S.seq!==q||!S.running)return;if(S.clock<=0)endHalf();else kickoff(1-team);},2700);
+  setTimeout(()=>{if(S.seq!==q||!S.running)return;if(S.golden||S.clock<=0)endHalf();else kickoff(1-team);},2700);
 }
 function endHalf(){
   S.armed='';
   if(S.half===1){
     S.phase='break';S.msg={t:'Half-time',s:`${N(0)} ${S.score[0]} - ${S.score[1]} ${N(1)}`,w:1};commit();const q=S.seq;
     setTimeout(()=>{if(S.seq!==q||!S.running)return;S.half=2;S.clock=S.halfLen;kickoff(1-S.ko1);},3000);
-  }else{S.phase='end';setTimeout(()=>ambience.update(),0);S.msg={t:'Full-time',s:`${N(0)} ${S.score[0]} - ${S.score[1]} ${N(1)}`,w:1};commit();}
+  }else if(S.tg&&!S.golden&&S.score[0]===S.score[1]){
+    S.golden=true;S.phase='break';S.msg={t:'Golden goal',s:`${N(0)} ${S.score[0]} - ${S.score[1]} ${N(1)}. Next goal wins.`,w:1};commit();const q=S.seq;
+    setTimeout(()=>{if(S.seq!==q||!S.running)return;S.clock=5999;kickoff(1-S.ko1);},3000);
+  }else{S.golden=false;S.phase='end';setTimeout(()=>ambience.update(),0);S.msg={t:'Full-time',s:`${N(0)} ${S.score[0]} - ${S.score[1]} ${N(1)}`,w:1};commit();}
 }
 function outOfPlay(ctx,fallback){
   const o=ctx.out,lt=ctx.last==null?fallback:ctx.last;
@@ -1577,7 +1629,7 @@ function unpackPos(a,out){
   if(out){out[60]=bx;out[61]=bz;out[62]=k0;out[63]=k1;out[64]=isFinite(hy)?hy:RB;}
   else{if(isFinite(bx))ball.x=bx;if(isFinite(bz))ball.z=bz;if(isFinite(k0))keepers[0].z=clamp(k0,-K_RANGE,K_RANGE);if(isFinite(k1))keepers[1].z=clamp(k1,-K_RANGE,K_RANGE);ball.hy=RB;}
 }
-function packState(){return{v:2,seq:S.seq,running:S.running,score:S.score.slice(),half:S.half,clock:Math.round(S.clock*10)/10,halfLen:S.halfLen,phase:S.phase,poss:S.poss,active:S.active,flicks:S.flicks,lastFig:S.lastFig,lastFigCount:S.lastFigCount,ko1:S.ko1,setupLeft:S.setupLeft,setupKind:S.setupKind,bar:S.bar.slice(),ballV:S.ballV||'',lookV:S.lookV||'',armed:S.armed,armedTeam:S.armedTeam,kits:S.kits.slice(),sq:[serSquad(matchSquads[0]),serSquad(matchSquads[1])],bal:MBAL,msg:S.msg,p:packPos()};}
+function packState(){return{v:2,seq:S.seq,running:S.running,score:S.score.slice(),half:S.half,clock:Math.round(S.clock*10)/10,halfLen:S.halfLen,phase:S.phase,poss:S.poss,active:S.active,flicks:S.flicks,lastFig:S.lastFig,lastFigCount:S.lastFigCount,ko1:S.ko1,setupLeft:S.setupLeft,setupKind:S.setupKind,bar:S.bar.slice(),ballV:S.ballV||'',lookV:S.lookV||'',armed:S.armed,armedTeam:S.armedTeam,kits:S.kits.slice(),sq:[serSquad(matchSquads[0]),serSquad(matchSquads[1])],bal:MBAL,tg:S.tg?1:0,gg:S.golden?1:0,nm:S.noMoments?1:0,msg:S.msg,p:packPos()};}
 const PHASES=['idle','attack','defend','goal','break','end'];
 function onRemoteState(d){
   if(!d||d.v!==2||!Array.isArray(d.p)||d.p.length!==POSLEN||!PHASES.includes(d.phase))return;
@@ -1594,6 +1646,7 @@ function onRemoteState(d){
   S.armed=SPECIALS[d.armed]?d.armed:'';S.armedTeam=int(d.armedTeam,-1,1,-1);
   const k0=int(d.kits&&d.kits[0],0,KITS.length-1,0),k1=int(d.kits&&d.kits[1],0,KITS.length-1,1);S.kits=[k0,k1];applyKits();
   if(d.bal)MBAL=cleanBal(d.bal);
+  S.tg=!!d.tg;S.golden=!!d.gg;S.noMoments=!!d.nm;
   if(Array.isArray(d.sq)){matchSquads=[parseSquad(d.sq[0],0),parseSquad(d.sq[1],1)];applySquadStats();}
   S.msg=d.msg&&typeof d.msg.t==='string'?{t:String(d.msg.t).slice(0,40),s:String(d.msg.s||'').slice(0,160),g:!!d.msg.g,w:!!d.msg.w,m:!!d.msg.m,c:d.msg.c===0||d.msg.c===1?d.msg.c:undefined}:null;
   unpackPos(d.p,null);stopAll();
@@ -2317,7 +2370,7 @@ function peerRoomApi(){
     const list=()=>[...R.pres.entries()].map(([id,pr])=>({peer:id,sameTab:id===R.me,kind:'viewer',presence:pr||{}}));
     const firePeers=ch=>R.peerCbs.forEach(cb=>{try{cb(ch);}catch(e){}});
     const fireMsg=(type,data,from)=>{const hs=R.handlers.get(type);if(hs)hs.forEach(cb=>{try{cb({data,sameTab:from===R.me,peer:from});}catch(e){}});};
-    const applyPres=(id,p,silent)=>{const was=R.pres.has(id),cur=Object.assign({},R.pres.get(id)||{},p);R.pres.set(id,cur);
+    const applyPres=(id,p,silent)=>{const was=R.pres.has(id);let cur=R.pres.get(id);if(!cur){cur={};R.pres.set(id,cur);}Object.assign(cur,p); // same object: the game keeps references to it
       if(!was)firePeers({joined:list().filter(x=>x.peer===id),left:[]});else if(!silent&&Object.keys(p).some(k=>!P2P_LIVE.has(k)))firePeers({joined:[],left:[]});};
     const drop=id=>{if(!R.pres.has(id))return;const gone=list().filter(x=>x.peer===id);R.pres.delete(id);firePeers({joined:[],left:gone});};
     const send=(c,m)=>{try{if(c&&c.open)c.send(m);}catch(e){}};
@@ -2371,16 +2424,18 @@ function refreshPlayers(){
     const mp=myPeer();
     const beats=p=>(+p.presence.t0||0)<net.joinedAt||((+p.presence.t0||0)===net.joinedAt&&p.peer<mp);
     let want=net.myTeam;
-    if(want==null||net.others.some(p=>p.presence.team===want&&beats(p))){
+    if(net.tourMatch){want=T.uid===net.tourMatch.home?0:T.uid===net.tourMatch.away?1:null;}
+    else if(want==null||net.others.some(p=>p.presence.team===want&&beats(p))){
       const taken=new Set(net.others.filter(p=>want==null||beats(p)||p.presence.team!==want).map(p=>p.presence.team));
       want=!taken.has(0)?0:!taken.has(1)?1:null;
     }
     if(want!==net.myTeam||!net.claimed){net.myTeam=want;net.claimed=true;net.named.presence({seat:want==null?'s':'p',team:want,t0:net.joinedAt,sq:serSquad(mySquads[0])}).catch(()=>{});}
   }
-  renderOnline();updateHud();
+  renderOnline();updateHud();if(net.tourMatch)tourAutoStart();
 }
-async function joinRoom(code){
-  code=(code||'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,6);
+async function joinRoom(code,o){
+  code=(code||'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,o&&o.raw?24:6);
+  if(!(o&&o.raw))net.tourMatch=null;
   if(code.length<3){setRoomStatus('Room codes are 3 to 6 letters or digits.');return;}
   if(!net.room){setRoomStatus('Online play is not available in this view.');return;}
   await leaveRoom(true);
@@ -2402,7 +2457,7 @@ async function leaveRoom(quiet){
   net.unsubs.forEach(u=>{try{u();}catch(e){}});net.unsubs=[];
   if(net.named){const r=net.named;net.named=null;try{await r.leave();}catch(e){}}
   net.myTeam=null;net.others=[];net.code='';
-  if(S.mode==='online'){S.running=false;S.phase='idle';S.mode='local';matchSquads=[mySquads[0],mySquads[1]];applySquadStats();formation(0);updateHud();}
+  if(S.mode==='online'){S.running=false;S.phase='idle';S.mode='local';S.tg=false;S.noMoments=false;S.golden=false;matchSquads=[mySquads[0],mySquads[1]];applySquadStats();formation(0);updateHud();}
   if(!quiet)setRoomStatus('Left the room.');
   renderOnline();
 }
@@ -2427,14 +2482,14 @@ function renderOnline(){
 }
 
 /* ================= HUD ================= */
-function fmtClock(s){s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function fmtClock(s){if(S.golden)return 'GG';s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 let lastClockTxt='';
 function myMomentTeam(){if(S.mode==='practice'||S.mode==='tutorial')return 0;if(S.mode==='online')return net.myTeam;if(S.mode==='cpu')return 1-cpuTeam;return S.active;}
 function updateHud(){
   lastClockTxt=fmtClock(S.clock);$('#clock').textContent=lastClockTxt;
   for(let t=0;t<2;t++){$('#ab'+t).textContent=AB(t);$('#k'+t).style.background=KITS[S.kits[t]].ui;$('#s'+t).textContent=S.score[t];$('#sbt'+t).classList.toggle('poss',S.running&&S.poss===t);
     $('#bar'+t).style.width=(S.bar[t]/BAR_MAX*100)+'%';$('#mb'+t).classList.toggle('full',S.bar[t]>=BAR_MAX);}
-  $('#half').textContent=S.half===1?'1st half':'2nd half';
+  $('#half').textContent=S.golden?'Golden goal':S.half===1?'1st half':'2nd half';
   const lockTxt=(S.phase==='attack'&&S.lastFigCount>=3)?' · figure resting':'';
   const tot=SETUP[S.setupKind]||0;
   $('#flickc').textContent=!S.running||S.phase==='end'?'':S.setupKind?`Set-up ${tot-S.setupLeft}/${tot}`:`Flick ${S.flicks+1}${lockTxt}`;
@@ -2455,7 +2510,7 @@ function updateHud(){
   }
   $('#btn-skip').hidden=!(localTurn()&&S.phase==='defend');
   const mt=myMomentTeam(),mb=$('#btn-moment');
-  if(!S.running||S.phase==='end'||mt==null){mb.hidden=true;}
+  if(!S.running||S.phase==='end'||mt==null||S.noMoments){mb.hidden=true;}
   else{
     mb.hidden=false;$('#mname').textContent=SPECIALS[matchSquads[mt].special].name;
     $('#barme').style.width=(S.bar[mt]/BAR_MAX*100)+'%';
@@ -2479,11 +2534,215 @@ function updateGlyphs(){
 function showMeter(p){const m=$('#meter');if(p<0){m.hidden=true;return;}m.hidden=false;$('#meter-fill').style.height=(clamp(p,0,1)*100)+'%';$('#meter-snap').style.bottom=(clamp(p*4/3,0,1)*100)+'%';}
 function showFT(){
   const a=S.score[0],b=S.score[1];
+  if(S.tour)tourMatchOver();
+  const tourOn=!!(S.tour||(net.tourMatch&&net.tourMatch.watch));$('#btn-rematch').hidden=tourOn;$('#btn-ft-menu').textContent=tourOn?'Back to tournament':'Main menu';
   $('#ft-title').textContent=a===b?'Honours even':(a>b?N(0):N(1))+' win';
   $('#ft-score').textContent=a+' - '+b;
   $('#ft-note').textContent=S.mode==='online'&&net.myTeam===1?'Home can start a rematch.':'';
   $('#btn-rematch').disabled=S.mode==='online'&&net.myTeam!==0;
   setTimeout(()=>{if(S.phase==='end'){$('#ft').hidden=false;music.menu(true);applyVolumes();}},1600);
+}
+
+/* ================= tournament (online) =================
+   The organiser's browser runs the tournament: it keeps the settings, the teams and the bracket in its lobby presence,
+   sends each pairing to its own match room (<code>m<round><match>), collects results and moves winners on.
+   CPU teams fill empty places: human v CPU is played on the human's screen, CPU v CPU is simulated. */
+const T={lobby:null,code:'',uid:(()=>{let u='';try{u=sessionStorage.getItem('baize.uid')||'';}catch(e){}if(!u){u=Math.random().toString(36).slice(2,10);try{sessionStorage.setItem('baize.uid',u);}catch(e){}}return u;})(),
+  host:false,t0:0,state:null,unsubs:[],roomType:'match',set:{size:8,min:5,moments:true,simul:true,ball:'',fin:''},busy:false};
+const CPU_NAMES=['Rovers','Athletic','Wanderers','Albion','Rangers','Harriers','Dynamo','Rapid','Sporting','Olympic','Town','Villa','Corinthians','Spartans','Orient'];
+const ROUND_NAMES={2:['Final'],4:['Semi-finals','Final'],8:['Quarter-finals','Semi-finals','Final'],16:['Round of 16','Quarter-finals','Semi-finals','Final']};
+const tEl=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;};
+function tourMembers(){if(!T.lobby)return[];return T.lobby.peers().filter(p=>p.presence&&p.presence.uid).map(p=>p.presence).sort((a,b)=>(a.t0||0)-(b.t0||0)||String(a.uid).localeCompare(String(b.uid)));}
+function tourHostPres(){return tourMembers().filter(p=>p.host).sort((a,b)=>(a.t0||0)-(b.t0||0))[0]||null;}
+function tourState(){if(T.host)return T.state;const h=tourHostPres();return h&&h.tour?h.tour:null;}
+function myTeamIdx(st){st=st||tourState();return st&&st.teams?st.teams.findIndex(t=>t.id===T.uid):-1;}
+function tourSave(){if(T.host&&T.state)store.set('baize.tour.'+T.code,JSON.stringify(T.state));}
+function tourPublish(){if(!T.lobby)return;const me={uid:T.uid,t0:T.t0,name:(mySquads[0].name||KITS[kitSel[0]].name),kit:kitSel[0],host:T.host};
+  if(T.host){T.state.set=Object.assign({},T.set);me.tour=T.state;tourSave();}
+  T.lobby.presence(me).catch(()=>{});renderTour();}
+
+async function tourJoin(code,create){
+  code=(code||'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,6);
+  if(code.length<3){tourStatus('Tournament codes are 3 to 6 letters or digits.');return;}
+  if(!net.room){tourStatus('Online play is not available in this view.');return;}
+  await tourLeave(true);
+  tourStatus((create?'Creating':'Joining')+' tournament '+code.toUpperCase()+'…');
+  let r;try{r=await net.room.join('baizet-'+code);}catch(e){tourStatus('Could not open that tournament ('+((e&&e.code)||'error')+'). Try again.');return;}
+  T.lobby=r;T.code=code;T.t0=Date.now();T.host=!!create;$('#tour-code').value=code.toUpperCase();
+  if(T.host){let saved=null;try{saved=JSON.parse(store.get('baize.tour.'+code)||'null');}catch(e){}
+    T.state=saved&&saved.host===T.uid?saved:{v:1,host:T.uid,phase:'lobby',set:Object.assign({},T.set),teams:null,rounds:null,champ:null};
+    if(T.state.set)T.set=Object.assign({},T.set,T.state.set);}
+  T.sig='';
+  T.unsubs.push(r.onPeers(()=>{tourCheckHost();const sig=tourMembers().filter(p=>p.uid!==T.uid).map(p=>p.uid+':'+p.name+':'+p.kit).join('|');
+    if(T.host&&T.state&&T.state.phase==='lobby'&&sig!==T.sig){T.sig=sig;tourPublish();}else renderTour();}));
+  T.unsubs.push(r.on('tres',m=>{if(T.host&&m&&m.data)tourResult(m.data.mid,m.data.sa,m.data.sb);}));
+  tourPublish();
+  setTimeout(()=>{tourCheckHost();renderTour();},1500);
+}
+// two organisers on one code: the earlier one keeps it
+function tourCheckHost(){if(!T.host||!T.lobby)return;const h=tourHostPres();if(h&&h.uid!==T.uid&&(h.t0||0)<T.t0){T.host=false;T.state=null;tourStatus('That code already has an organiser. You joined as a team.');tourPublish();}}
+async function tourLeave(quiet){
+  T.unsubs.forEach(u=>{try{u();}catch(e){}});T.unsubs=[];
+  if(T.lobby){const r=T.lobby;T.lobby=null;try{await r.leave();}catch(e){}}
+  T.host=false;T.state=null;T.code='';if(!quiet)tourStatus('Left the tournament.');renderTour();
+}
+function tourStatus(t){const e=$('#tour-status');if(e)e.textContent=t;}
+
+/* ---- organiser: draw, schedule, results ---- */
+function tourStart(){
+  if(!T.host||T.state.phase!=='lobby')return;
+  const size=T.set.size,hum=tourMembers().slice(0,size).map(p=>({id:p.uid,name:String(p.name||'Team').slice(0,16),kit:+p.kit||0,cpu:false}));
+  const cpuN=CPU_NAMES.slice().sort(()=>Math.random()-0.5);
+  while(hum.length<size){const i=hum.length;hum.push({id:'cpu'+i,name:cpuN[i%cpuN.length],kit:(i*2+3)%KITS.length,cpu:true});}
+  for(let i=hum.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[hum[i],hum[j]]=[hum[j],hum[i]];}
+  const rounds=[];let n=size/2;for(let r=0;n>=1;r++,n/=2){const ms=[];for(let k=0;k<n;k++)ms.push({id:'r'+r+'m'+k,a:r===0?2*k:null,b:r===0?2*k+1:null,sa:null,sb:null,w:null,st:'wait'});rounds.push(ms);}
+  Object.assign(T.state,{phase:'run',teams:hum,rounds,champ:null,set:Object.assign({},T.set)});
+  tourSchedule();tourPublish();
+}
+function tourFind(mid,st){st=st||tourState();if(!st||!st.rounds)return null;for(const R of st.rounds)for(const m of R)if(m.id===mid)return m;return null;}
+function tourSchedule(){
+  const st=T.state;let changed=true;
+  while(changed){changed=false;
+    st.rounds.forEach((R,r)=>R.forEach((m,k)=>{
+      if(m.st==='done'&&r+1<st.rounds.length){const nx=st.rounds[r+1][k>>1];const slot=k%2?'b':'a';if(nx[slot]==null){nx[slot]=m.w;changed=true;}}
+      if(m.st==='wait'&&m.a!=null&&m.b!=null&&st.teams[m.a].cpu&&st.teams[m.b].cpu){let x=Math.floor(Math.random()*4),y=Math.floor(Math.random()*4);if(x===y){if(Math.random()<0.5)x++;else y++;}
+        Object.assign(m,{sa:x,sb:y,w:x>y?m.a:m.b,st:'done'});changed=true;}
+    }));
+  }
+  const all=st.rounds.flat(),live=all.filter(m=>m.st==='live').length;
+  for(const m of all){if(m.st!=='wait'||m.a==null||m.b==null)continue;if(!st.set.simul&&(live>0||all.some(x=>x.st==='live')))break;m.st='live';if(!st.set.simul)break;}
+  const fin=st.rounds[st.rounds.length-1][0];if(fin.st==='done'){st.phase='done';st.champ=fin.w;}
+}
+function tourResult(mid,sa,sb){
+  if(!T.host||!T.state||T.state.phase!=='run')return;const m=tourFind(mid,T.state);if(!m||m.st!=='live')return;
+  sa=Math.max(0,Math.round(+sa)||0);sb=Math.max(0,Math.round(+sb)||0);if(sa===sb)return;
+  Object.assign(m,{sa,sb,w:sa>sb?m.a:m.b,st:'done'});tourSchedule();tourPublish();
+}
+function tourReport(mid,sa,sb){if(T.host)tourResult(mid,sa,sb);else if(T.lobby)T.lobby.emit('tres',{mid,sa,sb}).catch(()=>{});}
+
+/* ---- playing a tournament match ---- */
+function tourMyLiveMatch(){const st=tourState(),i=myTeamIdx(st);if(i<0||!st.rounds)return null;return st.rounds.flat().find(m=>m.st==='live'&&(m.a===i||m.b===i))||null;}
+function tourIsFinal(st,m){return st.rounds[st.rounds.length-1][0].id===m.id;}
+function tourMatchOpts(st,m){const set=st.set||{};return{ball:set.ball||'',look:tourIsFinal(st,m)&&set.fin?lookStr(Object.assign({},LOOKSEL,{table:set.fin})):''};}
+function tourPlay(){
+  const st=tourState(),m=tourMyLiveMatch();if(!st||!m)return;const i=myTeamIdx(st),A=st.teams[m.a],B=st.teams[m.b],opp=i===m.a?B:A;
+  const set=st.set||T.set;
+  if(opp.cpu){ // on this screen, me v the computer (you are always the left team here)
+    if(S.mode==='online'&&net.named)leaveRoom(true);
+    const cs=defaultSquad(1);cs.name=opp.name;
+    S.mode='cpu';matchSquads=[mySquads[0],cs];const myKit=(i===m.a?A:B).kit;S.kits=[myKit,opp.kit!==myKit?opp.kit:(myKit+1)%KITS.length];applyKits();
+    S.halfLen=set.min*60;S.tour={mid:m.id,iAmA:i===m.a,code:T.code,reported:false};S.tg=true;S.noMoments=!set.moments;
+    cam.mode=-1;closeMenu();newMatch(tourMatchOpts(st,m));return;
+  }
+  // a human opponent: both join the match room; the A team is always home
+  net.tourMatch={mid:m.id,home:A.id,away:B.id,kits:[A.kit,B.kit!==A.kit?B.kit:(A.kit+1)%KITS.length],min:set.min,moments:set.moments,opts:tourMatchOpts(st,m),started:false};
+  S.tour={mid:m.id,iAmA:true,code:T.code,reported:false};
+  joinRoom(T.code+'m'+m.id.replace(/[^0-9]/g,''),{raw:true});
+}
+function tourWatch(mid){const st=tourState(),m=tourFind(mid,st);if(!m)return;
+  net.tourMatch={mid,home:st.teams[m.a].id,away:st.teams[m.b].id,watch:true};S.tour=null;
+  joinRoom(T.code+'m'+mid.replace(/[^0-9]/g,''),{raw:true});}
+function tourAutoStart(){
+  const tm=net.tourMatch;if(!tm||tm.watch||tm.started||net.myTeam!==0||!oppPeer()||S.running)return;
+  tm.started=true;tourStatus('Opponent is here. Kick-off in a moment…');
+  setTimeout(()=>{const opp=oppPeer();if(!opp||!net.named){tm.started=false;return;}
+    S.mode='online';MBAL=BAL;matchSquads=[mySquads[0],parseSquad(opp.presence.sq,1)];S.kits=tm.kits.slice();applyKits();
+    S.halfLen=tm.min*60;S.tg=true;S.noMoments=!tm.moments;cam.mode=-1;closeMenu();newMatch(tm.opts);},1500);
+}
+// at full-time: send the score to the organiser (A team first)
+function tourMatchOver(){
+  const t=S.tour;if(!t||t.reported)return;t.reported=true;
+  let sa=S.score[0],sb=S.score[1];if(S.mode==='cpu'&&!t.iAmA){sa=S.score[1];sb=S.score[0];}
+  if(S.mode==='online'&&net.myTeam==null)return;
+  tourReport(t.mid,sa,sb);
+}
+function tourBack(){$('#ft').hidden=true;S.running=false;S.phase='idle';S.tour=null;S.tg=false;S.noMoments=false;S.golden=false;
+  if(net.named&&net.tourMatch)leaveRoom(true);net.tourMatch=null;setTab('play');openMenu();setMenuMode('online');setRoomType('tour');}
+
+/* ---- UI ---- */
+function setRoomType(rt){T.roomType=rt;document.querySelectorAll('#room-type .chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.rt===rt)));
+  $('#rt-match').hidden=rt!=='match';$('#rt-tour').hidden=rt!=='tour';updateStartBtn();renderTour();}
+function segRow(label,opts,cur,on,locked){const row=tEl('div','tset-row');row.appendChild(tEl('span','tset-l',label));const seg=tEl('div','seg');
+  opts.forEach(([v,t])=>{const b=tEl('button','chip',t);b.type='button';b.setAttribute('aria-pressed',String(v===cur));b.disabled=locked&&v!==cur;if(!locked)b.onclick=()=>on(v);seg.appendChild(b);});row.appendChild(seg);return row;}
+function selRow(label,opts,cur,on,locked){const row=tEl('div','tset-row');row.appendChild(tEl('span','tset-l',label));const s=tEl('select','tsel');s.disabled=locked;
+  opts.forEach(([v,t])=>{const o=tEl('option',null,t);o.value=v;if(v===cur)o.selected=true;s.appendChild(o);});s.onchange=()=>on(s.value);row.appendChild(s);return row;}
+function renderTour(){
+  const body=$('#tour-body');if(!body)return;
+  const inT=!!T.lobby,st=tourState();
+  body.hidden=!inT;$('#tour-leave').hidden=!inT;$('#tour-create').hidden=inT;$('#tour-join').hidden=inT;
+  if(!inT)return;
+  const editable=T.host&&st&&st.phase==='lobby',set=(st&&st.set)||T.set;
+  // settings
+  const box=$('#tour-set');box.innerHTML='';box.appendChild(tEl('p','h','Rules'));
+  const upd=(k,v)=>{T.set[k]=v;tourPublish();};
+  box.appendChild(segRow('Teams',[[4,'4'],[8,'8'],[16,'16']],set.size,v=>upd('size',v),!editable));
+  box.appendChild(segRow('Half length',[[3,'3 min'],[5,'5 min'],[8,'8 min']],set.min,v=>upd('min',v),!editable));
+  box.appendChild(segRow('Moments',[[true,'On'],[false,'Off']],set.moments,v=>upd('moments',v),!editable));
+  box.appendChild(segRow('Simultaneous games',[[true,'On'],[false,'Off']],set.simul,v=>upd('simul',v),!editable));
+  box.appendChild(selRow('Ball',[['',"Home team's ball"]].concat(BALL.variants.map(v=>[v.id,v.name])),set.ball||'',v=>upd('ball',v),!editable));
+  box.appendChild(selRow('Final stadium',[['',"Home team's table"]].concat(LOOK.table.map(v=>[v.id,v.name])),set.fin||'',v=>upd('fin',v),!editable));
+  if(!st)box.appendChild(tEl('p','note','Waiting for the organiser…'));
+  // teams
+  const tl=$('#tour-teams');tl.innerHTML='';
+  let teams;if(st&&st.teams)teams=st.teams;else{const ms=tourMembers().slice(0,set.size);teams=ms.map(p=>({id:p.uid,name:p.name,kit:+p.kit||0,cpu:false,host:p.host}));while(teams.length<set.size)teams.push({cpu:true,name:'CPU',kit:-1,id:'cpu?'+teams.length});}
+  const humans=teams.filter(t=>!t.cpu).length;$('#tour-count').textContent=`${humans} player${humans===1?'':'s'} · ${teams.length-humans} CPU`;
+  teams.forEach(t=>{const row=tEl('div','tteam'+(t.cpu?' cpu':'')+(t.id===T.uid?' me':''));const sw=tEl('i','tkit');sw.style.background=t.kit>=0?KITS[t.kit].ui:'transparent';row.appendChild(sw);
+    row.appendChild(tEl('b',null,t.cpu&&t.kit<0?'CPU (fills in)':t.name+(t.cpu?' (CPU)':'')));
+    if(t.id===T.uid)row.appendChild(tEl('small',null,'You'));else if(t.host||(st&&st.host===t.id))row.appendChild(tEl('small',null,'Organiser'));tl.appendChild(row);});
+  // bracket
+  const br=$('#tour-bracket');br.hidden=!(st&&st.rounds);br.innerHTML='';
+  if(st&&st.rounds){const names=ROUND_NAMES[st.teams.length]||[];const mi=myTeamIdx(st);
+    st.rounds.forEach((R,r)=>{const col=tEl('div','bcol');col.appendChild(tEl('p','h',names[r]||'Round '+(r+1)));
+      R.forEach(m=>{const c=tEl('div','bmatch st-'+m.st+((m.a===mi||m.b===mi)&&mi>=0?' mine':''));
+        [['a','sa'],['b','sb']].forEach(([s,sc])=>{const t=m[s]!=null?st.teams[m[s]]:null,row=tEl('div','bteam'+(m.w!=null&&m.w===m[s]?' win':''));
+          const sw=tEl('i','tkit');sw.style.background=t?KITS[t.kit].ui:'transparent';row.appendChild(sw);row.appendChild(tEl('span',null,t?t.name:'…'));row.appendChild(tEl('b',null,m[sc]!=null?String(m[sc]):''));c.appendChild(row);});
+        const foot=tEl('div','bfoot');foot.appendChild(tEl('small',null,m.st==='live'?'Live':m.st==='done'?'Full-time':'Waiting'));
+        const hum=m.a!=null&&m.b!=null&&!st.teams[m.a].cpu&&!st.teams[m.b].cpu;
+        if(m.st==='live'&&hum&&m.a!==mi&&m.b!==mi){const w=tEl('button','chip','Watch');w.onclick=()=>tourWatch(m.id);foot.appendChild(w);}
+        if(T.host&&m.st==='live'){[['a','sa'],['b','sb']].forEach(([s])=>{const t=st.teams[m[s]];const aw=tEl('button','chip mini','Award '+t.name.slice(0,8));aw.title='Give this match to '+t.name+' (for no-shows)';aw.onclick=()=>s==='a'?tourResult(m.id,3,0):tourResult(m.id,0,3);foot.appendChild(aw);});}
+        c.appendChild(foot);col.appendChild(c);});
+      br.appendChild(col);});
+    if(st.phase==='done'){const ch=st.teams[st.champ];const c=tEl('div','bcol champ');c.appendChild(tEl('p','h','Champion'));const b=tEl('div','bchamp');b.appendChild(tEl('b',null,ch.name));b.appendChild(tEl('small',null,'Baize Cup winner'));c.appendChild(b);br.appendChild(c);}
+  }
+  // actions + status
+  const my=st&&st.rounds?tourMyLiveMatch():null,inMatch=S.running&&!!S.tour;
+  $('#tour-start').hidden=!(T.host&&st&&st.phase==='lobby');
+  const pb=$('#tour-play');pb.hidden=!my||inMatch;
+  if(my){const o=st.teams[my.a===myTeamIdx(st)?my.b:my.a];pb.lastChild.textContent='Play '+o.name;}
+  const c=T.code.toUpperCase();
+  if(!st)tourStatus(`Tournament ${c}: waiting for the organiser.`);
+  else if(st.phase==='lobby')tourStatus(T.host?`Tournament ${c}: share the code. Empty places are filled with CPU teams when you start.`:`Tournament ${c}: you're in. Waiting for the organiser to start.`);
+  else if(st.phase==='done')tourStatus(`Tournament ${c} is over. ${st.teams[st.champ].name} win the Baize Cup!`);
+  else if(my)tourStatus(`Your match is ready.`);
+  else if(myTeamIdx(st)<0)tourStatus(`Tournament ${c} is under way. You are watching.`);
+  else{const alive=st.rounds.flat().some(m=>m.st!=='done'&&(m.a===myTeamIdx(st)||m.b===myTeamIdx(st)||m.a==null||m.b==null));tourStatus(alive?'Waiting for your next match…':'You are out. Stay to watch the rest.');}
+  updateStartBtn();
+}
+document.querySelectorAll('#room-type .chip').forEach(b=>b.addEventListener('click',()=>setRoomType(b.dataset.rt)));
+$('#tour-create').addEventListener('click',()=>{ensureAudio();let c=($('#tour-code').value||'').toLowerCase().replace(/[^a-z0-9]/g,'');if(c.length<3){const ch='abcdefghjkmnpqrstuvwxyz23456789';c='';for(let i=0;i<4;i++)c+=ch[Math.floor(Math.random()*ch.length)];}tourJoin(c,true);});
+$('#tour-join').addEventListener('click',()=>{ensureAudio();tourJoin($('#tour-code').value,false);});
+$('#tour-code').addEventListener('keydown',e=>{if(e.key==='Enter')tourJoin($('#tour-code').value,false);});
+$('#tour-leave').addEventListener('click',()=>tourLeave(false));
+$('#tour-start').addEventListener('click',()=>{ensureAudio();tourStart();});
+$('#tour-play').addEventListener('click',()=>{ensureAudio();tourPlay();});
+
+/* ================= concede ================= */
+function concede(team){
+  if(!S.running||S.phase==='end'||!(team===0||team===1))return;
+  const o=1-team;sim.running=false;sim.ctx=null;stopAll();
+  if(S.score[o]-S.score[team]<3){S.score[team]=0;S.score[o]=3;}
+  S.golden=false;S.phase='end';S.armed='';S.msg={t:'Conceded',s:`${N(team)} concede. ${N(o)} win ${S.score[0]}-${S.score[1]}.`,w:1,c:o};
+  closeMenu();commit();setTimeout(()=>ambience.update(),0);
+}
+const concedeSure={};let concedeSig='';
+function renderConcede(){
+  const row=$('#concede-row');if(!row)return;
+  const live=S.running&&S.phase!=='end'&&(S.mode==='online'||S.mode==='cpu'||S.mode==='local')&&!(S.mode==='online'&&net.myTeam==null);
+  const teams=!live?[]:S.mode==='online'?[net.myTeam]:S.mode==='cpu'?[0]:[0,1];
+  const label=t=>concedeSure[t]?'Tap again to concede':teams.length>1?`${N(t)} concede`:'Concede';
+  const sig=teams.map(t=>t+':'+label(t)).join('|');row.hidden=!teams.length;if(sig===concedeSig)return;concedeSig=sig;row.innerHTML='';
+  teams.forEach(t=>{const b=tEl('button','big alt concede',label(t));b.type='button';
+    b.onclick=()=>{if(concedeSure[t]){concedeSure[t]=0;concedeSig='';concede(t);return;}concedeSure[t]=Date.now();renderConcede();setTimeout(()=>{if(concedeSure[t]&&Date.now()-concedeSure[t]>=4900){concedeSure[t]=0;renderConcede();}},5000);};row.appendChild(b);});
 }
 
 /* ================= hub: play ================= */
@@ -2503,6 +2762,8 @@ function renderKits(){
 function updateStartBtn(){
   const b=$('#btn-start'),running=S.running&&S.phase!=='end';
   $('#mode-setup').hidden=!menuMode;
+  const tourView=menuMode==='online'&&T.roomType==='tour';$('#match-settings').hidden=tourView;$('#btn-start').hidden=tourView;
+  renderConcede();
   $('#btn-resume').hidden=!running||(menuMode==='online')!==(S.mode==='online');
   $('#match-settings').style.display=(menuMode==='online'&&net.named&&net.myTeam!==0)?'none':'';
   if(menuMode==='online'){const ready=net.named&&net.myTeam===0&&!!oppPeer();$('#start-lbl').textContent=running&&S.mode==='online'?'Restart match':'Start match';b.disabled=!ready;}
@@ -2531,6 +2792,7 @@ $('#btn-start').addEventListener('click',()=>{
     if(S.mode==='online'&&net.named)leaveRoom(true);
     S.mode=menuMode;matchSquads=S.mode==='cpu'?[mySquads[0],defaultSquad(1)]:[mySquads[0],mySquads[1]];
   }
+  S.tour=null;S.tg=false;S.noMoments=false;
   S.kits=kitSel.slice();applyKits();S.halfLen=halfMin*60;
   cam.mode=-1;closeMenu();newMatch();
 });
@@ -2550,7 +2812,7 @@ $('#btn-menu').addEventListener('click',toggleMenu);
 $('#btn-moment').addEventListener('click',()=>activateMoment(myMomentTeam()));
 $('#curl-l').addEventListener('click',()=>setCurl(-1));$('#curl-r').addEventListener('click',()=>setCurl(1));
 $('#btn-rematch').addEventListener('click',()=>{$('#ft').hidden=true;newMatch();music.menu(false);applyVolumes();});
-$('#btn-ft-menu').addEventListener('click',()=>{$('#ft').hidden=true;S.running=false;S.phase='idle';openMenu();});
+$('#btn-ft-menu').addEventListener('click',()=>{if(S.tour||(net.tourMatch&&net.tourMatch.watch)){tourBack();return;}$('#ft').hidden=true;S.running=false;S.phase='idle';openMenu();});
 
 /* ================= hub: squad builder ================= */
 let sqTeam=0,sqSlot=8,noteT=0;
@@ -2842,17 +3104,21 @@ function renderTracks(){
 }
 // On GitHub Pages, any audio file pushed into music/ joins the playlist (named "Title + Version - Artist.mp3")
 (async function findRepoTracks(){
-  const h=location.hostname;if(!/\.github\.io$/i.test(h))return;
-  const owner=h.split('.')[0],seg=location.pathname.split('/').filter(Boolean)[0];
-  const repo=seg&&!/\.html?$/i.test(seg)?seg:h;
-  let list;try{const r=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/music`);if(!r.ok)return;list=await r.json();}catch(e){return;}
-  if(!Array.isArray(list))return;
-  const known=new Set(TRACKS.map(t=>decodeURIComponent(String(t.src).split('/').pop())));
+  // which files are in music/: on GitHub Pages ask GitHub, elsewhere read the folder listing your web server shows
+  let names=[];
+  const h=location.hostname;
+  if(/\.github\.io$/i.test(h)){
+    const owner=h.split('.')[0],seg=location.pathname.split('/').filter(Boolean)[0],repo=seg&&!/\.html?$/i.test(seg)?seg:h;
+    try{const r=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/music`);if(r.ok){const list=await r.json();if(Array.isArray(list))names=list.filter(f=>f&&f.type==='file').map(f=>f.name);}}catch(e){}
+  }else if(location.protocol!=='file:'&&!window.claude){
+    try{const r=await fetch('music/');if(r.ok){const html=await r.text();names=[...html.matchAll(/href="([^"?#]+)"/gi)].map(m=>{try{return decodeURIComponent(m[1]).split('/').pop();}catch(e){return '';}});}}catch(e){}
+  }
+  const known=new Set(TRACKS.map(t=>decodeURIComponent(String(t.src).split('/').pop()).toLowerCase()));
   let added=0;
-  list.filter(f=>f&&f.type==='file'&&/\.(mp3|ogg|m4a|wav)$/i.test(f.name)&&!/^stadium-ambience\./i.test(f.name)&&!known.has(f.name)).forEach(f=>{
-    const t=Object.assign({id:'gh_'+f.name,src:'music/'+encodeURIComponent(f.name),dur:0},parseTrackName(f.name));TRACKS.push(t);added++;
+  [...new Set(names)].filter(n=>/\.(mp3|ogg|m4a|wav)$/i.test(n)&&!/^stadium-ambience\./i.test(n)&&!known.has(n.toLowerCase())).sort((a,b)=>a.localeCompare(b)).forEach(n=>{
+    known.add(n.toLowerCase());const t=Object.assign({id:'gh_'+n,src:'music/'+encodeURIComponent(n),dur:0},parseTrackName(n));TRACKS.push(t);added++;
     const a=new Audio();a.preload='metadata';a.src=t.src;a.onloadedmetadata=()=>{t.dur=a.duration;renderTracks();};});
-  if(added)renderTracks();
+  if(added){renderTracks();music.refresh();}
 })();
 $('#add-tracks').addEventListener('change',e=>{
   const files=Array.from(e.target.files||[]);
@@ -2911,7 +3177,7 @@ function tickClock(dt){
   if(S.mode==='practice'||S.mode==='tutorial')return;
   if(!S.running||S.paused||!(S.phase==='attack'||S.phase==='defend'))return;
   if(S.mode==='online'&&!oppPeer()&&net.myTeam!=null)return;
-  S.clock=Math.max(0,S.clock-dt);
+  if(!S.golden)S.clock=Math.max(0,S.clock-dt);
   const txt=fmtClock(S.clock);if(txt!==lastClockTxt){lastClockTxt=txt;$('#clock').textContent=txt;}
   if(S.clock<=0&&!sim.running&&isAuthority()&&!ptr.on)endHalf();
 }
