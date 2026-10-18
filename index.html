@@ -663,6 +663,39 @@ body.padnav #hub :is(button,input,select,[tabindex="0"]):focus{outline:3px solid
 #hub.paused-match [data-panel=play] .cta .big{min-width:220px;min-height:64px;font-size:20px;justify-content:center;gap:10px}
 #hub.paused-match [data-panel=play] .cta::before{content:'Paused';position:absolute;left:0;right:0;top:calc(16vh - 86px);text-align:center;font:900 italic 44px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:#fff;opacity:.9}
 #hub.paused-match [data-panel=play] .cta{position:relative}
+/* sub-menus: a dark strip so the choices read on the bright background */
+.subnav{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;width:max-content;max-width:100%;margin-left:auto;margin-right:auto}
+.cust-nav.subnav{justify-self:center}
+.set-grid.sub-one{margin-left:auto;margin-right:auto}
+.subnav[hidden]{display:none}
+.subnav>.chip,.subnav>.cnav{background:rgba(10,4,38,.72);color:#e9e4ff;border:1px solid transparent;box-shadow:0 6px 16px rgba(5,0,30,.3);padding:9px 16px;font-size:16px;flex:none}
+.subnav>.chip[aria-pressed="true"],.subnav>.cnav[aria-current="true"]{background:var(--accent);color:#fff;box-shadow:inset 4px 0 0 var(--orange)}
+.subnav>.cnav{display:flex;gap:8px;align-items:center;clip-path:none}
+.subnav>.cnav small{font-size:10px;opacity:.6}
+.subnav>.cnav:disabled{opacity:.45}
+.subnav .sg{visibility:hidden;font-size:11px}
+body.padmode .subnav .sg{visibility:visible}
+.cust{grid-template-columns:1fr}
+.cust-nav{flex-direction:row}
+.set-grid.sub-one{display:block;max-width:760px}
+.set-grid.sub-one .col{display:contents}
+.set-grid.sub-one [data-sub]{display:none}
+.set-grid.sub-one [data-sub].on{display:block}
+/* controller pointer */
+#reticle{position:fixed;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 2px rgba(20,8,60,.7),0 0 12px rgba(92,242,234,.8);pointer-events:none;z-index:9999}
+#reticle i{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:var(--cyan)}
+#reticle.down{transform:scale(.8);background:rgba(92,242,234,.25)}
+.rhov{outline:2px solid rgba(92,242,234,.8)!important;outline-offset:2px}
+.ctl-map{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.2fr);border:1px solid var(--line);font-size:13px}
+.ctl-map>div{padding:7px 10px;border-top:1px solid var(--line);color:#e9e4ff}
+.ctl-map>.cm-h{border-top:0;background:rgba(10,4,38,.72);font-family:var(--f-display);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:var(--cyan)}
+.ctl-map>.cm-a{font-family:var(--f-display);font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:12px;color:#fff}
+.ctl-map>div:nth-child(6n+4),.ctl-map>div:nth-child(6n+5),.ctl-map>div:nth-child(6n+6){background:rgba(255,255,255,.03)}
+.set-grid.sub-one [data-sub="ctl"].on{max-width:none}
+.tok.moving{filter:drop-shadow(0 0 8px var(--cyan)) drop-shadow(0 0 2px #fff);z-index:3;transform:translate(-50%,-50%) scale(1.15)}
+#np-next .npg{display:none;margin-right:6px;font-size:10px;vertical-align:middle}
+body.padmode #np-next .npg{display:inline-grid}
+#np-next{display:inline-flex;align-items:center}
 </style>
 
 <canvas id="c" aria-label="Table football pitch"></canvas>
@@ -702,6 +735,7 @@ body.padnav #hub :is(button,input,select,[tabindex="0"]):focus{outline:3px solid
 </div>
 
 <div id="vcur" hidden></div>
+<div id="reticle" hidden aria-hidden="true"><i></i></div>
 <aside class="side" id="prac" hidden aria-label="Practice drills">
   <div class="sh"><div class="pt"><small>Practice</small><b id="prac-name">3v3</b></div><span class="dstat" id="prac-stat"></span><button class="x ib" id="prac-min" aria-expanded="true" aria-label="Hide drills" title="Hide drills"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
   <div class="body">
@@ -816,8 +850,8 @@ body.padnav #hub :is(button,input,select,[tabindex="0"]):focus{outline:3px solid
     </div>
 
     <div class="panel" data-panel="squad" hidden>
-      <div class="cta" style="justify-content:space-between">
-        <div class="seg" id="squad-team"><button class="chip" data-team="0" aria-pressed="true">Home squad</button><button class="chip" data-team="1" aria-pressed="false">Away squad</button></div>
+      <div class="cta sq-head" style="flex-direction:column;align-items:center;gap:6px">
+        <div class="subnav" id="squad-team"><span class="glyph sg" aria-hidden="true">LT</span><button class="chip" data-team="0" aria-pressed="true">Home squad</button><button class="chip" data-team="1" aria-pressed="false">Away squad</button><span class="glyph sg" aria-hidden="true">RT</span></div>
         <p class="note" id="squad-note">Changes apply from the next kick-off.</p>
       </div>
       <div class="cardbox idbar">
@@ -870,11 +904,11 @@ body.padnav #hub :is(button,input,select,[tabindex="0"]):focus{outline:3px solid
 
     <div class="panel" data-panel="custom" hidden>
       <div class="cust">
-        <nav class="cust-nav" aria-label="Customization sections">
+        <nav class="cust-nav subnav" aria-label="Customization sections"><span class="glyph sg" aria-hidden="true">LT</span>
           <button class="cnav" data-sec="ball" aria-current="true">Ball</button>
           <button class="cnav" data-sec="table" aria-current="false">Table</button>
           <button class="cnav" disabled>Home kit look <small>Coming soon</small></button>
-          <button class="cnav" disabled>Team trinkets <small>Coming soon</small></button>
+          <button class="cnav" disabled>Team trinkets <small>Coming soon</small></button><span class="glyph sg" aria-hidden="true">RT</span>
         </nav>
         <div class="cust-main" id="cust-ball">
           <div class="stage" id="ball-stage">
@@ -956,8 +990,9 @@ body.padnav #hub :is(button,input,select,[tabindex="0"]):focus{outline:3px solid
     </div>
 
     <div class="panel" data-panel="settings" hidden>
-      <div class="set-grid">
-        <div class="cardbox">
+      <div class="subnav" id="set-sub" style="margin-bottom:14px"><span class="glyph sg" aria-hidden="true">LT</span><button class="chip" data-sub="audio" aria-pressed="true">Audio</button><button class="chip" data-sub="gfx" aria-pressed="false">Graphics</button><button class="chip" data-sub="ctl" aria-pressed="false">Controls</button><button class="chip" data-sub="music" aria-pressed="false">Playlist</button><span class="glyph sg" aria-hidden="true">RT</span></div>
+      <div class="set-grid sub-one">
+        <div class="cardbox" data-sub="music">
           <div class="cta" style="justify-content:space-between;margin-bottom:10px">
             <p class="h" style="margin:0">Playlist</p>
             <div class="seg"><button class="chip" id="btn-np-skip">Next track</button><span class="chip filebtn">Add tracks<input type="file" id="add-tracks" accept="audio/*" multiple aria-label="Add your own tracks"></span></div>
@@ -966,7 +1001,7 @@ body.padnav #hub :is(button,input,select,[tabindex="0"]):focus{outline:3px solid
           <p class="note" style="margin-top:10px">A random ticked track fades in each time the menu opens. Track names read <b>Title + Version - Artist</b>.</p>
         </div>
         <div class="col">
-          <div class="cardbox">
+          <div class="cardbox" data-sub="audio">
             <p class="h">Audio</p>
             <div class="srow"><label for="vol-master">Master</label><div class="rng"><input type="range" id="vol-master" min="0" max="100" step="1"><output id="o-master"></output></div></div>
             <div class="srow"><label for="vol-music">Music</label><div class="rng"><input type="range" id="vol-music" min="0" max="100" step="1"><output id="o-music"></output></div></div>
@@ -975,11 +1010,19 @@ body.padnav #hub :is(button,input,select,[tabindex="0"]):focus{outline:3px solid
             <div class="srow" title="Off: music plays in the menus only and fades out at kick-off."><label for="music-match">Music during matches</label><span class="tog"><input type="checkbox" id="music-match"><i></i></span></div>
             <div class="srow"><label for="mute-all">Mute everything</label><span class="tog"><input type="checkbox" id="mute-all"><i></i></span></div>
           </div>
-          <div class="cardbox">
+          <div class="cardbox" data-sub="ctl">
             <p class="h">Controls</p>
+            <div class="srow" title="How far you pull the mouse for a full-power flick. Higher needs a shorter pull."><label for="ctl-msens">Mouse pull sensitivity</label><div class="rng"><input type="range" id="ctl-msens" min="50" max="200" step="5"><output id="o-msens"></output></div></div>
+            <div class="srow" title="How fast the camera turns when you orbit it."><label for="ctl-csens">Camera sensitivity</label><div class="rng"><input type="range" id="ctl-csens" min="40" max="250" step="5"><output id="o-csens"></output></div></div>
+            <div class="srow"><label for="ctl-invy">Invert camera up and down</label><span class="tog"><input type="checkbox" id="ctl-invy"><i></i></span></div>
             <div class="srow" title="Hides the cursor while you pull, so the edge of the screen never cuts your pull short. A small ring shows where your mouse is. Press Esc to cancel the flick."><label for="ctl-lock">Lock mouse while aiming</label><span class="tog"><input type="checkbox" id="ctl-lock"><i></i></span></div>
+            <div class="srow" title="How far the stick must move before it counts. Raise it if your stick drifts."><label for="ctl-dz">Stick dead zone</label><div class="rng"><input type="range" id="ctl-dz" min="5" max="40" step="1"><output id="o-dz"></output></div></div>
+            <div class="srow" title="Speed of the right-stick pointer in the menus."><label for="ctl-rspeed">Menu pointer speed</label><div class="rng"><input type="range" id="ctl-rspeed" min="40" max="250" step="5"><output id="o-rspeed"></output></div></div>
+            <div class="srow" title="Rumble on flicks, hits and goals, when the controller supports it."><label for="ctl-rumble">Controller vibration</label><span class="tog"><input type="checkbox" id="ctl-rumble"><i></i></span></div>
+            <p class="h" style="margin-top:16px">Button map</p>
+            <div class="ctl-map"><div class="cm-h"></div><div class="cm-h">Keyboard and mouse</div><div class="cm-h">Controller</div><div class="cm-a">Flick</div><div>Press on the pitch, pull back, release</div><div>Right stick: pull back, then flick</div><div class="cm-a">Pick a figure</div><div>Click it, or Tab</div><div>Left stick, LB / RB</div><div class="cm-a">Moment</div><div>M</div><div>X</div><div class="cm-a">Curl (Finesse)</div><div>Q / E</div><div>LT / RT</div><div class="cm-a">Slide keeper (block)</div><div>Drag him, or Q / E</div><div>LT / RT</div><div class="cm-a">Skip block</div><div>Space</div><div>A</div><div class="cm-a">Keeper out / back</div><div>G</div><div>D-pad up</div><div class="cm-a">Set-piece spot</div><div>1 / 2 / 3</div><div>X / A / B</div><div class="cm-a">Reset camera</div><div>C</div><div>Y</div><div class="cm-a">Orbit camera</div><div>Hold middle mouse and drag</div><div>–</div><div class="cm-a">Frame the ball</div><div>Hold F</div><div>–</div><div class="cm-a">Cancel a pull</div><div>Right click, or Esc</div><div>B</div><div class="cm-a">Pause</div><div>Esc</div><div>Start</div><div class="cm-a">Next song</div><div>N</div><div>R3</div><div class="cm-a">Move a formation shield</div><div>Drag it</div><div>A to pick it, right stick to move, X to confirm</div><div class="cm-a">Menu tabs</div><div>Click</div><div>LB / RB</div><div class="cm-a">Sub-menus</div><div>Click</div><div>LT / RT</div><div class="cm-a">Move in menus</div><div>Mouse</div><div>D-pad or left stick, A to press, B to go back</div><div class="cm-a">Menu pointer</div><div>Mouse</div><div>Right stick, A to click or drag</div></div>
           </div>
-          <div class="cardbox">
+          <div class="cardbox" data-sub="gfx">
             <p class="h">Graphics</p>
             <div class="srow" title="Sets render scale and shadows together. Use Low on older phones."><span class="sl">Quality</span><div class="seg" id="gfx-preset"><button class="chip" data-q="low">Low</button><button class="chip" data-q="med">Medium</button><button class="chip" data-q="high">High</button></div></div>
             <div class="srow"><label for="gfx-scale">Render scale</label><div class="rng"><input type="range" id="gfx-scale" min="50" max="100" step="5"><output id="o-scale"></output></div></div>
@@ -999,7 +1042,7 @@ body.padnav #hub :is(button,input,select,[tabindex="0"]):focus{outline:3px solid
   <linearGradient id="tokGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6dc8a"/><stop offset="1" stop-color="#b98a2a"/></linearGradient>
   <linearGradient id="tokSel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#9a5cff"/></linearGradient>
 </defs></svg>
-<div class="np" id="np" aria-live="polite"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="nt"><span class="lab" id="np-lab">Now playing</span><span class="ttl" id="np-ttl"></span><span class="art" id="np-art"></span></span><button id="np-next" aria-label="Next track">Next</button></div>
+<div class="np" id="np" aria-live="polite"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="nt"><span class="lab" id="np-lab">Now playing</span><span class="ttl" id="np-ttl"></span><span class="art" id="np-art"></span></span><button id="np-next" aria-label="Next track"><span class="glyph npg" aria-hidden="true">R3</span>Next</button></div>
 
 <section class="hub" id="ft" hidden>
   <div class="hub-bg" aria-hidden="true"><svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="hubFade2" x1="0" y1="0" x2="0" y2="1"><stop offset="0.55" stop-color="#1a0b66" stop-opacity="0"/><stop offset="1" stop-color="#140852" stop-opacity="0.85"/></linearGradient></defs><g fill="none" stroke-linecap="round">
@@ -1198,7 +1241,7 @@ const inAttArea=(t,x)=>dirOf(t)>0?x>=SHOOT:x<=-SHOOT;
 const inDefArea=(t,x)=>dirOf(t)>0?x<=-SHOOT:x>=SHOOT;
 
 /* ================= audio ================= */
-const SET=(()=>{const d={master:80,music:60,sfx:90,crowd:30,mute:false,inMatch:false,off:[],q:'high',scale:100,shadows:true,guides:true,calm:false,lock:true};try{const v=JSON.parse(store.get('baize.settings')||'{}');return Object.assign(d,v&&typeof v==='object'?v:{});}catch(e){return d;}})();
+const SET=(()=>{const d={master:80,music:60,sfx:90,crowd:30,mute:false,inMatch:false,off:[],q:'high',scale:100,shadows:true,guides:true,calm:false,lock:true,msens:100,csens:100,invY:false,dz:20,rspeed:100,rumble:true};try{const v=JSON.parse(store.get('baize.settings')||'{}');return Object.assign(d,v&&typeof v==='object'?v:{});}catch(e){return d;}})();
 if(!Array.isArray(SET.off))SET.off=[];
 function saveSet(){store.set('baize.settings',JSON.stringify(SET));}
 let AC=null,BUS=null,sndT=0;
@@ -1580,6 +1623,7 @@ function newMatch(o){
 function addBar(t,v){if(S.noMoments)return;if(t===0||t===1)S.bar[t]=Math.min(BAR_MAX,S.bar[t]+v);}
 function turnover(team,title,sub){resetPossession(team);S.msg={t:title,s:sub,c:team};commit();}
 function scoreGoal(team,own){
+  rumble(1,420);
   S.score[team]++;S.phase='goal';if(!own)addBar(team,20);
   S.msg={t:'Goal!',s:own?`Own goal. ${N(team)} take it, ${S.score[0]}-${S.score[1]}.`:`${N(team)} score. ${S.score[0]}-${S.score[1]}.`,g:1,c:team};
   commit();const q=S.seq;
@@ -1741,7 +1785,7 @@ function startFlick(id,dx,dz,power,kind,soft){
   let ux=dx/L,uz=dz/L;
   let v=flickSpeed(id,p,kind);
   if(soft){const amp=Math.max(0,sv(b,'mae')),e=Math.random()+Math.random()-1;v*=Math.sqrt(Math.max(0.5,1+amp*e*1.6));const a=(Math.random()*2-1)*amp*0.1,c=Math.cos(a),s=Math.sin(a),nx=ux*c-uz*s,nz=ux*s+uz*c;ux=nx;uz=nz;}
-  b.vx=ux*v;b.vz=uz*v;b.spin=(Math.random()-0.5)*(4+p*14);
+  b.vx=ux*v;b.vz=uz*v;b.spin=(Math.random()-0.5)*(4+p*14);rumble(clamp(p*0.6,0.15,0.7),90);
   const special=(S.armed&&S.armedTeam===b.team)?S.armed:'';
   sim.ctx={glide:Math.abs(b.x)<SHOOT?clamp(sv(b,'b2b'),0.3,3):1,kind,team:b.team,fig:id,bx:ball.x,bz:ball.z,fdx:ux,fdz:uz,first:null,hit:false,last:null,defTouch:false,out:null,goal:null,done:false,
     fromArea:inAttArea(b.team,ball.x),setup:kind==='attack'&&S.taker>=0&&id!==S.taker&&S.setupLeft>0,taking:kind==='attack'&&S.taker===id,fx:b.x,fz:b.z,pass:false,lastId:null,lastX:null,soft:!!soft,special,curl:special==='finesse'&&kind==='attack'?curlSign:0,recv:-1};
@@ -2323,7 +2367,7 @@ function screenDirToWorld(ax,ay,id){
 /* ================= pointer: pull and flick (360, signed pull) ================= */
 const ptr={on:false,id:null,mode:null,sx:0,sy:0,ax:0,ay:0,s:0,peak:0,hist:[],dx:0,dz:0};
 let lastInput='pointer';
-function fullPx(){return Math.max(150,Math.min(innerWidth,innerHeight)*0.27);}
+function fullPx(){return Math.max(150,Math.min(innerWidth,innerHeight)*0.27)/clamp((SET.msens||100)/100,0.3,3);}
 function localAim(fig,dx,dz,p){
   aimShow={fig,dx,dz,p};
   if(S.mode==='online'&&net.named){const now=performance.now();if(now-(net.lastAim||0)>60){net.lastAim=now;net.named.presence({aim:{s:S.seq,f:fig,x:+dx.toFixed(3),z:+dz.toFixed(3),p:+p.toFixed(3)}}).catch(()=>{});}}
@@ -2384,7 +2428,7 @@ canvas.addEventListener('pointerdown',e=>{
 function onPtrMove(e){
   if(orb.on&&e.pointerId===orb.id){
     if(!(e.buttons&4)){orb.on=false;return;}
-    if(!(ptr.on&&ptr.mode==='pull')){cam.yaw+=(e.clientX-orb.x)*0.006;cam.pitch=clamp(cam.pitch+(e.clientY-orb.y)*0.004,-0.75,0.55);}
+    if(!(ptr.on&&ptr.mode==='pull')){const cs=(SET.csens||100)/100;cam.yaw+=(e.clientX-orb.x)*0.006*cs;cam.pitch=clamp(cam.pitch+(e.clientY-orb.y)*0.004*cs*(SET.invY?-1:1),-0.75,0.55);}
     orb.x=e.clientX;orb.y=e.clientY;return;
   }
   if(!ptr.on||e.pointerId!==ptr.id)return;
@@ -2440,6 +2484,7 @@ window.addEventListener('keydown',e=>{
   if(e.code==='Space'){e.preventDefault();if(S.phase==='defend')skipDefend();}
   if(e.code==='Tab'){e.preventDefault();cycleSel(e.shiftKey?-1:1);}
   if(e.code==='KeyM')activateMoment(S.active);
+  if(e.code==='KeyN'){ensureAudio();music.next();}
   if(e.code==='KeyG'&&localTurn())gkToggle(S.active);
   if(S.phase==='attack'&&S.armed==='finesse'&&S.armedTeam===S.active){if(e.code==='KeyQ')setCurl(-1);if(e.code==='KeyE')setCurl(1);}
 });
@@ -2452,20 +2497,66 @@ const padSt=[];
 // spatial focus for controllers: pick the nearest visible control in the pressed direction
 function padCands(){return [...document.querySelectorAll('#hub .tabs .tab, #hub [data-panel]:not([hidden]) :is(button,input,select,[tabindex="0"])')].filter(el=>{if(el.disabled)return false;const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&el.offsetParent!==null&&getComputedStyle(el).visibility!=='hidden';});}
 function padFocusEl(){const a=document.activeElement;return a&&a!==document.body&&$('#hub').contains(a)?a:null;}
+function padZone(el){return !el?'':el.closest('.tabs')?'tabs':el.closest('.subnav')?'sub':'content';}
+function padPick(el){if(!el)return;el.focus({preventScroll:true});el.scrollIntoView({block:'nearest',inline:'nearest'});}
+function padSubBtns(){const pn=document.querySelector('#hub [data-panel]:not([hidden])'),nav=pn&&pn.querySelector('.subnav');return nav&&!nav.hidden&&nav.offsetParent?[...nav.querySelectorAll('button')].filter(b=>!b.disabled&&b.offsetParent):[];}
 function padNav(dir){
-  document.body.classList.add('padnav');
+  const z=padZone(padFocusEl());
+  // tabs and sub-menus: left and right switch straight away, up and down move between the rows
+  if(z==='tabs'||z==='sub'){
+    if(ret.on)retShow(false);document.body.classList.add('padnav');
+    const cur=padFocusEl();
+    if(dir==='l'||dir==='r'){
+      if(z==='tabs'){stepTab(dir==='r'?1:-1);padPick(document.querySelector('.tab[aria-selected="true"]'));return;}
+      const bs=padSubBtns();let k=bs.indexOf(cur);k=(k<0?0:k+(dir==='r'?1:-1)+bs.length)%bs.length;bs[k].click();padPick(bs[k]);return;}
+    if(dir==='u'){if(z==='sub')padPick(document.querySelector('.tab[aria-selected="true"]'));return;}
+    if(z==='tabs'){const bs=padSubBtns();if(bs.length){padPick(bs.find(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-current')==='true')||bs[0]);return;}}
+    const list=padCands().filter(el=>padZone(el)==='content'&&el.getBoundingClientRect().top>(cur?cur.getBoundingClientRect().bottom-2:0));
+    if(list.length){const c=cur.getBoundingClientRect(),cx=c.left+c.width/2;list.sort((a,b)=>{const ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect();return (ra.top-c.bottom)+Math.abs(ra.left+ra.width/2-cx)*0.5-((rb.top-c.bottom)+Math.abs(rb.left+rb.width/2-cx)*0.5);});padPick(list[0]);}
+    return;}
+  return padNavContent(dir);
+}
+function padNavContent(dir){
+  if(ret.on)retShow(false);document.body.classList.add('padnav');
   const cur=padFocusEl();
   if(cur&&cur.type==='range'&&(dir==='l'||dir==='r')){const st=+cur.step||1;cur.value=+cur.value+(dir==='r'?st:-st)*Math.max(1,Math.round((+cur.max-+cur.min)/20/st));cur.dispatchEvent(new Event('input',{bubbles:true}));cur.dispatchEvent(new Event('change',{bubbles:true}));return;}
-  const list=padCands();if(!list.length)return;
+  const list=padCands().filter(el=>padZone(el)==='content');
+  if(!cur||!list.length){const bs=padSubBtns();const t=bs.find(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-current')==='true')||bs[0];if(!list.length){padPick(t||document.querySelector('.tab[aria-selected="true"]'));return;}}
   if(!cur){const first=list.find(el=>el.closest('[data-panel]'))||list[0];first.focus({preventScroll:false});first.scrollIntoView({block:'nearest'});return;}
   if(cur.matches('input[type=text],input:not([type]),input[type=password]'))cur.blur();
   const c=cur.getBoundingClientRect(),cx=c.left+c.width/2,cy=c.top+c.height/2;let best=null,bs=1e9;
   for(const el of list){if(el===cur)continue;const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,dx=x-cx,dy=y-cy;
-    const main=dir==='u'?-dy:dir==='d'?dy:dir==='l'?-dx:dx,side=dir==='u'||dir==='d'?Math.abs(dx):Math.abs(dy);
-    if(main<4)continue;const sc=main+side*2.2;if(sc<bs){bs=sc;best=el;}}
+    const main=dir==='u'?c.top-r.bottom:dir==='d'?r.top-c.bottom:dir==='l'?c.left-r.right:r.left-c.right,side=dir==='u'||dir==='d'?Math.abs(dx):Math.abs(dy);
+    if(main<-6)continue;const sc=main+side*2.2;if(sc<bs){bs=sc;best=el;}}
   if(best){best.focus({preventScroll:true});best.scrollIntoView({block:'nearest',inline:'nearest'});}
+  else if(dir==='u'){const bs=padSubBtns();padPick(bs.find(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-current')==='true')||bs[0]||document.querySelector('.tab[aria-selected="true"]'));}
 }
 addEventListener('pointerdown',()=>document.body.classList.remove('padnav'),true);
+// right stick drives an on-screen pointer in the menus; A clicks (and drags) where it points
+const ret={on:false,x:innerWidth/2,y:innerHeight/2,down:null,hov:null};
+function retShow(on){ret.on=on;$('#reticle').hidden=!on;if(!on&&ret.hov){ret.hov.classList.remove('rhov');ret.hov=null;}}
+function retEv(el,type,x,y){const o={bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'||type==='mouseup'?0:1,pointerId:77,pointerType:'mouse',isPrimary:true};
+  el.dispatchEvent(type.startsWith('pointer')?new PointerEvent(type,o):new MouseEvent(type,o));}
+function retPad(gp,st,dt,pressed){
+  const rx=gp.axes[2]||0,ry=gp.axes[3]||0,m=Math.hypot(rx,ry);
+  const RDZ=clamp((SET.dz||20)/100,0.05,0.5);
+  if(m>RDZ){if(!ret.on){retShow(true);const f=padFocusEl();if(f)f.blur();document.body.classList.remove('padnav');}
+    const sp=(m-RDZ)/(1-RDZ),v=(250+1300*sp*sp)*dt*clamp((SET.rspeed||100)/100,0.3,3);let nx=ret.x+rx/m*v*Math.min(1,m),ny=ret.y+ry/m*v*Math.min(1,m);
+    // past the top or bottom edge: scroll whatever is under the pointer
+    if((ny<8&&ry<0)||(ny>innerHeight-8&&ry>0)){const el=document.elementFromPoint(ret.x,ret.y);let sc=el;while(sc&&sc!==document.body&&!(sc.scrollHeight>sc.clientHeight+4&&/auto|scroll/.test(getComputedStyle(sc).overflowY)))sc=sc.parentElement;if(sc&&sc!==document.body)sc.scrollTop+=ry*900*dt;}
+    ret.x=clamp(nx,4,innerWidth-4);ret.y=clamp(ny,4,innerHeight-4);
+    const R=$('#reticle');R.style.left=ret.x+'px';R.style.top=ret.y+'px';
+    if(ret.down)retEv(ret.down.el,'pointermove',ret.x,ret.y);
+    const el=document.elementFromPoint(ret.x,ret.y),h=el&&el.closest('button,input,label,select,.tok,.sw,[tabindex]');if(h!==ret.hov){if(ret.hov)ret.hov.classList.remove('rhov');ret.hov=h;if(h)h.classList.add('rhov');}}
+  if(!ret.on)return false;
+  const a=pressed(0),was=!!st.btn[0];
+  if(a&&!was){const el=document.elementFromPoint(ret.x,ret.y);if(el){ret.down={el,x:ret.x,y:ret.y};$('#reticle').classList.add('down');retEv(el,'pointerdown',ret.x,ret.y);retEv(el,'mousedown',ret.x,ret.y);}}
+  if(!a&&was&&ret.down){const d=ret.down;ret.down=null;$('#reticle').classList.remove('down');retEv(d.el,'pointerup',ret.x,ret.y);retEv(d.el,'mouseup',ret.x,ret.y);
+    if(Math.hypot(ret.x-d.x,ret.y-d.y)<8){const t=d.el.closest('button,input,label,select,a,.tok,.sw,[tabindex]')||d.el;if(t.matches('input[type=text],input:not([type]),input[type=password],input[type=number],textarea'))t.focus();t.click();}}
+  return false;
+}
+addEventListener('mousemove',e=>{if(ret.on&&(Math.abs(e.movementX)+Math.abs(e.movementY))>2)retShow(false);});
+function rumble(strong,ms){if(!SET.rumble||lastInput!=='pad')return;try{for(const gp of navigator.getGamepads()){if(gp&&gp.vibrationActuator&&gp.vibrationActuator.playEffect)gp.vibrationActuator.playEffect('dual-rumble',{duration:ms,strongMagnitude:strong,weakMagnitude:Math.min(1,strong+0.2)}).catch(()=>{});}}catch(e){}}
 function pollPads(dt){
   let pads=[];try{pads=navigator.getGamepads?Array.from(navigator.getGamepads()).filter(p=>p&&p.connected):[];}catch(e){pads=[];}
   if(lastInput!=='pad'&&pads.some(gp=>gp.axes.some(a=>Math.abs(a)>0.4)||gp.buttons.some(b=>b.pressed)))setInput('pad');
@@ -2473,14 +2564,27 @@ function pollPads(dt){
     const st=padSt[i]||(padSt[i]={btn:[],rs:'idle',peak:0,dx:0,dz:0,peakT:0,nT:0,ls:true});
     const pressed=k=>gp.buttons[k]&&gp.buttons[k].pressed,edge=k=>pressed(k)&&!st.btn[k];
     const hubOpen=!$('#hub').hidden;
+    if(edge(11)&&tokMove<0){ensureAudio();music.next();}
     if(edge(9)){if(hubOpen&&S.running&&S.phase!=='end')closeMenu();else toggleMenu();}
     if(hubOpen){
-      if(edge(4))stepTab(-1);if(edge(5))stepTab(1);
+      if(edge(4))stepTab(-1);if(edge(5))stepTab(1);if(edge(6))subStep(-1);if(edge(7))subStep(1);
+      if(tokMove<0&&retPad(gp,st,dt,pressed)){st.btn=gp.buttons.map(b=>b.pressed);return;}
       // D-pad or left stick moves a highlight around the menu, A presses it, B backs out
       const lx=gp.axes[0]||0,ly=gp.axes[1]||0,now=performance.now();
-      let dir=pressed(12)?'u':pressed(13)?'d':pressed(14)?'l':pressed(15)?'r':Math.abs(ly)>0.6&&Math.abs(ly)>=Math.abs(lx)?(ly<0?'u':'d'):Math.abs(lx)>0.6?(lx<0?'l':'r'):'';
+      if(tokMove>=0){
+        if(hubTab!=='squad'){tokMove=-1;}
+        else{const DZ=clamp((SET.dz||20)/100,0.05,0.5);let mx=Math.abs(lx)>DZ?lx:0,my=Math.abs(ly)>DZ?ly:0;
+          const rx2=gp.axes[2]||0,ry2=gp.axes[3]||0;if(Math.abs(rx2)>DZ)mx=rx2;if(Math.abs(ry2)>DZ)my=ry2;
+          if(pressed(14))mx=-1;if(pressed(15))mx=1;if(pressed(12))my=-1;if(pressed(13))my=1;
+          if(mx||my)squadNudge(tokMove,mx*34*dt,my*34*dt);
+          if(edge(2))squadMoveEnd();
+          st.btn=gp.buttons.map(b=>b.pressed);return;}}
+      // squad tab: the left stick scrolls the page, the D-pad moves the highlight
+      const stickNav=hubTab!=='squad';
+      if(!stickNav&&Math.abs(ly)>0.25){const hm=document.querySelector('#hub .hub-main');if(hm)hm.scrollTop+=Math.sign(ly)*(Math.abs(ly)-0.25)/0.75*1100*dt;}
+      let dir=pressed(12)?'u':pressed(13)?'d':pressed(14)?'l':pressed(15)?'r':!stickNav?'':Math.abs(ly)>0.6&&Math.abs(ly)>=Math.abs(lx)?(ly<0?'u':'d'):Math.abs(lx)>0.6?(lx<0?'l':'r'):'';
       if(!dir)st.navD='';else if(dir!==st.navD){st.navD=dir;st.navT=now+380;padNav(dir);}else if(now>st.navT){st.navT=now+150;padNav(dir);}
-      if(edge(0)){const f=padFocusEl();if(f){f.click();if(f.matches('input[type=text],input:not([type]),input[type=password]'))f.focus();}else if(hubTab==='play')$('#btn-start').click();}
+      if(edge(0)&&!ret.on){const f=padFocusEl();if(f&&f.classList.contains('tok')){squadMoveStart([...$('#mini').querySelectorAll('.tok')].indexOf(f));}else if(f){f.click();if(f.matches('input[type=text],input:not([type]),input[type=password]'))f.focus();}else if(hubTab==='play')$('#btn-start').click();}
       if(edge(1)){const f=padFocusEl();if(f&&f.matches('input'))f.blur();else if(!$('#btn-resume').hidden)closeMenu();else if(hubTab==='play'&&menuMode){setMenuMode('');}}
       st.btn=gp.buttons.map(b=>b.pressed);return;}
     let team;if(S.mode==='local')team=pads.length>=2?i:S.active;else if(S.mode==='cpu')team=1-cpuTeam;else team=net.myTeam;
@@ -2501,10 +2605,11 @@ function pollPads(dt){
       const lx=gp.axes[0]||0,ly=gp.axes[1]||0,lm=Math.hypot(lx,ly);
       if(lm>0.6&&st.ls){st.ls=false;selectToward(B.rx*lx-B.fx*ly,B.rz*lx-B.fz*ly);}else if(lm<0.3)st.ls=true;
       const now=performance.now();
-      if(st.rs==='cool'){if(m<0.2)st.rs='idle';}
-      else if(st.rs==='idle'){if(m>0.25&&sel>=0){st.rs='load';st.peak=0;st.nT=0;st.dx=0;st.dz=0;}}
+      const DZ=clamp((SET.dz||20)/100,0.05,0.5);
+      if(st.rs==='cool'){if(m<DZ)st.rs='idle';}
+      else if(st.rs==='idle'){if(m>DZ+0.05&&sel>=0){st.rs='load';st.peak=0;st.nT=0;st.dx=0;st.dz=0;}}
       else if(st.rs==='load'){
-        if(m>=0.25){
+        if(m>=DZ+0.05){
           const w=screenDirToWorld(-rx/m,-ry/m,sel),sx=w.dx,sz=w.dz;
           if(st.peak>0.3&&(st.dx||st.dz)){const L1=Math.hypot(sx,sz)||1,L2=Math.hypot(st.dx,st.dz)||1;
             if((-sx*st.dx-sz*st.dz)/(L1*L2)>0.5&&m>0.3){const el=now-st.peakT,snap=clamp(1-(el-60)/320,0,1);st.rs='cool';
@@ -2799,7 +2904,7 @@ function updateHud(){
 }
 function setInput(k){if(lastInput===k)return;lastInput=k;updateGlyphs();}
 function updateGlyphs(){
-  const pad=lastInput==='pad',touch=lastInput==='touch';
+  const pad=lastInput==='pad',touch=lastInput==='touch';document.body.classList.toggle('padmode',pad);
   const g=(id,padTxt,keyTxt,cls)=>{const el=$(id);el.textContent=pad?padTxt:keyTxt;el.className='glyph'+(pad&&cls?' '+cls:'');el.hidden=touch;};
   g('#g-skip','A','Space','a');g('#g-cam','Y','C','y');g('#g-menu','≡','Esc','');g('#mglyph','X','M','x');g('#g-gk','▲','G','');
   $('#g-lb').hidden=false;$('#g-rb').hidden=false;$('#g-lb').style.visibility=$('#g-rb').style.visibility=pad?'visible':'hidden';
@@ -3024,6 +3129,14 @@ if(kitSel[0]===kitSel[1])kitSel[1]=(kitSel[0]+1)%KITS.length;
 const TABS=['play','squad','custom','rules','settings','balance'];
 const PAUSE_HIDE=['squad','custom','balance'];
 function setTab(t){hubTab=t;document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==t);if(t==='squad')renderSquad();if(t==='custom'){if(custSec==='table')renderLook();else renderCustom();}}
+let setSub='audio';
+function setSettingsSub(k){setSub=k;document.querySelectorAll('#set-sub [data-sub]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sub===k)));document.querySelectorAll('.set-grid [data-sub]').forEach(c=>c.classList.toggle('on',c.dataset.sub===k));}
+document.querySelectorAll('#set-sub [data-sub]').forEach(b=>b.addEventListener('click',()=>setSettingsSub(b.dataset.sub)));
+setSettingsSub('audio');
+// LT / RT: step through the sub-menu of the open tab
+function subStep(d){const pn=document.querySelector('#hub [data-panel]:not([hidden])');const nav=pn&&pn.querySelector('.subnav');if(!nav||nav.hidden||!nav.offsetParent)return;
+  const bs=[...nav.querySelectorAll('button')].filter(b=>!b.disabled&&b.offsetParent);if(bs.length<2)return;
+  let k=bs.findIndex(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-current')==='true');k=(k<0?0:k+d+bs.length)%bs.length;bs[k].click();sfx('tock',6);}
 function stepTab(d){const paused=$('#hub').classList.contains('paused-match'),list=TABS.filter(t=>!(paused&&PAUSE_HIDE.includes(t)));let i=list.indexOf(hubTab);if(i<0)i=0;setTab(list[(i+d+list.length)%list.length]);}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
 function setMenuMode(m){menuMode=m;document.querySelectorAll('.tile').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));$('#online-panel').hidden=m!=='online';updateStartBtn();if(hubTab==='squad')renderSquad();}
@@ -3050,7 +3163,7 @@ function updateStartBtn(){
   if(menuMode==='practice'||menuMode==='tutorial')$('#match-settings').style.display='none';
 }
 function openMenu(){const was=$('#hub').hidden;$('#hub').hidden=false;if(was)music.menu(true);applyVolumes();if(S.mode!=='online')S.paused=true;setMenuMode(S.mode==='online'&&S.running?'online':menuMode);updateStartBtn();updateHud();}
-function closeMenu(){const was=!$('#hub').hidden;$('#hub').hidden=true;S.paused=false;updateHud();if(was){music.menu(false);applyVolumes();}}
+function closeMenu(){retShow(false);const was=!$('#hub').hidden;$('#hub').hidden=true;S.paused=false;updateHud();if(was){music.menu(false);applyVolumes();}}
 function toggleMenu(){if($('#hub').hidden)openMenu();else if(S.running&&S.phase!=='end')closeMenu();}
 document.querySelectorAll('.tile').forEach(b=>b.addEventListener('click',()=>{ensureAudio();setMenuMode(b.dataset.mode);}));
 document.querySelectorAll('#halflen .chip').forEach(b=>b.addEventListener('click',()=>{halfMin=+b.dataset.min;document.querySelectorAll('#halflen .chip').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));}));
@@ -3095,6 +3208,15 @@ $('#btn-ft-menu').addEventListener('click',()=>{if(S.tour||(net.tourMatch&&net.t
 /* ================= hub: squad builder ================= */
 let sqTeam=0,sqSlot=8,noteT=0;
 const stars=n=>'★'.repeat(n)+'☆'.repeat(3-n);
+// controller: move one formation shield
+let tokMove=-1;
+function squadNudge(i,dx,dz){const q=mySquads[sqTeam],F=formOf(q);
+  if(q.form!=='custom'){q.cbase=FORMATIONS[q.form]?q.form:'4-4-2';q.cpos=F.pos.map(p=>p.slice());q.form='custom';document.querySelectorAll('#formations .chip').forEach(c=>c.setAttribute('aria-pressed',String(c.textContent==='Custom')));}
+  const p=q.cpos[i];p[0]=clamp(p[0]+dx,-57,29);p[1]=clamp(p[1]+dz,-36,36);
+  const b=$('#mini').querySelectorAll('.tok')[i];if(b){b.style.left=((p[0]+60)/120*100)+'%';b.style.top=((p[1]+39)/78*100)+'%';const sm=b.querySelector('small');if(sm)sm.textContent=roleLab(p[0],p[1]);}}
+function squadMoveStart(i){sqSlot=i;tokMove=i;renderSquad();const b=$('#mini').querySelectorAll('.tok')[i];if(b){b.classList.add('moving');b.focus({preventScroll:true});}flashSubMenu('Move it with the right stick. Press X to confirm.');}
+function squadMoveEnd(){const i=tokMove;tokMove=-1;const q=mySquads[sqTeam];if(q.cpos)q.cpos=q.cpos.map(([x,z])=>[Math.round(x*2)/2,Math.round(z*2)/2]);saveSquads();renderSquad();const b=$('#mini').querySelectorAll('.tok')[i];if(b)b.focus({preventScroll:true});}
+function flashSubMenu(t){const n=$('#squad-note');if(n){n.textContent=t;n.style.color='var(--cyan)';}}
 function renderSquad(){
   const showTeams=menuMode==='local'||!menuMode;
   $('#squad-team').hidden=!showTeams;if(!showTeams)sqTeam=0;
@@ -3118,7 +3240,7 @@ function renderSquad(){
     b.style.left=((x+60)/120*100)+'%';b.style.top=((z+39)/78*100)+'%';const kp=F.kop.indexOf(i);
     b.innerHTML=shieldSVG(i===sqSlot?'url(#tokSel)':'url(#tokGold)','#1a0b40')+`<b>${NUMS[i]}</b><small>${F.lab[i]}</small>`+(kp===0?'<i class="kb"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M12 7.2l4 2.9-1.5 4.7h-5L8 10.1z\" fill=\"currentColor\"/><path d=\"M12 7.2V2.6M16 10.1l4.3-1.4M14.5 14.8l2.7 3.7M9.5 14.8l-2.7 3.7M8 10.1L3.7 8.7\" stroke=\"currentColor\" stroke-width=\"1.6\"/></svg></i>':kp===1?'<i class="kb">2</i>':'');b.setAttribute('aria-pressed',String(i===sqSlot));b.setAttribute('aria-label',`${F.lab[i]} ${myNames[sqTeam][i]}`);b.title=myNames[sqTeam][i];
     b.onclick=e=>{if(b.dataset.drag){delete b.dataset.drag;return;}sqSlot=i;renderSquad();};
-    b.onpointerdown=e=>{if(e.button!==0)return;const r=mini.getBoundingClientRect(),sx=e.clientX,sy=e.clientY;let moved=false;b.setPointerCapture(e.pointerId);
+    b.onpointerdown=e=>{if(e.button!==0)return;const r=mini.getBoundingClientRect(),sx=e.clientX,sy=e.clientY;let moved=false;try{b.setPointerCapture(e.pointerId);}catch(_){}
       b.onpointermove=ev=>{if(!moved&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5)return;
         if(!moved){moved=true;if(q.form!=='custom'){q.cbase=q.form;q.cpos=F.pos.map(p=>p.slice());q.form='custom';fr.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.textContent==='Custom')));}}
         const lf=clamp((ev.clientX-r.left)/r.width,0,1),tf=clamp((ev.clientY-r.top)/r.height,0,1);
@@ -3466,6 +3588,8 @@ bindToggle('gfx-shadows','shadows',()=>{SET.q='custom';applyGraphics();});
 bindToggle('gfx-guides','guides',()=>{});
 bindToggle('gfx-calm','calm',applyGraphics);
 bindToggle('ctl-lock','lock',()=>{});
+bindRange('ctl-msens','o-msens','msens',pct,()=>{});bindRange('ctl-csens','o-csens','csens',pct,()=>{});bindToggle('ctl-invy','invY',()=>{});
+bindRange('ctl-dz','o-dz','dz',pct,()=>{});bindRange('ctl-rspeed','o-rspeed','rspeed',pct,()=>{});bindToggle('ctl-rumble','rumble',()=>{});
 syncMuteBtn();renderTracks();applyGraphics();
 // the browser only allows sound after the viewer interacts: start audio (and the menu music) on the first press anywhere
 ['pointerdown','keydown','touchstart'].forEach(ev=>window.addEventListener(ev,()=>ensureAudio(),{capture:true,passive:true}));
