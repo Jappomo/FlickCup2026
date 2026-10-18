@@ -715,6 +715,23 @@ body.padmode #np-next .npg{display:inline-grid}
 .plays-list b{display:block;font-family:var(--f-display);font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#fff}
 .plays-list small{display:block;font-size:11.5px;line-height:1.3;color:#d9d2ff}
 @media (max-width:820px){.plays{width:190px;top:calc(env(safe-area-inset-top,0px) + 64px)}}
+/* Hobby wallet, speaker icon, price tags */
+.hobby{display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 7px;background:rgba(10,4,38,.72);border:1px solid rgba(246,196,67,.45);font-family:var(--f-display);font-weight:900;font-size:16px;color:#ffe08a;letter-spacing:.04em}
+.hobby[hidden]{display:none}
+.hobby .hb-ic{width:20px;height:20px}
+.hobby.pop{animation:hpop .5s ease}
+@keyframes hpop{40%{transform:scale(1.18);box-shadow:0 0 16px rgba(246,196,67,.7)}}
+.iconb{display:inline-grid;place-items:center;width:40px;height:34px;padding:0}
+.iconb svg{width:22px;height:22px}
+.iconb .off{display:none}.iconb.muted .off{display:inline}.iconb.muted .on{display:none}
+.price{display:inline-flex;align-items:center;gap:4px;font-family:var(--f-display);font-weight:900;color:#ffe08a}
+.price .hb-ic{width:14px;height:14px}
+.lcard,.bcard{position:relative}
+.lcard .lock,.bcard .lock{position:absolute;top:6px;right:6px;padding:3px 7px;background:rgba(10,4,38,.85);border:1px solid rgba(246,196,67,.5);font-size:12px;display:inline-flex;gap:4px;align-items:center;color:#ffe08a;font-family:var(--f-display);font-weight:800}
+.lcard .lock.buy{background:var(--accent);border-color:#fff;color:#fff}
+.lcard.locked img,.bcard.locked img{filter:saturate(.35) brightness(.75)}
+.htoast{position:fixed;z-index:60;left:50%;top:70px;transform:translateX(-50%);background:rgba(10,4,38,.92);border:1px solid rgba(255,255,255,.2);color:#fff;padding:10px 18px;font-family:var(--f-display);font-weight:800;letter-spacing:.04em;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.htoast.good{border-color:rgba(246,196,67,.7);color:#ffe08a}
 </style>
 
 <canvas id="c" aria-label="Table football pitch"></canvas>
@@ -796,7 +813,8 @@ body.padmode #np-next .npg{display:inline-grid}
       <button class="tab" role="tab" data-tab="balance" aria-selected="false">Balancing</button>
       <span class="glyph" id="g-rb" hidden>RB</span>
     </nav>
-    <div class="hub-right"><button class="ghost" id="btn-sound">Mute</button></div>
+    <div class="hub-right"><span class="hobby" id="hobby" title="Hobby: earn it by playing, spend it in Customization"><svg class="hb-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#f6c443" stroke="#9a6d12" stroke-width="1.6"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#9a6d12" stroke-width="1.2" opacity=".6"/><path d="M9.2 7.5v9M14.8 7.5v9M9.2 12h5.6" stroke="#6b4a08" stroke-width="2" stroke-linecap="round"/></svg><b id="hobby-n">0</b></span><button class="ghost iconb" id="btn-sound" aria-label="Mute" title="Mute"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><g class="on"><path d="M15.2 9a4.2 4.2 0 0 1 0 6M17.6 6.6a7.6 7.6 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g><g class="off"><path d="M15.5 9.5l5 5M20.5 9.5l-5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g></svg></button></div>
+<div class="htoast" id="htoast" hidden></div>
   </header>
   <main class="hub-main">
     <div class="panel" data-panel="play">
@@ -967,7 +985,7 @@ body.padmode #np-next .npg{display:inline-grid}
         <ol class="rules">
           <li><b>Keep the ball.</b> Flick a figure into the ball. You keep possession while your flicked figure touches the ball first and no opposing figure or keeper touches it last.</li>
           <li><b>Losing it.</b> Miss the ball, or let it come to rest off an opponent, and possession switches.</li>
-          <li><b>Keeper out.</b> On your turn, with the ball in your own small box, you can take your keeper off his rod: he plays as a normal figure. He can go back from your next turn. Sending him back while the other side has the ball costs you that block.</li>
+          <li><b>Keeper out.</b> On your turn, with the ball in your own box, you can take your keeper off his rod: he plays as a normal figure, but only inside his box. If he touches the ball outside it, he goes back on the rod and the other side gets a free kick. If he just ends up outside, he walks back into the box at the end of the flick. He can go back on the rod from your next turn. Sending him back while the other side has the ball costs you that block.</li>
           <li><b>Zones.</b> The halfway line and the two shooting lines split the pitch into four zones. For each side: A defence, B defensive midfield, C attacking midfield, D shooting area.</li>
           <li><b>Kick-off.</b> Two figures stand at the ball. The kick-off must be a pass: the figure that kicks off cannot play the next flick.</li>
           <li><b>Fouls.</b> Hit any figure, an opponent or a teammate, before the ball and it's a foul. Ball and figure go back, and the other side gets a free kick.</li>
@@ -1006,6 +1024,7 @@ body.padmode #np-next .npg{display:inline-grid}
         <div class="cardbox" id="bal-pastebox" hidden style="margin-bottom:12px"><p class="h">Paste JSON</p><textarea id="bal-json" rows="6" spellcheck="false" style="width:100%;box-sizing:border-box;background:rgba(0,0,0,.35);color:inherit;border:1px solid rgba(255,255,255,.25);font:12px/1.4 ui-monospace,monospace;padding:8px"></textarea><div class="seg" style="margin-top:8px"><button class="chip" id="bal-apply">Apply</button><button class="chip" id="bal-cancel">Cancel</button></div></div>
         <div class="cardbox"><p class="h">Player stats</p><div class="bal-scroll"><table class="bal" id="bal-stats"></table></div></div>
         <div class="cardbox" style="margin-top:12px"><p class="h">Squad paths</p><div class="bal-scroll"><table class="bal" id="bal-paths"></table></div></div>
+        <div class="cardbox" style="margin-top:12px"><div class="cta" style="justify-content:space-between;margin-bottom:8px"><p class="h" style="margin:0">Economy (Hobby)</p><label class="srow" style="border:0;padding:0;gap:10px"><span class="sl">On</span><span class="tog"><input type="checkbox" id="bal-eco-on"><i></i></span></label></div><div class="bal-scroll"><table class="bal" id="bal-eco"></table></div><div class="cta" style="margin-top:8px;gap:8px;align-items:center"><span class="note">Your wallet</span><input type="number" id="bal-wallet" min="0" step="10" style="width:110px"><button class="chip" id="bal-wallet-set" type="button">Set</button><button class="chip" id="bal-owned-reset" type="button">Lock items again</button></div></div>
         <div class="cardbox" style="margin-top:12px"><p class="h">Player of the Match Moment bar</p><div class="bal-scroll"><table class="bal" id="bal-bar"></table></div><p class="note" style="margin-top:8px">Points added to the bar for each event. The bar is full at 100. Example: with Kept the ball at 6, about 17 kept flicks fill it.</p></div>
       </div>
     </div>
@@ -1193,8 +1212,10 @@ const BAL_DEF={
   stats:{sht:{base:1,step:0.04},pin:{base:1,step:0.27},mae:{base:0.12,step:-0.03},b2b:{base:1,step:0.033},trk:{base:0,step:0.15},trkd:{base:30,step:0}},
   paths:{att:{sht:1,pin:0,mae:0,b2b:0,trk:0},mid:{sht:0,pin:0,mae:0.5,b2b:0.5,trk:0},def:{sht:0,pin:1,mae:0,b2b:0,trk:0}},
   unlock:{att:['finesse','bicycle'],mid:['bicycle','maradona','thread'],def:['thread','moon']},
-  bar:{keep:6,chain:4,area:10,steal:10,goal:20,moon:8}
+  bar:{keep:6,chain:4,area:10,steal:10,goal:20,moon:8},
+  eco:{on:true,start:100,tutorial:400,lose:40,draw:60,win:100,field:100,table:250,trinket:50,banner:50,ball:200}
 };
+const ECO_ROWS=[['start','Starting Hobby','New players begin with'],['tutorial','Tutorial reward','Once, for finishing the tutorial'],['lose','Solo: loss','Kick-off against the CPU'],['draw','Solo: draw','Kick-off against the CPU'],['win','Solo: win','Kick-off against the CPU'],['field','Field price','Each field'],['table','Table price','Each table'],['trinket','Trinket price','Each corner trinket'],['banner','Banner price','Each border banner'],['ball','Ball price','Each ball']];
 // Moment bar: points added on each event (the bar is full at 100)
 const BAR_ROWS=[['keep','Kept the ball','Each flick that keeps possession'],['chain','Third flick bonus','Extra on the 3rd and later flicks of a turn'],['area','Shot from the area','A flick from your shooting area that hits the ball'],['steal','Won the ball','Ball comes off your figure or keeper'],['goal','Goal','Scoring (not own goals)'],['moon','To the Moon clear','A To the Moon! clearance']];
 function cleanBal(o){
@@ -1204,6 +1225,7 @@ function cleanBal(o){
   PATH_KEYS.forEach(p=>{const x=o.paths&&o.paths[p];if(x)STAT_KEYS.forEach(k=>{d.paths[p][k]=num(x[k],-3,3,d.paths[p][k]);});
     const u=o.unlock&&o.unlock[p];if(Array.isArray(u))d.unlock[p]=MOMENT_ORDER.filter(m=>u.includes(m));});
   BAR_ROWS.forEach(([k])=>{if(o.bar&&o.bar[k]!=null)d.bar[k]=num(o.bar[k],0,100,d.bar[k]);});
+  if(o.eco){if(typeof o.eco.on==='boolean')d.eco.on=o.eco.on;ECO_ROWS.forEach(([k])=>{if(o.eco[k]!=null)d.eco[k]=Math.round(num(o.eco[k],0,100000,d.eco[k]));});}
   return d;
 }
 let BAL=cleanBal((()=>{try{return JSON.parse(store.get('baize.balance')||'null');}catch(e){return null;}})());
@@ -1421,6 +1443,7 @@ function contact(a,b,ctx){
 function travelDist(v,dec,drag){if(v<=0)return 0;return (v-(dec/drag)*Math.log(1+drag*v/dec))/drag;}
 function speedForDist(d,dec,drag){let lo=0,hi=260;for(let i=0;i<32;i++){const m=(lo+hi)/2;if(travelDist(m,dec,drag)<d)lo=m;else hi=m;}return (lo+hi)/2;}
 function ballTouched(ctx,team,id){
+  if(id>20&&id===ctx.fig&&!ctx.gkFoul){const k=bodies[id];if(k&&!inBox(k,k.team,BOX.deep,BOX.half))ctx.gkFoul={t:k.team,x:ball.x,z:ball.z};}
   const first=id===ctx.fig&&!ctx.hit;
   if(ctx.hit&&id!==ctx.fig)ctx.curlOff=true;
   if(first){ctx.hit=true;if(!ctx.first)ctx.first='ball';}
@@ -1639,7 +1662,7 @@ function kickoff(team){
   formation(team);resetPossession(team);S.armed='';S.koPend=true;S.timeUp=false;
   S.msg={t:'Kick-off',s:`${N(team)} get the game going. The kick-off must be a pass.`,w:1,c:team};selPrefer=team*10+formOf(matchSquads[team]).kop[0];commit();
 }
-function newMatch(o){S.log=[];playMsg=null;
+function newMatch(o){S.log=[];playMsg=null;S.paid=false;S.conceded=false;
   leaveDrills();o=o||{};
   S.ballV=o.ball||BALL.mine||((BALL.variants[0]||{}).id||'');showBall();S.lookV=o.look||lookStr(LOOKSEL);showLook();
   S.golden=false;S.score=[0,0];S.half=1;S.clock=S.halfLen;S.running=true;S.paused=false;S.ko1=0;S.bar=[0,0];S.armed='';S.armedTeam=-1;
@@ -1680,8 +1703,17 @@ function outOfPlay(ctx,fallback){
   if(lt===endTeam){const t=1-endTeam;return setPiece(t,'corner',o.end*(HX-1.2),o.side*(HZ-1.2),'Corner',`${N(t)} line up the corner.`);}
   return goalKick(endTeam,o.side);
 }
+// the keeper may only play the ball inside his own box: outside it he goes back on the rod and it's a free kick
+function gkFoul(ctx){const t=ctx.gkFoul.t,o=1-t,k=GKB(t);
+  S.kOut[t]=0;keepers[t].z=keepers[t].target=clamp(k.z,-K_RANGE,K_RANGE);k.off=true;k.x=400;k.z=400+t*8;
+  const fx=clamp(ctx.gkFoul.x,-HX+2,HX-2),fz=clamp(ctx.gkFoul.z,-HZ+2,HZ-2);
+  return setPiece(o,'free',fx,fz,'Keeper outside his box',`The ${N(t)} keeper played it outside his box. He goes back on the line, free kick to ${N(o)}.`);}
+// a keeper off his rod who ends up outside his box walks back in
+function gkReturn(){for(let t=0;t<2;t++){if(!S.kOut[t])continue;const k=GKB(t);if(k.off||inBox(k,t,BOX.deep,BOX.half))continue;
+  const s=boxSide(t);let u=clamp(HX-s*k.x,k.r+0.3,BOX.deep-k.r-0.3);k.x=s*(HX-u);k.z=clamp(k.z,-BOX.half+k.r+0.3,BOX.half-k.r-0.3);k.vx=k.vz=0;S.boxNote=(S.boxNote?S.boxNote+' ':'')+`The ${N(t)} keeper goes back into his box.`;}}
 function resolveAttack(ctx){
   const att=ctx.team,def=1-att;
+  if(ctx.gkFoul)return gkFoul(ctx);
   if(ctx.setup){
     // positional flick: the ball never moves for it
     if(ctx.bmoved||ctx.hit||ctx.goal||ctx.out){ball.x=ctx.bx;ball.z=ctx.bz;ball.vx=ball.vz=0;separate();}
@@ -1714,6 +1746,7 @@ function resolveAttack(ctx){
 }
 function resolveDefend(ctx){
   const att=1-ctx.team,def=ctx.team;
+  if(ctx.gkFoul)return gkFoul(ctx);
   if(ctx.moonHit){
     if(ctx.goal)return scoreGoal(ctx.goal.team,ctx.goal.team!==def);
     if(ctx.out)return outOfPlay(ctx,def);
@@ -1763,7 +1796,7 @@ function controls(team){if(S.mode==='local')return true;if(S.mode==='practice'||
 // He can go back from your next turn on; doing it while you don't have the ball costs your block.
 function gkState(team){
   if(!(S.running&&!S.paused&&!sim.running&&S.active===team&&(S.phase==='attack'||S.phase==='defend')))return null;
-  if(!S.kOut[team]){if(S.phase==='attack'&&S.taker<0&&!S.setupKind&&inBox(ball,team,BOX.sDeep,BOX.sHalf))return{out:true,label:'Keeper out'};return null;}
+  if(!S.kOut[team]){if(S.phase==='attack'&&S.taker<0&&!S.setupKind&&inBox(ball,team,BOX.deep,BOX.half))return{out:true,label:'Keeper out'};return null;}
   if(S.possN===S.kAt[team])return null;
   return S.phase==='attack'?{out:false,label:'Keeper back'}:{out:false,cost:true,label:'Keeper back (skip block)'};
 }
@@ -1901,7 +1934,7 @@ function renderLog(){const box=$('#plays');if(!box)return;const on=S.running&&$(
   if(!L.length){const li=document.createElement('li');li.className='empty';li.textContent=PL.mine?'None of your plays yet.':'No plays yet.';ul.appendChild(li);return;}
   L.forEach((e,k)=>{const li=document.createElement('li');if(k===0)li.className='new';const col=e.c>=0&&S.kits?KITS[S.kits[e.c]].ui:'rgba(255,255,255,.4)';li.style.setProperty('--pc',col);
     const b=document.createElement('b');b.textContent=e.t;const sm=document.createElement('small');sm.textContent=e.s;li.appendChild(b);li.appendChild(sm);ul.appendChild(li);});}
-function commit(){logPlay();enforceBoxes();S.seq++;onState();if(S.boxNote){const t=S.boxNote;S.boxNote='';setTimeout(()=>flashSub(t),0);}if(S.mode==='online')net.sendState();}
+function commit(){if(!sim.running)gkReturn();logPlay();enforceBoxes();S.seq++;onState();if(S.boxNote){const t=S.boxNote;S.boxNote='';setTimeout(()=>flashSub(t),0);}if(S.mode==='online')net.sendState();}
 function onState(){
   if(S.msg){banner(S.msg.t,S.msg.s,S.msg);if(S.msg.g)sfx('goal');else if(S.msg.w)sfx('whistle');}
   autoSelect();updateHud();
@@ -2176,8 +2209,8 @@ function isolate(node){const c=node.clone(true);c.position.set(0,0,0);c.rotation
 function copBox(root,name){const o=root.getObjectByName(name);if(!o)return null;const b=new THREE.Box3().setFromObject(o);if(b.isEmpty())return null;const r=v=>Math.round(v*1000)/1000;b.min.multiplyScalar(100);b.max.multiplyScalar(100);['x','y','z'].forEach(k=>{b.min[k]=r(b.min[k]);b.max[k]=r(b.max[k]);});return b;}
 function stripColliders(root){const kill=[];root.traverse(o=>{if(o.name&&o.name.startsWith('CoP_'))kill.push(o);});kill.forEach(o=>o.parent&&o.parent.remove(o));return root;}
 function prepVisual(root,{cast=true,recv=true}={}){root.scale.setScalar(100);root.traverse(o=>{if(o.isMesh){o.castShadow=cast;o.receiveShadow=recv;}});return root;}
-function kitMaterials(root,t){
-  const M=teamM[t],map={Kit_Shirt:M.shirt,Kit_Shorts:M.shorts,Kit_Socks:M.socks,Kit_Insert:M.insert,Kit_Keeper:M.gk};
+function kitMaterials(root,t,gk){
+  const M=teamM[t],map={Kit_Shirt:gk?M.gk:M.shirt,Kit_Shorts:M.shorts,Kit_Socks:M.socks,Kit_Insert:M.insert,Kit_Keeper:M.gk};
   root.traverse(o=>{if(o.isMesh&&o.material&&map[o.material.name])o.material=map[o.material.name];});return root;
 }
 const half=(b,ax)=>(b.max[ax]-b.min[ax])/2;
@@ -2222,7 +2255,7 @@ function applyPins(scene,label){
     const iso=isolate(P),cb=copBox(iso,'CoP_Pin');if(!cb)throw new Error('pin: no CoP_Pin found');
     RF=clamp(Math.max(half(cb,'x'),half(cb,'z')),0.8,3.5);for(const b of bodies)if(!b.ball)b.r=RF;
     const vis=prepVisual(stripColliders(iso));
-    for(let i=0;i<22;i++){const g=i<20?figGroups[i]:kFig[i-20];if(modelVis.pin[i])g.remove(modelVis.pin[i]);else g.children.slice().forEach(c=>c.visible=false);const v=kitMaterials(vis.clone(true),i<10?0:i<20?1:i-20);g.add(v);modelVis.pin[i]=v;}
+    for(let i=0;i<22;i++){const g=i<20?figGroups[i]:kFig[i-20];if(modelVis.pin[i])g.remove(modelVis.pin[i]);else g.children.slice().forEach(c=>c.visible=false);const v=kitMaterials(vis.clone(true),i<10?0:i<20?1:i-20,i>=20);g.add(v);modelVis.pin[i]=v;}
     note.push(`pin radius ${RF.toFixed(2)} cm`);
   }
   if(K){
@@ -2269,6 +2302,9 @@ function showLook(){
   if(modelVis.look)scene.remove(modelVis.look);
   const {g,hasField,hasTable}=buildLookGroup(sel);g.userData.key=key;scene.add(g);modelVis.look=g;
   CLOTH.visible=!hasField;FIELD.visible=!hasTable;
+  // a field can ask for its own line colour (custom property 'lines' on the SM_Field node), e.g. dark lines on snow
+  const f=lookPick('field',sel.field),lc=f&&f.node.userData&&f.node.userData.lines;LINES.material.color.set(typeof lc==='string'&&/^#?[0-9a-f]{6}$/i.test(lc)?(lc[0]==='#'?lc:'#'+lc):'#ffffff');
+  const lo=f&&f.node.userData?Number(f.node.userData.lines_opacity):NaN;LINES.material.opacity=isFinite(lo)?clamp(lo,0,1):0.78;
 }
 function applyTable(scene,label){
   const iso=isolate(scene.getObjectByName('Table')||scene);
@@ -2963,7 +2999,10 @@ function showFT(){
   const tourOn=!!(S.tour||(net.tourMatch&&net.tourMatch.watch));$('#btn-rematch').hidden=tourOn;$('#btn-ft-menu').textContent=tourOn?'Back to tournament':'Main menu';
   $('#ft-title').textContent=a===b?'Honours even':(a>b?N(0):N(1))+' win';
   $('#ft-score').textContent=a+' - '+b;
-  $('#ft-note').textContent=S.mode==='online'&&net.myTeam===1?'Home can start a rematch.':'';
+  let note=S.mode==='online'&&net.myTeam===1?'Home can start a rematch.':'';
+  if(S.mode==='cpu'&&!S.tour&&!S.paid&&ecoOn()){S.paid=true;const me=1-cpuTeam,r=S.conceded?0:a===b?BAL.eco.draw:S.score[me]>S.score[1-me]?BAL.eco.win:BAL.eco.lose;
+    if(r>0){earn(r,a===b?'Draw':S.score[me]>S.score[1-me]?'Victory':'Good game');note=`+${r} Hobby`;}else if(S.conceded)note='No Hobby for a conceded match.';}
+  $('#ft-note').textContent=note;
   $('#btn-rematch').disabled=S.mode==='online'&&net.myTeam!==0;
   setTimeout(()=>{if(S.phase==='end'){$('#ft').hidden=false;music.menu(true);applyVolumes();}},1600);
 }
@@ -3154,7 +3193,7 @@ $('#tour-play').addEventListener('click',()=>{ensureAudio();tourPlay();});
 /* ================= concede ================= */
 function concede(team){
   if(!S.running||S.phase==='end'||!(team===0||team===1))return;
-  const o=1-team;sim.running=false;sim.ctx=null;stopAll();
+  const o=1-team;sim.running=false;sim.ctx=null;stopAll();S.conceded=true;
   if(S.score[o]-S.score[team]<3){S.score[team]=0;S.score[o]=3;}
   S.golden=false;S.phase='end';S.armed='';S.msg={t:'Conceded',s:`${N(team)} concede. ${N(o)} win ${S.score[0]}-${S.score[1]}.`,w:1,c:o};
   closeMenu();commit();setTimeout(()=>ambience.update(),0);
@@ -3238,7 +3277,7 @@ $('#btn-join').addEventListener('click',()=>{ensureAudio();joinRoom($('#room-cod
 $('#room-code').addEventListener('keydown',e=>{if(e.key==='Enter')joinRoom($('#room-code').value);});
 $('#btn-newroom').addEventListener('click',()=>{const ch='abcdefghjkmnpqrstuvwxyz23456789';let c='';for(let i=0;i<4;i++)c+=ch[Math.floor(Math.random()*ch.length)];joinRoom(c);});
 $('#btn-leave').addEventListener('click',()=>leaveRoom(false));
-function syncMuteBtn(){$('#btn-sound').textContent=SET.mute?'Unmute':'Mute';$('#mute-all').checked=SET.mute;}
+function syncMuteBtn(){const b=$('#btn-sound');b.classList.toggle('muted',!!SET.mute);b.setAttribute('aria-label',SET.mute?'Unmute':'Mute');b.title=SET.mute?'Unmute':'Mute';$('#mute-all').checked=SET.mute;}
 $('#btn-sound').addEventListener('click',()=>{SET.mute=!SET.mute;saveSet();syncMuteBtn();ensureAudio();applyVolumes();});
 $('#btn-skip').addEventListener('click',()=>{if(localTurn())skipDefend();});
 $('#btn-gk').addEventListener('click',()=>{if(localTurn())gkToggle(S.active);});
@@ -3405,6 +3444,8 @@ function renderBal(){
   PATH_KEYS.forEach(p=>{u+=`<tr><th scope="row" style="color:${PATHS[p].col}">${PATHS[p].name}</th>`+STAT_KEYS.map(k=>`<td><input type="number" step="0.5" data-p="${p}" data-k="${k}" value="${D.paths[p][k]}"></td>`).join('')+
     MOMENT_ORDER.map(m=>`<td class="ck"><input type="checkbox" data-u="${p}" data-m="${m}" ${D.unlock[p].includes(m)?'checked':''} aria-label="${PATHS[p].name} unlocks ${SPECIALS[m].name}"></td>`).join('')+'</tr>';});
   $('#bal-paths').innerHTML=u+'</tbody>';
+  $('#bal-eco').innerHTML='<thead><tr><th>Setting</th><th>When</th><th>Hobby</th></tr></thead><tbody>'+ECO_ROWS.map(([k,n,w])=>`<tr><th scope="row">${n}</th><td class="fx">${w}</td><td><input type="number" step="10" min="0" data-e="${k}" value="${D.eco[k]}"></td></tr>`).join('')+'</tbody>';
+  $('#bal-eco-on').checked=!!D.eco.on;$('#bal-wallet').value=HOBBY.n||0;
   $('#bal-bar').innerHTML='<thead><tr><th>Event</th><th>When</th><th>Points</th></tr></thead><tbody>'+BAR_ROWS.map(([k,n,w])=>`<tr><th scope="row">${n}</th><td class="fx">${w}</td><td><input type="number" step="1" min="0" max="100" data-b="${k}" value="${D.bar[k]}"></td></tr>`).join('')+'</tbody>';
 }
 $('#bal-form').addEventListener('submit',e=>{e.preventDefault();const v=$('#bal-pw').value;$('#bal-pw').value='';
@@ -3412,6 +3453,8 @@ $('#bal-form').addEventListener('submit',e=>{e.preventDefault();const v=$('#bal-
 $('#bal-edit').addEventListener('input',e=>{const el=e.target;if(!balDraft)return;
   if(el.dataset.s){const v=parseFloat(el.value);if(isFinite(v))balDraft.stats[el.dataset.s][el.dataset.f]=v;}
   else if(el.dataset.p){const v=parseFloat(el.value);if(isFinite(v))balDraft.paths[el.dataset.p][el.dataset.k]=v;}
+  else if(el.dataset.e){const v=parseFloat(el.value);if(isFinite(v))balDraft.eco[el.dataset.e]=v;}
+  else if(el.id==='bal-eco-on'){balDraft.eco.on=el.checked;}
   else if(el.dataset.b){const v=parseFloat(el.value);if(isFinite(v))balDraft.bar[el.dataset.b]=v;}
   else if(el.dataset.u){const p=el.dataset.u,set=new Set(balDraft.unlock[p]);el.checked?set.add(el.dataset.m):set.delete(el.dataset.m);balDraft.unlock[p]=MOMENT_ORDER.filter(m=>set.has(m));}
   balDraft=cleanBal(balDraft);
@@ -3419,8 +3462,11 @@ $('#bal-edit').addEventListener('input',e=>{const el=e.target;if(!balDraft)retur
   BAL_KEYS.forEach(k=>{const row=$('#bal-stats').querySelector(`tr[data-row="${k}"]`),x=balDraft.stats[k];if(row)[0,1,2,3].forEach(n=>row.cells[4+n].textContent=balPv(k,x,n));});
   const dirty=JSON.stringify(balDraft)!==JSON.stringify(BAL);$('#bal-save').disabled=!dirty;$('#bal-save').textContent=dirty?'Save':'Saved';});
 $('#bal-save').onclick=()=>{BAL=cleanBal(balDraft);store.set('baize.balance',JSON.stringify(BAL));mySquads.forEach(fitSpecial);saveSquads();renderSquad();renderBal();
+  syncHobby();renderLook();renderCustom();
   const live=S.running&&S.phase!=='end'&&S.mode!=='online';if(live){MBAL=BAL;applySquadStats();}
   $('#bal-state').textContent=live?'Saved and applied to this match.':S.running&&S.mode==='online'?'Saved. Online matches use the host\'s values; yours apply from your next match.':'Saved. New values apply from the next kick-off.';};
+$('#bal-wallet-set').onclick=()=>{const v=parseInt($('#bal-wallet').value,10);if(isFinite(v)){HOBBY.n=v;syncHobby();$('#bal-state').textContent='Wallet set to '+HOBBY.n+' Hobby.';}};
+$('#bal-owned-reset').onclick=()=>{OWNED={field:[],table:[],trinket:[],banner:[],ball:[]};store.set('baize.owned',JSON.stringify(OWNED));$('#bal-state').textContent='Bought items are locked again (the first of each and the ones in use stay usable).';renderLook();renderCustom();};
 $('#bal-reset').onclick=()=>{balDraft=cleanBal(null);renderBal();$('#bal-state').textContent='Defaults loaded. Save to keep them.';};
 $('#bal-lockbtn').onclick=()=>{balOpen=false;balDraft=null;renderBal();};
 $('#bal-copy').onclick=()=>{const txt=JSON.stringify(balDraft||BAL,null,1);try{navigator.clipboard.writeText(txt).then(()=>{$('#bal-state').textContent='Copied to the clipboard.';},()=>{$('#bal-state').textContent=txt;});}catch(e){$('#bal-state').textContent=txt;}};
@@ -3489,17 +3535,18 @@ function renderCustom(rebuild){
     const nm=document.createElement('b');nm.textContent=v.name;
     b.append(img,nm);
     if(v.id===eqId){const e=document.createElement('span');e.className='eqp';e.textContent='Equipped';b.appendChild(e);}
+    else if(!owns('ball',v.id)){b.classList.add('locked');const t=document.createElement('span');t.className='lock';t.innerHTML=coinTag(priceOf('ball',v.id));b.appendChild(t);}
     b.onclick=()=>{custSel=v.id;renderCustom();};
     b.ondblclick=()=>{custSel=v.id;equipBall();};
     grid.appendChild(b);
   });
   const cur=list.find(v=>v.id===custSel)||list[0];
   $('#bp-no').textContent='Ball '+(cur.id||'001');$('#bp-name').textContent=cur.name;$('#bp-eq').hidden=cur.id!==eqId;
-  const btn=$('#btn-equip');btn.disabled=cur.id===eqId;btn.lastChild.textContent=cur.id===eqId?'Equipped':'Equip';
+  const btn=$('#btn-equip'),own=owns('ball',cur.id);btn.disabled=cur.id===eqId;btn.lastChild.textContent=cur.id===eqId?'Equipped':own?'Equip':`Buy · ${priceOf('ball',cur.id)} Hobby`;
   $('#ball-note').textContent=S.mode==='online'&&S.running?'Online, the home player\'s ball is used for both of you.':'Every ball plays the same; only the look changes.';
   if(hubTab==='custom'&&custSec==='ball'&&initPreview()){sizePreview();previewObject(cur.id);if(!custLoop){custLoop=true;requestAnimationFrame(custTick);}}
 }
-function equipBall(){BALL.mine=custSel;store.set('baize.ball',custSel);showBall();renderCustom();sfx('tock',30);}
+function equipBall(){if(!owns('ball',custSel)&&!buy('ball',custSel)){renderCustom();return;}BALL.mine=custSel;store.set('baize.ball',custSel);showBall();renderCustom();sfx('tock',30);}
 $('#btn-equip').addEventListener('click',equipBall);
 
 /* ================= customization: table looks ================= */
@@ -3537,12 +3584,35 @@ function makeLookThumbs(){
   if(!initTablePreview())return;
   LOOK_PARTS.forEach(p=>LOOK[p].forEach(v=>{const k=p+v.id;if(!tThumbs[k])tThumbs[k]=snapThumb(partObject(p,v),THUMB_DIR[p],192,128);}));
 }
+/* ================= Hobby: coins, rewards and unlocks ================= */
+const HOBBY={get n(){const v=parseInt(store.get('baize.hobby'),10);return isFinite(v)?v:null;},set n(v){store.set('baize.hobby',String(Math.max(0,Math.round(v))));}};
+if(HOBBY.n==null)HOBBY.n=BAL.eco.start;
+let OWNED=(()=>{try{const o=JSON.parse(store.get('baize.owned')||'null');if(o&&typeof o==='object')return o;}catch(e){}return null;})();
+// first run with the economy: keep whatever is already in use
+if(!OWNED){OWNED={field:[],table:[],trinket:[],banner:[],ball:[]};LOOK_PARTS.forEach(p=>{if(LOOKSEL[p])OWNED[p].push(LOOKSEL[p]);});if(BALL.mine)OWNED.ball.push(BALL.mine);store.set('baize.owned',JSON.stringify(OWNED));}
+const ecoOn=()=>!!(BAL.eco&&BAL.eco.on);
+function firstId(part){const L=part==='ball'?BALL.variants:LOOK[part];return L&&L.length?L[0].id:'';}
+function owns(part,id){if(!ecoOn()||!id||id===firstId(part)||priceOf(part,id)===0)return true;return (OWNED[part]||[]).includes(id);}
+// an item can set its own price with a 'price' custom property (0 = free); otherwise the Balancing price
+function variantNode(part,id){const L=part==='ball'?BALL.variants:LOOK[part];const v=L&&L.find(x=>x.id===id);return v&&v.node;}
+function priceOf(part,id){const n=id!=null&&variantNode(part,id),p=n&&n.userData?Number(n.userData.price):NaN;return isFinite(p)&&p>=0?Math.round(p):(BAL.eco[part]||0);}
+function syncHobby(){const h=$('#hobby');h.hidden=!ecoOn();$('#hobby-n').textContent=(HOBBY.n||0).toLocaleString();}
+function hobbyToast(t,good){const el=$('#htoast');el.textContent=t;el.className='htoast'+(good?' good':'');el.hidden=false;clearTimeout(el._t);el._t=setTimeout(()=>{el.hidden=true;},2600);}
+function earn(n,why){if(!ecoOn()||!(n>0))return 0;HOBBY.n=(HOBBY.n||0)+n;syncHobby();const h=$('#hobby');h.classList.remove('pop');void h.offsetWidth;h.classList.add('pop');if(why)hobbyToast(`+${n} Hobby · ${why}`,true);return n;}
+function buy(part,id){if(owns(part,id))return true;const p=priceOf(part,id);
+  if((HOBBY.n||0)<p){hobbyToast(`Not enough Hobby: this costs ${p}, you have ${HOBBY.n||0}.`);sfx('clack',10);return false;}
+  HOBBY.n=(HOBBY.n||0)-p;OWNED[part]=[...(OWNED[part]||[]),id];store.set('baize.owned',JSON.stringify(OWNED));syncHobby();hobbyToast(`Unlocked for ${p} Hobby`,true);sfx('tock',30);return true;}
+const coinTag=n=>`<span class="price">${'<svg class="hb-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#f6c443" stroke="#9a6d12" stroke-width="1.6"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#9a6d12" stroke-width="1.2" opacity=".6"/><path d="M9.2 7.5v9M14.8 7.5v9M9.2 12h5.6" stroke="#6b4a08" stroke-width="2" stroke-linecap="round"/></svg>'}${n}</span>`;
+let lookPend=null;
 function lookCard(part,v,on,disabled){
   const b=document.createElement('button');b.className='lcard';b.setAttribute('aria-pressed',String(on));if(disabled)b.disabled=true;
   if(v){const img=document.createElement('img');img.alt='';if(tThumbs[part+v.id])img.src=tThumbs[part+v.id];b.appendChild(img);}
   else{const n=document.createElement('span');n.className='none';n.textContent='None';b.appendChild(n);}
   const nm=document.createElement('b');nm.textContent=v?v.name:'None';b.appendChild(nm);
-  b.onclick=()=>{LOOKSEL[part]=v?v.id:'';saveLook();showLook();renderLook();sfx('tock',30);};
+  const locked=v&&!owns(part,v.id),pend=locked&&lookPend&&lookPend.part===part&&lookPend.id===v.id;
+  if(locked){b.classList.add('locked');const t=document.createElement('span');t.className='lock';t.innerHTML=pend?'Buy · '+coinTag(priceOf(part,v.id)):coinTag(priceOf(part,v.id));if(pend)t.classList.add('buy');b.appendChild(t);}
+  b.onclick=()=>{if(locked){if(!pend){lookPend={part,id:v.id};renderLook();sfx('tock',10);return;}lookPend=null;if(!buy(part,v.id)){renderLook();return;}}
+    lookPend=null;LOOKSEL[part]=v?v.id:'';saveLook();showLook();renderLook();sfx('tock',30);};
   return b;
 }
 function renderLook(rebuild){
@@ -3646,7 +3716,7 @@ bindToggle('gfx-calm','calm',applyGraphics);
 bindToggle('ctl-lock','lock',()=>{});
 bindRange('ctl-msens','o-msens','msens',pct,()=>{});bindRange('ctl-csens','o-csens','csens',pct,()=>{});bindToggle('ctl-invy','invY',()=>{});
 bindRange('ctl-dz','o-dz','dz',pct,()=>{});bindRange('ctl-rspeed','o-rspeed','rspeed',pct,()=>{});bindToggle('ctl-rumble','rumble',()=>{});
-syncMuteBtn();renderTracks();applyGraphics();
+syncMuteBtn();syncHobby();renderTracks();applyGraphics();
 // the browser only allows sound after the viewer interacts: start audio (and the menu music) on the first press anywhere
 ['pointerdown','keydown','touchstart'].forEach(ev=>window.addEventListener(ev,()=>ensureAudio(),{capture:true,passive:true}));
 
@@ -3925,6 +3995,7 @@ function tutLayout(lay,msg){
 }
 function tutStep(i,msg){
   DR.step=i;const st=TUT[i];
+  if(i===TUT.length-1&&ecoOn()&&store.get('baize.tutPaid')!=='1'){store.set('baize.tutPaid','1');earn(BAL.eco.tutorial,'Tutorial complete');}
   if(st.lay!=='keep'&&(st.lay!==DR.layout||i===0))tutLayout(st.lay,msg);else if(msg){S.msg=msg;commit();}
   if(st.wait==='select')DR.sel0=sel;
   if(st.wait==='keeper')DR.k0=keepers[0].z;
