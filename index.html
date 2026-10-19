@@ -732,6 +732,17 @@ body.padmode #np-next .npg{display:inline-grid}
 .lcard.locked img,.bcard.locked img{filter:saturate(.35) brightness(.75)}
 .htoast{position:fixed;z-index:60;left:50%;top:70px;transform:translateX(-50%);background:rgba(10,4,38,.92);border:1px solid rgba(255,255,255,.2);color:#fff;padding:10px 18px;font-family:var(--f-display);font-weight:800;letter-spacing:.04em;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 .htoast.good{border-color:rgba(246,196,67,.7);color:#ffe08a}
+.sw{display:flex;flex-direction:column;justify-content:flex-start}
+.sw i.kst{position:static;display:block;width:100%;flex:none}
+.sw.my{outline:1px dashed rgba(255,255,255,.5);outline-offset:1px}
+.kitpal{display:flex;flex-wrap:wrap;gap:8px}
+.kc{width:38px;height:38px;border:2px solid rgba(255,255,255,.18);padding:0;cursor:pointer;box-shadow:inset 0 -8px 12px rgba(0,0,0,.18)}
+.kc[aria-pressed="true"]{outline:3px solid var(--cyan);outline-offset:2px;border-color:#fff}
+#kit-prev{width:100%;height:100%;display:block}
+.kitview{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:8px}
+.kv{width:52px;height:44px;display:grid;place-items:center;background:rgba(10,4,38,.72);border:1px solid rgba(255,255,255,.18);color:#e9e4ff;padding:0;cursor:pointer}
+.kv svg{width:28px;height:28px}
+.kv[aria-pressed="true"]{background:var(--accent);border-color:#fff;color:#fff;box-shadow:inset 4px 0 0 var(--orange)}
 </style>
 
 <canvas id="c" aria-label="Table football pitch"></canvas>
@@ -945,7 +956,7 @@ body.padmode #np-next .npg{display:inline-grid}
         <nav class="cust-nav subnav" aria-label="Customization sections"><span class="glyph sg" aria-hidden="true">LT</span>
           <button class="cnav" data-sec="ball" aria-current="true">Ball</button>
           <button class="cnav" data-sec="table" aria-current="false">Table</button>
-          <button class="cnav" disabled>Home kit look <small>Coming soon</small></button>
+          <button class="cnav" data-sec="kit" aria-current="false">Kit look</button>
           <button class="cnav" disabled>Team trinkets <small>Coming soon</small></button><span class="glyph sg" aria-hidden="true">RT</span>
         </nav>
         <div class="cust-main" id="cust-ball">
@@ -960,6 +971,22 @@ body.padmode #np-next .npg{display:inline-grid}
               <div class="ball-grid" id="ball-grid"></div>
             </div>
             <div class="cta"><p class="note" id="ball-note" style="margin-right:auto">Every ball plays the same; only the look changes.</p><button class="big go" id="btn-equip"><span class="glyph a">A</span>Equip</button></div>
+          </div>
+        </div>
+        <div class="cust-main" id="cust-kit" hidden>
+          <div class="stage" id="kit-stage">
+            <canvas id="kit-prev" aria-label="Kit preview, drag to spin"></canvas>
+            <div class="cap"><div><small id="kit-team-l">Home squad</small><b id="kit-name">Kit</b></div></div>
+            <div class="kitview" role="group" aria-label="Preview"><button class="kv" type="button" data-kv="player" aria-pressed="true" title="Outfield player" aria-label="Outfield player"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15.5c0-1 .7-1.6 1.6-1.7l4-.4 3.3-6.4h3.4l-.7 4.2c2.6.4 5 1.4 6.3 3.1.6.8.4 2.2-.9 2.7-1 .4-2.7.5-4.8.5H5.2C3.9 17.5 3 16.7 3 15.5z" fill="currentColor"/><path d="M6 19.2v1.3M9.5 19.2v1.3M13 19.2v1.3M16.5 19.2v1.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button><button class="kv" type="button" data-kv="keeper" aria-pressed="false" title="Goalkeeper" aria-label="Goalkeeper"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 21h8.5l1.2-5.3 2.6-3.5c.6-.9.3-2-.7-2.2-.6-.1-1.2.2-1.6.7l-1.5 1.9V5.4c0-.8-.6-1.4-1.3-1.4s-1.3.6-1.3 1.4V4.2c0-.8-.6-1.4-1.3-1.4s-1.3.6-1.3 1.4v1c0-.8-.6-1.4-1.3-1.4S7.3 4.4 7.3 5.2v1.6c0-.8-.6-1.3-1.3-1.3s-1.2.6-1.2 1.3v7.3c0 2 .9 3.5 2.7 4.6z" fill="currentColor"/><path d="M7 18.8h9.4" stroke="#1a0b40" stroke-width="1.4"/></svg></button></div>
+          </div>
+          <div class="col">
+            <div class="cta" style="justify-content:space-between"><div class="seg" id="kit-team"><button class="chip" data-team="0" aria-pressed="true">Home squad</button><button class="chip" data-team="1" aria-pressed="false">Away squad</button></div>
+              <label class="srow" style="border:0;padding:0;gap:10px"><span class="sl">Use my kit</span><span class="tog"><input type="checkbox" id="kit-use"><i></i></span></label></div>
+            <div class="cardbox"><p class="h">Shirt</p><div class="kitpal" id="kp-s"></div></div>
+            <div class="cardbox"><p class="h">Shorts</p><div class="kitpal" id="kp-p"></div></div>
+            <div class="cardbox"><p class="h">Socks</p><div class="kitpal" id="kp-o"></div></div>
+            <div class="cardbox"><p class="h">Goalkeeper</p><div class="kitpal" id="kp-g"></div></div>
+            <p class="note" id="kit-note">Mix and match. When Use my kit is on, this squad wears it instead of the quick kit picked at kick-off. Patterns are coming soon.</p>
           </div>
         </div>
         <div class="cust-main" id="cust-table" hidden>
@@ -1128,6 +1155,14 @@ const KITS=[
   {name:'Tangerines',ab:'TAN',shirt:0xec7a1c,shorts:0x15151a,socks:0x15151a,insert:0xec7a1c,gk:0x2a7fc4,ui:'#f38a2f'},
   {name:'Clarets',ab:'CLA',shirt:0x7b1e3a,shorts:0xf3f1ea,socks:0x8fc3e8,insert:0x8fc3e8,gk:0x222222,ui:'#c04a72'}
 ];
+// kit look: 10 colours per section (shirt, shorts, socks) and keeper-only shirts
+const KIT_COLORS=[['Red',0xc8322a],['Blue',0x2459c4],['White',0xf2f0ea],['Black',0x1b1b1d],['Yellow',0xe7b923],['Orange',0xec7a1c],['Green',0x1f8a3e],['Sky',0x6fb7ea],['Claret',0x7b1e3a],['Purple',0x5b2a9e]];
+const GK_COLORS=[['Black',0x161618],['White',0xf4f4f2],['Green Neon',0x39ff6a],['Pink Neon',0xff3fa8],['Orange Neon',0xff7a1a],['Blue Neon',0x22c8ff],['Yellow Neon',0xe8ff2a]];
+const hexStr=n=>'#'+n.toString(16).padStart(6,'0');
+// what a team actually wears: its kit preset, unless its squad has its own kit look switched on
+function kitOf(t){const base=KITS[S.kits[t]]||KITS[t]||KITS[0],q=typeof matchSquads!=='undefined'&&matchSquads&&matchSquads[t],L=q&&q.useLook&&q.look;
+  if(!L)return base;const c=i=>KIT_COLORS[i]?KIT_COLORS[i][1]:0xffffff;
+  return Object.assign({},base,{shirt:c(L.s),shorts:c(L.p),socks:c(L.o),insert:c(L.s),gk:GK_COLORS[L.g]?GK_COLORS[L.g][1]:base.gk,ui:hexStr(c(L.s)===0xf2f0ea?c(L.p):c(L.s))});}
 const STATS=[
   {k:'sht',name:'Striker',ab:'SHT',desc:'Harder flicks when the ball is in the opponent\'s shooting area.'},
   {k:'pin',name:'Defender',ab:'PIN',desc:'Heavier base: gets knocked around less when opponents bump into it.'},
@@ -1242,12 +1277,13 @@ function defaultSquad(t){
   return{form:'4-4-2',corner:'bal',special:t===0?'finesse':'maradona',path:t===0?'att':'mid',cards,cc:CORNER_PRESETS.bal.spots.map(a=>a.slice()),dcorner:'bal',dcc:DEF_PRESETS.bal.spots.map(a=>a.slice())};
 }
 function cleanSquadName(v){return String(v||'').replace(/[\u0000-\u001f<>|]/g,'').replace(/\s+/g,' ').trim().slice(0,16);}
-function serSquad(q){return [q.form,q.corner,q.special,q.cards.map(c=>c.st.join('')).join(''),encCC(q.cc),q.dcorner,encCC(q.dcc),q.path||'mid',encodeURIComponent(q.name||''),q.cbase||'',q.cpos?'e'+q.cpos.map(a=>a.map(v=>Math.round(v*2)).join(',')).join(';'):'',q.kit!=null?q.kit:'',Array.isArray(q.kop)?q.kop.join(','):''].join('|');}
+function serSquad(q){return [q.form,q.corner,q.special,q.cards.map(c=>c.st.join('')).join(''),encCC(q.cc),q.dcorner,encCC(q.dcc),q.path||'mid',encodeURIComponent(q.name||''),q.cbase||'',q.cpos?'e'+q.cpos.map(a=>a.map(v=>Math.round(v*2)).join(',')).join(';'):'',q.kit!=null?q.kit:'',Array.isArray(q.kop)?q.kop.join(','):'',q.look?[q.look.s,q.look.p,q.look.o,q.look.g,q.useLook?1:0].join(','):''].join('|');}
 function encCC(cc){return cc.map(a=>a.map(v=>Math.round(v*2)).join(',')).join(';');}
 function decCC(str,cfg,n){if(!str)return null;const pairs=str.split(';');if(pairs.length!==n)return null;const cc=pairs.map((pr,k)=>{const [u,w]=pr.split(',').map(Number);return isFinite(u)&&isFinite(w)?clampSpot(cfg,k,u/2,w/2):null;});return cc.every(Boolean)?cc:null;}
 function parseSquad(s,t){
   const q=defaultSquad(t);if(typeof s!=='string')return q;
-  const p=s.split('|');if(p.length<4||p.length>13)return q;
+  const p=s.split('|');if(p.length<4||p.length>14)return q;
+  if(p[13]){const L=p[13].split(',').map(Number);if(L.length===5&&L.every(Number.isInteger)){q.look={s:clamp(L[0],0,9),p:clamp(L[1],0,9),o:clamp(L[2],0,9),g:clamp(L[3],0,GK_COLORS.length-1)};q.useLook=L[4]===1;}}
   if(p[12]){const k=p[12].split(',').map(Number).filter(i=>Number.isInteger(i)&&i>=0&&i<10);if(k.length)q.kop=[...new Set(k)].slice(0,2);}
   if(p[11]!==undefined&&p[11]!==''&&KITS[+p[11]])q.kit=+p[11];
   if(FORMATIONS[p[9]])q.cbase=p[9];
@@ -1282,7 +1318,7 @@ function applySquadStats(){for(let t=0;t<2;t++)for(let i=0;i<10;i++){const b=bod
 const S={mode:'local',running:false,paused:false,seq:0,score:[0,0],half:1,halfLen:300,clock:300,phase:'idle',poss:0,active:0,flicks:0,lastFig:-1,lastFigCount:0,ko1:0,kits:[0,1],msg:null,setupLeft:0,setupKind:'',bar:[0,0],armed:'',armedTeam:-1,taker:-1,timeUp:false,ban:null,defN:0,koPend:false,kOut:[0,0],kAt:[-1,-1],possN:0,log:[]};
 const cpuTeam=1;
 let sel=-1,selPrefer=-1,curlSign=1;
-const N=t=>(matchSquads&&matchSquads[t]&&matchSquads[t].name)||KITS[S.kits[t]].name;
+const N=t=>(matchSquads&&matchSquads[t]&&matchSquads[t].name)||kitOf(t).name;
 const AB=t=>{const n=matchSquads&&matchSquads[t]&&matchSquads[t].name;const w=n?n.replace(/[^A-Za-z0-9 ]/g,'').trim().split(' ').filter(Boolean):[];if(!w.length)return KITS[S.kits[t]].ab;return (w.length>1&&w[0].length<=3?w.map(x=>x[0]).join(''):w[0]).slice(0,3).toUpperCase();};
 const inAttArea=(t,x)=>dirOf(t)>0?x>=SHOOT:x<=-SHOOT;
 const inDefArea=(t,x)=>dirOf(t)>0?x<=-SHOOT:x>=SHOOT;
@@ -1877,7 +1913,7 @@ function endSim(){
 function banner(t,s,o){
   o=o||{};const el=$('#toast'),band=$('#toast-band');
   $('#toast-t').textContent=t;$('#toast-s').textContent=s||'';
-  band.style.setProperty('--tc',o.m?'#c99a2e':o.c!=null?KITS[S.kits[o.c]].ui:'#6e33e6');
+  band.style.setProperty('--tc',o.m?'#c99a2e':o.c!=null?kitOf(o.c).ui:'#6e33e6');
   band.style.color=(o.c!=null&&!o.m&&(S.kits[o.c]===2||S.kits[o.c]===3))?'#07142c':'#fff';
   el.classList.remove('on');void el.offsetWidth;el.classList.toggle('long',!!o.g);el.classList.add('on');
   if(o.m)sfx('moment');
@@ -1932,7 +1968,7 @@ function renderLog(){const box=$('#plays');if(!box)return;const on=S.running&&$(
   const mt=myLogTeam();$('#plays-mine').hidden=mt<0;
   const all=S.log||[],L=(PL.mine&&mt>=0?all.filter(e=>e.c===mt):all).slice(0,PL.more?6:3),ul=$('#plays-list'),sig=JSON.stringify(L)+PL.more+PL.mine;if(ul.dataset.sig===sig)return;ul.dataset.sig=sig;ul.innerHTML='';
   if(!L.length){const li=document.createElement('li');li.className='empty';li.textContent=PL.mine?'None of your plays yet.':'No plays yet.';ul.appendChild(li);return;}
-  L.forEach((e,k)=>{const li=document.createElement('li');if(k===0)li.className='new';const col=e.c>=0&&S.kits?KITS[S.kits[e.c]].ui:'rgba(255,255,255,.4)';li.style.setProperty('--pc',col);
+  L.forEach((e,k)=>{const li=document.createElement('li');if(k===0)li.className='new';const col=e.c>=0&&S.kits?kitOf(e.c).ui:'rgba(255,255,255,.4)';li.style.setProperty('--pc',col);
     const b=document.createElement('b');b.textContent=e.t;const sm=document.createElement('small');sm.textContent=e.s;li.appendChild(b);li.appendChild(sm);ul.appendChild(li);});}
 function commit(){if(!sim.running)gkReturn();logPlay();enforceBoxes();S.seq++;onState();if(S.boxNote){const t=S.boxNote;S.boxNote='';setTimeout(()=>flashSub(t),0);}if(S.mode==='online')net.sendState();}
 function onState(){
@@ -2073,7 +2109,7 @@ const hairM=[0x2b1d14,0x5a3a1e,0x111111,0xc9a35a,0x7a4a20].map(c=>std(c,0.8));
 const teamM=[0,1].map(()=>({shirt:std(0xffffff,0.45),shorts:std(0xffffff,0.5),socks:std(0xffffff,0.5),insert:std(0xffffff,0.3),base:std(0x161616,0.3),gk:std(0xffffff,0.45)}));
 const aimMats=[0,1].map(()=>new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.92,depthWrite:false}));
 function applyKits(){
-  for(let t=0;t<2;t++){const k=KITS[S.kits[t]],m=teamM[t];m.shirt.color.copy(lin(k.shirt));m.shorts.color.copy(lin(k.shorts));m.socks.color.copy(lin(k.socks));m.insert.color.copy(lin(k.insert));m.gk.color.copy(lin(k.gk));aimMats[t].color.copy(lin(k.ui));}
+  for(let t=0;t<2;t++){const k=kitOf(t),m=teamM[t];m.shirt.color.copy(lin(k.shirt));m.shorts.color.copy(lin(k.shorts));m.socks.color.copy(lin(k.socks));m.insert.color.copy(lin(k.insert));m.gk.color.copy(lin(k.gk));aimMats[t].color.copy(lin(k.ui));}
   updateHud();
 }
 const GEO={
@@ -2103,7 +2139,7 @@ function buildFigure(t,i){
   scene.add(g);return g;
 }
 for(let t=0;t<2;t++)for(let i=0;i<10;i++)figGroups.push(buildFigure(t,i));
-const kFig=[0,1].map(t=>{const g=buildFigure(t,0);g.userData.id=21+t;const M=teamM[t];g.traverse(o=>{if(o.isMesh&&o.material===M.shirt)o.material=M.gk;});g.visible=false;return g;});
+const kFig=[0,1].map(t=>{const g=buildFigure(t,0);g.userData.id=21+t;const M=teamM[t];g.traverse(o=>{if(o.isMesh&&(o.material===M.shirt||o.material===M.shorts||o.material===M.socks))o.material=M.gk;});g.visible=false;return g;});
 const keeperGroups=[0,1].map(t=>{
   const M=teamM[t],g=new THREE.Group();g.userData.keeper=t;const s=t===0?-1:1;
   const base=new THREE.Mesh(new THREE.CylinderGeometry(K_R,K_R,2*K_HALF,18),M.base);base.rotation.x=Math.PI/2;base.scale.set(1,1,0.5);base.castShadow=true;g.add(base);
@@ -2112,8 +2148,8 @@ const keeperGroups=[0,1].map(t=>{
   const torso=new THREE.Mesh(new THREE.CylinderGeometry(0.42,0.36,1.5,10),M.gk);torso.rotation.x=Math.PI/2;torso.position.set(0,1.25,0.35);torso.castShadow=true;g.add(torso);
   const head=new THREE.Mesh(GEO.head,skinM[t]);head.position.set(0,1.35,1.45);head.castShadow=true;g.add(head);
   [0.28,-0.28].forEach(x=>{const a=new THREE.Mesh(GEO.arm,M.gk);a.rotation.x=Math.PI/2;a.position.set(x,1.45,2.0);a.castShadow=true;g.add(a);});
-  const shorts=new THREE.Mesh(new THREE.BoxGeometry(0.75,0.5,0.6),M.shorts);shorts.position.set(0,1.15,-0.6);g.add(shorts);
-  [0.2,-0.2].forEach(x=>{const l=new THREE.Mesh(GEO.leg,M.socks);l.rotation.x=Math.PI/2;l.position.set(x,1.05,-1.5);l.castShadow=true;g.add(l);});
+  const shorts=new THREE.Mesh(new THREE.BoxGeometry(0.75,0.5,0.6),M.gk);shorts.position.set(0,1.15,-0.6);g.add(shorts);
+  [0.2,-0.2].forEach(x=>{const l=new THREE.Mesh(GEO.leg,M.gk);l.rotation.x=Math.PI/2;l.position.set(x,1.05,-1.5);l.castShadow=true;g.add(l);});
   const rodLen=(HX+GDEPTH+9)-K_X;const rod=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.13,rodLen,8),std(0x9aa3a8,0.3,0.8));rod.rotation.z=Math.PI/2;rod.position.set(s*rodLen/2,0.95,0);g.add(rod);
   const knob=new THREE.Mesh(new THREE.CylinderGeometry(0.45,0.45,2.6,12),std(0x1a1a1a,0.5));knob.rotation.z=Math.PI/2;knob.position.set(s*(rodLen+1.3),0.95,0);knob.castShadow=true;g.add(knob);
   scene.add(g);return g;
@@ -2204,13 +2240,16 @@ function drawAim(a){
 // Naming rules: CoP_ objects are gameplay colliders (only their bounding boxes are read), SM_ objects are what you see.
 // Files are in metres; the game works in centimetres.
 const MODEL_INFO={ball:{src:'Built-in'},pin:{src:'Built-in'},table:{src:'Built-in'},field:{src:'Built-in'},trinket:{src:'Built-in'},banner:{src:'Built-in'}};
-const modelVis={ball:null,pin:[],keeper:[],look:null};
+const modelVis={ball:null,pin:[],keeper:[],look:null};let PIN_VIS=null;
 function isolate(node){const c=node.clone(true);c.position.set(0,0,0);c.rotation.set(0,0,0);c.scale.set(1,1,1);c.updateMatrixWorld(true);return c;}
 function copBox(root,name){const o=root.getObjectByName(name);if(!o)return null;const b=new THREE.Box3().setFromObject(o);if(b.isEmpty())return null;const r=v=>Math.round(v*1000)/1000;b.min.multiplyScalar(100);b.max.multiplyScalar(100);['x','y','z'].forEach(k=>{b.min[k]=r(b.min[k]);b.max[k]=r(b.max[k]);});return b;}
 function stripColliders(root){const kill=[];root.traverse(o=>{if(o.name&&o.name.startsWith('CoP_'))kill.push(o);});kill.forEach(o=>o.parent&&o.parent.remove(o));return root;}
 function prepVisual(root,{cast=true,recv=true}={}){root.scale.setScalar(100);root.traverse(o=>{if(o.isMesh){o.castShadow=cast;o.receiveShadow=recv;}});return root;}
-function kitMaterials(root,t,gk){
-  const M=teamM[t],map={Kit_Shirt:gk?M.gk:M.shirt,Kit_Shorts:M.shorts,Kit_Socks:M.socks,Kit_Insert:M.insert,Kit_Keeper:M.gk};
+function kitMaterials(root,t,gk,MM){
+  const M=MM||teamM[t];
+  // keeper gloves only on the standing keeper
+  root.traverse(o=>{if(/_KeeperGlove$/i.test(o.name||''))o.visible=!!gk;if(o.isMesh&&isKitMask(o.material))o.material=kitMaskMaterial(o.material,M,gk);});
+  const map={Kit_Shirt:gk?M.gk:M.shirt,Kit_Shorts:gk?M.gk:M.shorts,Kit_Socks:gk?M.gk:M.socks,Kit_Insert:M.insert,Kit_Keeper:M.gk};
   root.traverse(o=>{if(o.isMesh&&o.material&&map[o.material.name])o.material=map[o.material.name];});return root;
 }
 const half=(b,ax)=>(b.max[ax]-b.min[ax])/2;
@@ -2254,7 +2293,7 @@ function applyPins(scene,label){
   if(P){
     const iso=isolate(P),cb=copBox(iso,'CoP_Pin');if(!cb)throw new Error('pin: no CoP_Pin found');
     RF=clamp(Math.max(half(cb,'x'),half(cb,'z')),0.8,3.5);for(const b of bodies)if(!b.ball)b.r=RF;
-    const vis=prepVisual(stripColliders(iso));
+    const vis=prepVisual(stripColliders(iso));PIN_VIS=vis;
     for(let i=0;i<22;i++){const g=i<20?figGroups[i]:kFig[i-20];if(modelVis.pin[i])g.remove(modelVis.pin[i]);else g.children.slice().forEach(c=>c.visible=false);const v=kitMaterials(vis.clone(true),i<10?0:i<20?1:i-20,i>=20);g.add(v);modelVis.pin[i]=v;}
     note.push(`pin radius ${RF.toFixed(2)} cm`);
   }
@@ -2262,10 +2301,11 @@ function applyPins(scene,label){
     const iso=isolate(K),cb=copBox(iso,'CoP_Keeper');if(!cb)throw new Error('pin: no CoP_Keeper found');
     K_R=clamp(half(cb,'x'),0.5,3);K_HALF=clamp(half(cb,'z')-K_R,0.5,6);
     const vis=prepVisual(stripColliders(iso));
-    for(let t=0;t<2;t++){const g=keeperGroups[t];if(modelVis.keeper[t])g.remove(modelVis.keeper[t]);else g.children.slice().forEach(c=>c.visible=false);const v=kitMaterials(vis.clone(true),t);if(t===1)v.rotation.y=Math.PI;g.add(v);modelVis.keeper[t]=v;}
+    for(let t=0;t<2;t++){const g=keeperGroups[t];if(modelVis.keeper[t])g.remove(modelVis.keeper[t]);else g.children.slice().forEach(c=>c.visible=false);const v=kitMaterials(vis.clone(true),t,true);if(t===1)v.rotation.y=Math.PI;g.add(v);modelVis.keeper[t]=v;}
     note.push(`keeper ${(2*(K_HALF+K_R)).toFixed(1)} cm wide`);
   }
   MODEL_INFO.pin={src:label,note:note.join(' · ')};
+  if(typeof renderKitLook==='function')renderKitLook();
 }
 // ----- table looks: SM_<Part>_###_Name variants are the direct children of the file's root (Table / Field / Trinket / Banner) -----
 const LOOK_PARTS=['field','table','trinket','banner'];
@@ -2336,11 +2376,36 @@ function resetModel(kind){
   MODEL_INFO[kind]={src:'Built-in'};renderModels();
 }
 const APPLY={ball:applyBall,pin:applyPins,table:applyTable,field:applyLookPart('field'),trinket:applyLookPart('trinket'),banner:applyLookPart('banner')};
+// three r128 names textures only from the texture entry; Blender names the image, so copy that over
+function nameTextures(g){const P=g&&g.parser;if(!P||!P.associations)return;g.scene.traverse(o=>{const ms=o.material?(Array.isArray(o.material)?o.material:[o.material]):[];ms.forEach(m=>{['map'].forEach(k=>{const t=m[k];if(!t||t.name)return;const a=P.associations.get(t);if(a&&a.type==='textures'){const td=P.json.textures[a.index],im=td&&P.json.images&&P.json.images[td.source];if(im&&im.name)t.name=im.name;}});});});}
+// Colour ID map: R shirt, G shorts, B socks. Painted areas take the kit colour over the colour texture;
+// black areas keep the texture as it is. The map is models/<colour texture name with _Color -> _ID>.png
+// (or the file named in the material's 'idmap' custom property).
+const ID_MAPS={};
+function idMapFor(mat){const nm=(mat.userData&&mat.userData.idmap)||(mat.map&&mat.map.name?mat.map.name.replace(/_Color$/i,'')+'_ID.png':'');if(!nm)return null;
+  const file=/\.(png|jpe?g|webp)$/i.test(nm)?nm:nm+'.png';
+  if(!(file in ID_MAPS)){const e={tex:null,users:[]};ID_MAPS[file]=e;new THREE.TextureLoader().load('models/'+file,t=>{t.flipY=false;e.tex=t;e.users.forEach(u=>{u.uIdMap.value=t;u.uHasId.value=1;});},undefined,()=>{e.failed=true;});}
+  return ID_MAPS[file];}
+const kitMatCache=new Map();
+function kitMaskMaterial(src,M,gk){
+  const key=src.uuid+'|'+M.shirt.uuid+'|'+(gk?1:0);if(kitMatCache.has(key))return kitMatCache.get(key);
+  const m=src.clone(),u={uIdMap:{value:null},uHasId:{value:0},uShirt:{value:(gk?M.gk:M.shirt).color},uShorts:{value:(gk?M.gk:M.shorts).color},uSocks:{value:(gk?M.gk:M.socks).color}};
+  const e=idMapFor(src);if(e){e.users.push(u);if(e.tex){u.uIdMap.value=e.tex;u.uHasId.value=1;}}
+  m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,u);
+    sh.fragmentShader='uniform sampler2D uIdMap;uniform float uHasId;uniform vec3 uShirt;uniform vec3 uShorts;uniform vec3 uSocks;\n'+sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+  #ifdef USE_MAP
+  vec3 idm=uHasId>0.5?texture2D(uIdMap,vUv).rgb:vec3(smoothstep(0.45,0.7,min(min(diffuseColor.r,diffuseColor.g),diffuseColor.b)),0.,0.);
+  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*uShirt,idm.r);
+  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*uShorts,idm.g);
+  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*uSocks,idm.b);
+  #endif`);};
+  m.customProgramCacheKey=()=>'kitmask';kitMatCache.set(key,m);return m;}
+const isKitMask=m=>!!(m&&m.map&&((m.userData&&(m.userData.idmap||m.userData.kitmask))||/_Player/i.test(m.name||'')));
 function loadModel(kind,urlOrBuffer,label){
   return new Promise(res=>{
     if(!THREE.GLTFLoader){MODEL_INFO[kind]={src:'Built-in',err:'The model loader could not be downloaded.'};renderModels();return res(false);}
     const L=new THREE.GLTFLoader();
-    const ok=g=>{try{APPLY[kind](g.scene,label);if(!S.running)formation(0);renderModels();res(true);}catch(e){MODEL_INFO[kind]=Object.assign(MODEL_INFO[kind]||{},{err:String(e.message||e)});renderModels();res(false);}};
+    const ok=g=>{try{nameTextures(g);APPLY[kind](g.scene,label);if(!S.running)formation(0);renderModels();res(true);}catch(e){MODEL_INFO[kind]=Object.assign(MODEL_INFO[kind]||{},{err:String(e.message||e)});renderModels();res(false);}};
     const fail=e=>{MODEL_INFO[kind]=Object.assign(MODEL_INFO[kind]||{src:'Built-in'},{err:typeof urlOrBuffer==='string'?null:'This file could not be read as a GLB.'});renderModels();res(false);};
     if(typeof urlOrBuffer==='string')L.load(urlOrBuffer,ok,undefined,fail);else L.parse(urlOrBuffer,'',ok,fail);
   });
@@ -2945,7 +3010,7 @@ let lastClockTxt='';
 function myMomentTeam(){if(S.mode==='practice'||S.mode==='tutorial')return 0;if(S.mode==='online')return net.myTeam;if(S.mode==='cpu')return 1-cpuTeam;return S.active;}
 function updateHud(){renderLog();
   lastClockTxt=fmtClock(S.clock);$('#clock').textContent=lastClockTxt;
-  for(let t=0;t<2;t++){$('#ab'+t).textContent=AB(t);$('#k'+t).style.background=KITS[S.kits[t]].ui;$('#s'+t).textContent=S.score[t];$('#sbt'+t).classList.toggle('poss',S.running&&S.poss===t);
+  for(let t=0;t<2;t++){$('#ab'+t).textContent=AB(t);$('#k'+t).style.background=kitOf(t).ui;$('#s'+t).textContent=S.score[t];$('#sbt'+t).classList.toggle('poss',S.running&&S.poss===t);
     $('#bar'+t).style.width=(S.bar[t]/BAR_MAX*100)+'%';$('#mb'+t).classList.toggle('full',S.bar[t]>=BAR_MAX);}
   $('#half').textContent=S.golden?'Golden goal':S.timeUp?'Last turn':S.half===1?'1st half':'2nd half';
   const lockTxt=(S.phase==='attack'&&S.lastFigCount>=3)?' · figure resting':'';
@@ -2966,7 +3031,7 @@ function updateHud(){renderLog();
     else if(S.phase==='defend'){t=mine?(S.mode==='local'?`${A}: block or skip`:'Block or skip'):`${A} may block`;s=mine?'Do not touch the ball. Drag your keeper too.':'';}
     else if(S.phase==='goal')t='Goal';else if(S.phase==='break')t='Half-time';else if(S.phase==='end')t='Full-time';
     if(ptr.on&&ptr.mode==='pull'&&mine)s=lastInput==='touch'?'Tap with a second finger to cancel.':'Right-click or Esc to cancel.';
-    $('#ptitle').textContent=t;$('#psub').textContent=s;$('#ptitle').style.borderLeftColor=KITS[S.kits[S.active]].ui;
+    $('#ptitle').textContent=t;$('#psub').textContent=s;$('#ptitle').style.borderLeftColor=kitOf(S.active).ui;
   }
   $('#btn-skip').hidden=!(localTurn()&&S.phase==='defend');
   {const gs=localTurn()?gkState(S.active):null;$('#btn-gk').hidden=!gs;if(gs)$('#gk-lbl').textContent=gs.label;}
@@ -3226,12 +3291,15 @@ function subStep(d){const pn=document.querySelector('#hub [data-panel]:not([hidd
 function stepTab(d){const paused=$('#hub').classList.contains('paused-match'),list=TABS.filter(t=>!(paused&&PAUSE_HIDE.includes(t)));let i=list.indexOf(hubTab);if(i<0)i=0;setTab(list[(i+d+list.length)%list.length]);}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
 function setMenuMode(m){menuMode=m;document.querySelectorAll('.tile').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));$('#online-panel').hidden=m!=='online';updateStartBtn();if(hubTab==='squad')renderSquad();}
+function kitSwatch(b,k){b.style.background='none';b.innerHTML='';[['shirt',50],['shorts',30],['socks',20]].forEach(([p,h])=>{const i=document.createElement('i');i.className='kst';i.style.height=h+'%';i.style.background=typeof k[p]==='number'?hexStr(k[p]):k[p];b.appendChild(i);});}
 function renderKits(){
-  for(let t=0;t<2;t++){const row=$('#kit'+t);row.innerHTML='';
-    KITS.forEach((k,i)=>{const b=document.createElement('button');b.className='sw';b.type='button';b.title=k.name;b.style.background=k.ui;
-      const s=document.createElement('i');s.style.background='#'+k.shorts.toString(16).padStart(6,'0');b.appendChild(s);
-      b.setAttribute('aria-pressed',String(kitSel[t]===i));b.setAttribute('aria-label',(t?'Away':'Home')+' kit '+k.name);b.disabled=kitSel[1-t]===i;
-      b.onclick=()=>{kitSel[t]=i;mySquads[t].kit=i;saveSquads();renderKits();if(!S.running){S.kits=kitSel.slice();applyKits();}if(hubTab==='squad')renderSquad();};row.appendChild(b);});}
+  for(let t=0;t<2;t++){const row=$('#kit'+t);row.innerHTML='';const q=mySquads[t];
+    if(q.look){const b=document.createElement('button');b.className='sw my';b.type='button';b.title='My kit (Customization > Kit look)';const L=q.look;
+      kitSwatch(b,{shirt:KIT_COLORS[L.s][1],shorts:KIT_COLORS[L.p][1],socks:KIT_COLORS[L.o][1]});b.setAttribute('aria-pressed',String(!!q.useLook));b.setAttribute('aria-label',(t?'Away':'Home')+' kit: my kit');
+      b.onclick=()=>{q.useLook=true;saveSquads();if(!S.running)applyKits();renderKits();};row.appendChild(b);}
+    KITS.forEach((k,i)=>{const b=document.createElement('button');b.className='sw';b.type='button';b.title=k.name;kitSwatch(b,k);
+      b.setAttribute('aria-pressed',String(!q.useLook&&kitSel[t]===i));b.setAttribute('aria-label',(t?'Away':'Home')+' kit '+k.name);b.disabled=!mySquads[1-t].useLook&&kitSel[1-t]===i;
+      b.onclick=()=>{kitSel[t]=i;mySquads[t].kit=i;q.useLook=false;saveSquads();renderKits();if(!S.running){S.kits=kitSel.slice();applyKits();}if(hubTab==='squad')renderSquad();};row.appendChild(b);});}
 }
 function updateStartBtn(){
   const b=$('#btn-start'),running=S.running&&S.phase!=='end';
@@ -3507,6 +3575,7 @@ function previewObject(id){
 function sizePreview(){const cv=$('#ball-prev'),w=cv.clientWidth||300,h=cv.clientHeight||300;prevR.setSize(w,h,false);prevCam.aspect=w/h;prevCam.updateProjectionMatrix();}
 function makeThumbs(){
   if(!initPreview())return;
+  if(prevGround)prevGround.visible=false;setTimeout(()=>{if(prevGround)prevGround.visible=true;},0);
   const cv=$('#ball-prev'),keep=[cv.width,cv.height];prevR.setSize(180,180,false);prevCam.aspect=1;prevCam.updateProjectionMatrix();prevCam.position.set(0,0.6,5.2);prevCam.lookAt(0,0,0);
   (BALL.variants.length?BALL.variants:[{id:'',name:'Classic'}]).forEach(v=>{const o=previewObject(v.id);o.rotation.set(0.25,0.7,0);prevR.render(prevScene,prevCam);thumbs[v.id]=cv.toDataURL('image/png');});
   sizePreview();
@@ -3517,6 +3586,7 @@ function custTick(){
   if(!on||!prevR){custLoop=false;return;}
   if(!prevSpin.drag){prevSpin.v*=0.95;prevSpin.a+=0.008+prevSpin.v*0.002;}
   if(prevObj){prevObj.rotation.y=prevSpin.a;prevObj.rotation.x=0.22;}
+  prevGround=groundUnder(prevScene,prevGround,120/RB,-0.97);GROUND_U.uTime.value=performance.now()/1000; // TEST-GRASS
   prevCam.position.set(0,0.6,7.2);prevCam.lookAt(0,0.25,0);
   prevR.render(prevScene,prevCam);requestAnimationFrame(custTick);
 }
@@ -3552,8 +3622,66 @@ $('#btn-equip').addEventListener('click',equipBall);
 /* ================= customization: table looks ================= */
 let tR=null,tScene=null,tCam=null,tObj=null,tSpin={a:-0.5,v:0,drag:false,x:0},tThumbs={},tLoop=false;
 function setCustSec(sec){custSec=sec;document.querySelectorAll('.cnav[data-sec]').forEach(b=>b.setAttribute('aria-current',String(b.dataset.sec===sec)));
-  $('#cust-ball').hidden=sec!=='ball';$('#cust-table').hidden=sec!=='table';if(sec==='ball')renderCustom();else renderLook();}
+  $('#cust-ball').hidden=sec!=='ball';$('#cust-table').hidden=sec!=='table';$('#cust-kit').hidden=sec!=='kit';if(sec==='ball')renderCustom();else if(sec==='kit')renderKitLook();else renderLook();}
 document.querySelectorAll('.cnav[data-sec]').forEach(b=>b.addEventListener('click',()=>setCustSec(b.dataset.sec)));
+/* ---------- kit look editor ---------- */
+let kitView='player',kitTeam=0,kR=null,kScene=null,kCam=null,kObj=null,kLoop=false;const kSpin={a:0.5,v:0,drag:false,x:0};
+const KIT_PM={shirt:std(0xffffff,0.45),shorts:std(0xffffff,0.5),socks:std(0xffffff,0.5),insert:std(0xffffff,0.3),base:std(0x161616,0.3),gk:std(0xffffff,0.45)};
+function lookOf(q,t){return q.look||(()=>{const k=KITS[kitSel[t]]||KITS[t];const near=(hex,pal)=>{let b=0,bd=1e9;pal.forEach(([n,c],i)=>{const d=Math.abs((c>>16)-(hex>>16))+Math.abs(((c>>8)&255)-((hex>>8)&255))+Math.abs((c&255)-(hex&255));if(d<bd){bd=d;b=i;}});return b;};
+  return{s:near(k.shirt,KIT_COLORS),p:near(k.shorts,KIT_COLORS),o:near(k.socks,KIT_COLORS),g:near(k.gk,GK_COLORS)};})();}
+function initKitPreview(){if(kR)return true;try{const cv=$('#kit-prev');kR=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+  kR.outputEncoding=THREE.sRGBEncoding;kR.toneMapping=THREE.ACESFilmicToneMapping;kR.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  kScene=new THREE.Scene();kScene.add(new THREE.HemisphereLight(0xe8f0ff,0x1a2440,0.9));const k=new THREE.DirectionalLight(0xfff1dc,1.5);k.position.set(-3,6,4);kScene.add(k);const r=new THREE.DirectionalLight(0x9a7cff,0.6);r.position.set(4,2,-4);kScene.add(r);
+  kCam=new THREE.PerspectiveCamera(28,1,0.05,200);
+  cv.addEventListener('pointerdown',e=>{kSpin.drag=true;kSpin.x=e.clientX;try{cv.setPointerCapture(e.pointerId);}catch(_){}});
+  cv.addEventListener('pointermove',e=>{if(!kSpin.drag)return;const dx=e.clientX-kSpin.x;kSpin.x=e.clientX;kSpin.a+=dx*0.01;kSpin.v=dx*0.5;});
+  const up=()=>{kSpin.drag=false;};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);return true;}catch(e){kR=null;return false;}}
+function kitPreviewObj(){const g=new THREE.Group(),only=kitView==='keeper';
+  if(PIN_VIS){g.add(kitMaterials(PIN_VIS.clone(true),0,only,KIT_PM));}
+  else{for(const gk of [only]){const f=buildFigure(0,0);scene.remove(f);f.traverse(o=>{if(!o.isMesh)return;const M=teamM[0];o.material=o.material===M.shirt?(gk?KIT_PM.gk:KIT_PM.shirt):o.material===M.shorts?(gk?KIT_PM.gk:KIT_PM.shorts):o.material===M.socks?(gk?KIT_PM.gk:KIT_PM.socks):o.material===M.insert?KIT_PM.insert:o.material===M.base?KIT_PM.base:o.material;});g.add(f);}}
+  return g;}
+function kitTick(){if($('#hub').hidden||hubTab!=='custom'||custSec!=='kit'||!kR){kLoop=false;return;}
+  if(!kSpin.drag){kSpin.v*=0.94;kSpin.a+=0.0022+kSpin.v*0.002;}if(kObj)kObj.rotation.y=kSpin.a;kGround=groundUnder(kScene,kGround,170,0);GROUND_U.uTime.value=performance.now()/1000; // TEST-GRASS
+  
+  kCam.position.set(0,3.6,10.5);kCam.lookAt(0,1.9,0);kR.render(kScene,kCam);requestAnimationFrame(kitTick);}
+function renderKitLook(){
+  if(hubTab!=='custom'||custSec!=='kit')return;
+  const q=mySquads[kitTeam],L=lookOf(q,kitTeam);
+  document.querySelectorAll('#kit-team .chip').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.team===kitTeam)));
+  $('#kit-use').checked=!!q.useLook;$('#kit-team-l').textContent=kitTeam?'Away squad':'Home squad';$('#kit-name').textContent=q.name||KITS[kitSel[kitTeam]].name;
+  const row=(id,pal,key)=>{const el=$(id);el.innerHTML='';pal.forEach(([n,c],i)=>{const b=document.createElement('button');b.type='button';b.className='kc';b.title=n;b.setAttribute('aria-label',n);b.style.background=hexStr(c);b.setAttribute('aria-pressed',String(L[key]===i));
+    b.onclick=()=>{q.look=Object.assign({},lookOf(q,kitTeam),{[key]:i});q.useLook=true;saveSquads();if(!S.running){applyKits();}renderKits();renderKitLook();sfx('tock',20);};el.appendChild(b);});};
+  row('#kp-s',KIT_COLORS,'s');row('#kp-p',KIT_COLORS,'p');row('#kp-o',KIT_COLORS,'o');row('#kp-g',GK_COLORS,'g');
+  const lc=(m,c)=>m.color.copy(new THREE.Color(c).convertSRGBToLinear());lc(KIT_PM.shirt,KIT_COLORS[L.s][1]);lc(KIT_PM.insert,KIT_COLORS[L.s][1]);lc(KIT_PM.shorts,KIT_COLORS[L.p][1]);lc(KIT_PM.socks,KIT_COLORS[L.o][1]);lc(KIT_PM.gk,GK_COLORS[L.g][1]);
+  if(initKitPreview()){const cv=$('#kit-prev'),w=cv.clientWidth||400,h=cv.clientHeight||400;kR.setSize(w,h,false);kCam.aspect=w/h;kCam.updateProjectionMatrix();
+    document.querySelectorAll('#cust-kit .kv').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.kv===kitView)));
+    if(!kObj||kObj.userData.pin!==PIN_VIS||kObj.userData.view!==kitView){if(kObj)kScene.remove(kObj);kObj=kitPreviewObj();kObj.userData.pin=PIN_VIS;kObj.userData.view=kitView;kScene.add(kObj);}
+    if(!kLoop){kLoop=true;requestAnimationFrame(kitTick);}}
+}
+document.querySelectorAll('#cust-kit .kv').forEach(b=>b.addEventListener('click',()=>{kitView=b.dataset.kv;renderKitLook();}));
+document.querySelectorAll('#kit-team .chip').forEach(b=>b.addEventListener('click',()=>{kitTeam=+b.dataset.team;renderKitLook();}));
+$('#kit-use').addEventListener('change',e=>{const q=mySquads[kitTeam];if(!q.look)q.look=lookOf(q,kitTeam);q.useLook=e.target.checked;saveSquads();if(!S.running)applyKits();renderKits();renderKitLook();});
+/* ---------- TEST: grass turf under the ball and kit previews (delete this block and the two lines tagged TEST-GRASS to remove) ---------- */
+let GROUND_VIS=null,prevGround=null,kGround=null;
+// preview grass shading: blades bend away from whatever stands in the middle, sway a little at the tip,
+// and are lit the same on both sides (no dark back faces)
+const GROUND_U={uTime:{value:0},uR:{value:0.0095}};
+function groundMat(m,blades){m=m.clone();m.onBeforeCompile=sh=>{sh.uniforms.uTime=GROUND_U.uTime;sh.uniforms.uR=GROUND_U.uR;
+  if(blades)sh.vertexShader='uniform float uTime;uniform float uR;\n'+sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+  float gh=max(transformed.y,0.0);vec2 gp=transformed.xz;float gd=length(gp);
+  float near=1.0-smoothstep(uR*0.8,uR*1.5,gd);
+  vec2 gdir=gd>1e-6?gp/gd:vec2(1.0,0.0);
+  transformed.xz+=gdir*gh*0.55*near;
+  transformed.y-=gh*0.12*near;
+  transformed.x+=sin(uTime*0.8+gp.x*420.0+gp.y*310.0)*gh*gh*40.0;
+  transformed.z+=cos(uTime*0.6+gp.y*380.0)*gh*gh*22.0;`);
+  sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_begin>',`#include <normal_fragment_begin>
+  normal=normalize(mix(normalize((viewMatrix*vec4(0.0,1.0,0.0,0.0)).xyz),vec3(0.0,0.0,1.0),0.55));`);};
+  m.customProgramCacheKey=()=>'ground'+(blades?'b':'p');return m;}
+(function(){if(!THREE.GLTFLoader)return;new THREE.GLTFLoader().load('models/ground.glb',g=>{const r=g.scene.getObjectByName('Ground')||g.scene;stripColliders(r);
+  r.traverse(o=>{if(o.isMesh){o.receiveShadow=true;o.material=groundMat(o.material,!/Turf/i.test(o.name));}});GROUND_VIS=r;},undefined,()=>{});})();
+function groundUnder(scn,cur,scale,y){if(!GROUND_VIS||cur)return cur;const o=GROUND_VIS.clone(true);o.position.set(0,y,0);o.scale.setScalar(scale);scn.add(o);return o;}
+/* ---------- end TEST ---------- */
 function initTablePreview(){
   if(tR)return true;
   try{
