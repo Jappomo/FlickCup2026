@@ -26,6 +26,7 @@
     "models/field.glb": "Art/Field/Scene_Field_Collection.blend",
     "models/table.glb": "Art/Table/Scene_Table_Collection.blend",
     "models/props.glb": "Art/Props/Scene_Props_Collection.blend",
-    "models/banner.glb": "Art/Banner/Scene_Banner_Collection.blend"
+    "models/banner.glb": "Art/Banner/Scene_Banner_Collection.blend",
+    "models/emblem.glb": "Art/Emblems/SourceData/emblem.glb"
   }
 }

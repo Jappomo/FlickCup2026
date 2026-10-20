@@ -1,0 +1,2107 @@
+{
+  "version": 1,
+  "clash": 120,
+  "tiers": {
+    "1": {
+      "name": "Amateur",
+      "aim": 1.8,
+      "power": 1.5
+    },
+    "2": {
+      "name": "Pro",
+      "aim": 1.2,
+      "power": 1.1
+    },
+    "3": {
+      "name": "Elite",
+      "aim": 0.75,
+      "power": 0.85
+    }
+  },
+  "playstyles": {
+    "fortress": {
+      "name": "Fortress",
+      "desc": "Deep and patient. Short safe passes, sits back and blocks close to goal.",
+      "pass": 22,
+      "spread": 12,
+      "aim": 1,
+      "power": 0.06,
+      "press": 14,
+      "reach": 30,
+      "sit": 0.5,
+      "moment": 1
+    },
+    "counter": {
+      "name": "Counter",
+      "desc": "Sits back, then breaks long and fast when it wins the ball.",
+      "pass": 40,
+      "spread": 14,
+      "aim": 1,
+      "power": 0.08,
+      "press": 11,
+      "reach": 34,
+      "sit": 0.35,
+      "moment": 1
+    },
+    "tiki": {
+      "name": "Tiki-Taka",
+      "desc": "Short passes along the floor, keeps the ball and waits for the gap.",
+      "pass": 16,
+      "spread": 10,
+      "aim": 0.9,
+      "power": 0.05,
+      "press": 9,
+      "reach": 38,
+      "sit": 0.1,
+      "moment": 1
+    },
+    "longball": {
+      "name": "Long Ball",
+      "desc": "Big flicks forward to the strikers, every time.",
+      "pass": 48,
+      "spread": 18,
+      "aim": 1.1,
+      "power": 0.12,
+      "press": 9,
+      "reach": 38,
+      "sit": 0.15,
+      "moment": 1
+    },
+    "press": {
+      "name": "Press",
+      "desc": "Aggressive high line: chases the ball everywhere and blocks tight.",
+      "pass": 28,
+      "spread": 14,
+      "aim": 1,
+      "power": 0.08,
+      "press": 5,
+      "reach": 55,
+      "sit": 0,
+      "moment": 1
+    },
+    "wildcard": {
+      "name": "Wildcard",
+      "desc": "Unpredictable: wild angles, mixed power, Moments at odd times.",
+      "pass": 30,
+      "spread": 26,
+      "aim": 1.4,
+      "power": 0.2,
+      "press": 9,
+      "reach": 42,
+      "sit": 0.2,
+      "moment": 0.6
+    }
+  },
+  "clubs": [
+    {
+      "id": "club001",
+      "name": "Millbrook Rovers",
+      "short": "MIL",
+      "emblem": "001",
+      "stars": 1,
+      "playstyle": "longball",
+      "formation": "4-3-3",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "att",
+      "moment": "bicycle",
+      "corner": "agg",
+      "dcorner": "bal",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#1f8a3e",
+          "shorts": "#f2f0ea",
+          "socks": "#1f8a3e"
+        },
+        "away": {
+          "shirt": "#f2f0ea",
+          "shorts": "#1f8a3e",
+          "socks": "#f2f0ea"
+        },
+        "keeper": "#e7b923",
+        "keeperAway": "#161618"
+      },
+      "players": [
+        {
+          "name": "Abbott",
+          "st": [
+            0,
+            2,
+            0,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Balogun",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Carver",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Delgado",
+          "st": [
+            0,
+            2,
+            0,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Ferreira",
+          "st": [
+            1,
+            0,
+            1,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Granger",
+          "st": [
+            1,
+            0,
+            1,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Juarez",
+          "st": [
+            1,
+            0,
+            1,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Lowe",
+          "st": [
+            1,
+            0,
+            1,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Murata",
+          "st": [
+            3,
+            1,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Osei",
+          "st": [
+            3,
+            1,
+            0,
+            1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club002",
+      "name": "Harbourside Athletic",
+      "short": "HAR",
+      "emblem": "002",
+      "stars": 1,
+      "playstyle": "counter",
+      "formation": "5-3-2",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "def",
+      "moment": "thread",
+      "corner": "bal",
+      "dcorner": "agg",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#1d2f6b",
+          "shorts": "#6fb7ea",
+          "socks": "#1d2f6b"
+        },
+        "away": {
+          "shirt": "#6fb7ea",
+          "shorts": "#1d2f6b",
+          "socks": "#6fb7ea"
+        },
+        "keeper": "#ff7a1a",
+        "keeperAway": "#39ff6a"
+      },
+      "players": [
+        {
+          "name": "Eklund",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Foster",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Hayashi",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Kimura",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Mahler",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Novak",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Paxton",
+          "st": [
+            0,
+            2,
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Ruiz",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Tabor",
+          "st": [
+            3,
+            0,
+            0,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Vega",
+          "st": [
+            3,
+            0,
+            0,
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club003",
+      "name": "Saltmarsh Town",
+      "short": "SAL",
+      "emblem": "003",
+      "stars": 1,
+      "playstyle": "fortress",
+      "formation": "5-3-2",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "def",
+      "moment": "moon",
+      "corner": "def",
+      "dcorner": "def",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#7b1e3a",
+          "shorts": "#e7b923",
+          "socks": "#7b1e3a"
+        },
+        "away": {
+          "shirt": "#e7b923",
+          "shorts": "#7b1e3a",
+          "socks": "#e7b923"
+        },
+        "keeper": "#161618",
+        "keeperAway": "#22c8ff"
+      },
+      "players": [
+        {
+          "name": "Larsen",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Merrick",
+          "st": [
+            0,
+            3,
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Okoro",
+          "st": [
+            0,
+            3,
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Quist",
+          "st": [
+            0,
+            3,
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Sayer",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Toro",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Ward",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Achebe",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Barrow",
+          "st": [
+            3,
+            0,
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "name": "Castillo",
+          "st": [
+            3,
+            0,
+            0,
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club004",
+      "name": "Copperfield Wanderers",
+      "short": "COP",
+      "emblem": "004",
+      "stars": 1,
+      "playstyle": "wildcard",
+      "formation": "4-3-3",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "mid",
+      "moment": "maradona",
+      "corner": "agg",
+      "dcorner": "bal",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#c8642a",
+          "shorts": "#15151a",
+          "socks": "#15151a"
+        },
+        "away": {
+          "shirt": "#15151a",
+          "shorts": "#c8642a",
+          "socks": "#c8642a"
+        },
+        "keeper": "#22c8ff",
+        "keeperAway": "#e8ff2a"
+      },
+      "players": [
+        {
+          "name": "Rinaldi",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Soto",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Urquhart",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Yates",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Alcott",
+          "st": [
+            1,
+            0,
+            1,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "Birch",
+          "st": [
+            0,
+            2,
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Corrigan",
+          "st": [
+            1,
+            0,
+            1,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "Ellery",
+          "st": [
+            1,
+            0,
+            1,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Garrido",
+          "st": [
+            2,
+            0,
+            0,
+            0,
+            3
+          ]
+        },
+        {
+          "name": "Hendry",
+          "st": [
+            1,
+            0,
+            1,
+            2,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club005",
+      "name": "Lantern Lane",
+      "short": "LAN",
+      "emblem": "005",
+      "stars": 1,
+      "playstyle": "tiki",
+      "formation": "4-2-3-1",
+      "kickoff": [
+        9,
+        7
+      ],
+      "path": "mid",
+      "moment": "thread",
+      "corner": "bal",
+      "dcorner": "bal",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#e7b923",
+          "shorts": "#2459c4",
+          "socks": "#e7b923"
+        },
+        "away": {
+          "shirt": "#2459c4",
+          "shorts": "#e7b923",
+          "socks": "#2459c4"
+        },
+        "keeper": "#ff3fa8",
+        "keeperAway": "#161618"
+      },
+      "players": [
+        {
+          "name": "Zeller",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Ashdown",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Brodie",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Dalton",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Farrow",
+          "st": [
+            0,
+            1,
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Gomez",
+          "st": [
+            0,
+            1,
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Jansen",
+          "st": [
+            0,
+            0,
+            3,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "Lennox",
+          "st": [
+            1,
+            0,
+            3,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Moreno",
+          "st": [
+            0,
+            0,
+            3,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "Olsen",
+          "st": [
+            2,
+            0,
+            1,
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club006",
+      "name": "Ironbridge United",
+      "short": "IRB",
+      "emblem": "006",
+      "stars": 2,
+      "playstyle": "press",
+      "formation": "4-3-3",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "att",
+      "moment": "finesse",
+      "corner": "agg",
+      "dcorner": "agg",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#b3201c",
+          "shorts": "#1b1b1d",
+          "socks": "#b3201c"
+        },
+        "away": {
+          "shirt": "#8a8f98",
+          "shorts": "#1b1b1d",
+          "socks": "#8a8f98"
+        },
+        "keeper": "#39ff6a",
+        "keeperAway": "#ff7a1a"
+      },
+      "players": [
+        {
+          "name": "Drummond",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Flores",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Halvorsen",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Kaya",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Madsen",
+          "st": [
+            0,
+            1,
+            1,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Navarro",
+          "st": [
+            0,
+            2,
+            0,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Palmer",
+          "st": [
+            0,
+            1,
+            1,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Rook",
+          "st": [
+            1,
+            0,
+            1,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Stroud",
+          "st": [
+            3,
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "Vance",
+          "st": [
+            1,
+            0,
+            1,
+            2,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club007",
+      "name": "Bluewater Albion",
+      "short": "BWA",
+      "emblem": "007",
+      "stars": 2,
+      "playstyle": "tiki",
+      "formation": "4-3-3",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "mid",
+      "moment": "thread",
+      "corner": "bal",
+      "dcorner": "bal",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#6fb7ea",
+          "shorts": "#f2f0ea",
+          "socks": "#6fb7ea"
+        },
+        "away": {
+          "shirt": "#f2f0ea",
+          "shorts": "#1d2f6b",
+          "socks": "#f2f0ea"
+        },
+        "keeper": "#e8ff2a",
+        "keeperAway": "#ff3fa8"
+      },
+      "players": [
+        {
+          "name": "Koval",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Mbeki",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Ochoa",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Petit",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Salgado",
+          "st": [
+            0,
+            0,
+            3,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "Teague",
+          "st": [
+            0,
+            1,
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Wade",
+          "st": [
+            0,
+            0,
+            3,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "Zubiri",
+          "st": [
+            1,
+            0,
+            1,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Bakker",
+          "st": [
+            2,
+            0,
+            1,
+            0,
+            2
+          ]
+        },
+        {
+          "name": "Calloway",
+          "st": [
+            1,
+            0,
+            1,
+            2,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club008",
+      "name": "Northgate Harriers",
+      "short": "NGH",
+      "emblem": "008",
+      "stars": 2,
+      "playstyle": "counter",
+      "formation": "4-4-2",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "def",
+      "moment": "thread",
+      "corner": "bal",
+      "dcorner": "agg",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#f2f0ea",
+          "shorts": "#1b1b1d",
+          "socks": "#f2f0ea"
+        },
+        "away": {
+          "shirt": "#1b1b1d",
+          "shorts": "#f2f0ea",
+          "socks": "#1b1b1d"
+        },
+        "keeper": "#ff7a1a",
+        "keeperAway": "#22c8ff"
+      },
+      "players": [
+        {
+          "name": "Ramos",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Shaw",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Ueda",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Whitlock",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Ahlberg",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Bellamy",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Cole",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Duarte",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Fontaine",
+          "st": [
+            3,
+            0,
+            0,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Harlow",
+          "st": [
+            3,
+            0,
+            0,
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club009",
+      "name": "Valemont Sporting",
+      "short": "VAL",
+      "emblem": "009",
+      "stars": 2,
+      "playstyle": "longball",
+      "formation": "3-5-2",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "att",
+      "moment": "bicycle",
+      "corner": "agg",
+      "dcorner": "bal",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#5b2a9e",
+          "shorts": "#f2f0ea",
+          "socks": "#5b2a9e"
+        },
+        "away": {
+          "shirt": "#f2f0ea",
+          "shorts": "#5b2a9e",
+          "socks": "#f2f0ea"
+        },
+        "keeper": "#39ff6a",
+        "keeperAway": "#161618"
+      },
+      "players": [
+        {
+          "name": "Young",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Arkwright",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Bogdan",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Cruz",
+          "st": [
+            0,
+            2,
+            0,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Esposito",
+          "st": [
+            1,
+            0,
+            1,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Gibbs",
+          "st": [
+            1,
+            0,
+            1,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Hughes",
+          "st": [
+            0,
+            2,
+            0,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Lacroix",
+          "st": [
+            1,
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "Medina",
+          "st": [
+            3,
+            1,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Oduya",
+          "st": [
+            3,
+            1,
+            0,
+            1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club010",
+      "name": "Kestrel City",
+      "short": "KES",
+      "emblem": "010",
+      "stars": 2,
+      "playstyle": "wildcard",
+      "formation": "4-2-3-1",
+      "kickoff": [
+        9,
+        7
+      ],
+      "path": "mid",
+      "moment": "maradona",
+      "corner": "agg",
+      "dcorner": "bal",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#138a8a",
+          "shorts": "#f2f0ea",
+          "socks": "#ec7a1c"
+        },
+        "away": {
+          "shirt": "#ec7a1c",
+          "shorts": "#138a8a",
+          "socks": "#138a8a"
+        },
+        "keeper": "#161618",
+        "keeperAway": "#e8ff2a"
+      },
+      "players": [
+        {
+          "name": "Delgado",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Ferreira",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Granger",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Juarez",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Lowe",
+          "st": [
+            0,
+            2,
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Murata",
+          "st": [
+            0,
+            2,
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Osei",
+          "st": [
+            1,
+            0,
+            1,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "Reyes",
+          "st": [
+            1,
+            0,
+            1,
+            0,
+            3
+          ]
+        },
+        {
+          "name": "Silva",
+          "st": [
+            1,
+            0,
+            1,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "Underhill",
+          "st": [
+            2,
+            0,
+            0,
+            0,
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club011",
+      "name": "Royal Arcadia",
+      "short": "ARC",
+      "emblem": "011",
+      "stars": 3,
+      "playstyle": "tiki",
+      "formation": "4-3-3",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "mid",
+      "moment": "thread",
+      "corner": "bal",
+      "dcorner": "bal",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#14213d",
+          "shorts": "#e7b923",
+          "socks": "#14213d"
+        },
+        "away": {
+          "shirt": "#e7b923",
+          "shorts": "#14213d",
+          "socks": "#e7b923"
+        },
+        "keeper": "#ff3fa8",
+        "keeperAway": "#39ff6a"
+      },
+      "players": [
+        {
+          "name": "Kimura",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Mahler",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Novak",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Paxton",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Ruiz",
+          "st": [
+            0,
+            0,
+            3,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "Tabor",
+          "st": [
+            0,
+            1,
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Vega",
+          "st": [
+            0,
+            0,
+            3,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "Zamora",
+          "st": [
+            1,
+            0,
+            1,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Asante",
+          "st": [
+            2,
+            0,
+            1,
+            0,
+            2
+          ]
+        },
+        {
+          "name": "Brannigan",
+          "st": [
+            1,
+            0,
+            1,
+            2,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club012",
+      "name": "Steelhaven Dynamo",
+      "short": "STD",
+      "emblem": "012",
+      "stars": 3,
+      "playstyle": "press",
+      "formation": "3-5-2",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "att",
+      "moment": "finesse",
+      "corner": "agg",
+      "dcorner": "agg",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#5c6670",
+          "shorts": "#e7b923",
+          "socks": "#5c6670"
+        },
+        "away": {
+          "shirt": "#e7b923",
+          "shorts": "#5c6670",
+          "socks": "#e7b923"
+        },
+        "keeper": "#22c8ff",
+        "keeperAway": "#ff3fa8"
+      },
+      "players": [
+        {
+          "name": "Quist",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Sayer",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Toro",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Ward",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Achebe",
+          "st": [
+            0,
+            1,
+            1,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Barrow",
+          "st": [
+            0,
+            1,
+            1,
+            3,
+            0
+          ]
+        },
+        {
+          "name": "Castillo",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Doherty",
+          "st": [
+            1,
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "Fitch",
+          "st": [
+            3,
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "Haddad",
+          "st": [
+            3,
+            0,
+            0,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club013",
+      "name": "Meridian Olympic",
+      "short": "MER",
+      "emblem": "013",
+      "stars": 3,
+      "playstyle": "fortress",
+      "formation": "5-3-2",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "def",
+      "moment": "moon",
+      "corner": "def",
+      "dcorner": "def",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#1b1b1d",
+          "shorts": "#c9a24a",
+          "socks": "#1b1b1d"
+        },
+        "away": {
+          "shirt": "#c9a24a",
+          "shorts": "#1b1b1d",
+          "socks": "#c9a24a"
+        },
+        "keeper": "#39ff6a",
+        "keeperAway": "#22c8ff"
+      },
+      "players": [
+        {
+          "name": "Yates",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Alcott",
+          "st": [
+            0,
+            3,
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Birch",
+          "st": [
+            0,
+            3,
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Corrigan",
+          "st": [
+            0,
+            3,
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Ellery",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Garrido",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Hendry",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Kirby",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Marlow",
+          "st": [
+            3,
+            0,
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "name": "Nwosu",
+          "st": [
+            3,
+            0,
+            0,
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club014",
+      "name": "Calderon Vale",
+      "short": "CAV",
+      "emblem": "014",
+      "stars": 3,
+      "playstyle": "counter",
+      "formation": "4-2-3-1",
+      "kickoff": [
+        9,
+        7
+      ],
+      "path": "def",
+      "moment": "thread",
+      "corner": "bal",
+      "dcorner": "agg",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#0f5e3a",
+          "shorts": "#1b1b1d",
+          "socks": "#0f5e3a"
+        },
+        "away": {
+          "shirt": "#f2f0ea",
+          "shorts": "#0f5e3a",
+          "socks": "#f2f0ea"
+        },
+        "keeper": "#ff7a1a",
+        "keeperAway": "#e8ff2a"
+      },
+      "players": [
+        {
+          "name": "Dalton",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Farrow",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Gomez",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Jansen",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Lennox",
+          "st": [
+            0,
+            2,
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Moreno",
+          "st": [
+            0,
+            2,
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Olsen",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Radley",
+          "st": [
+            1,
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "Serrano",
+          "st": [
+            0,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "Tully",
+          "st": [
+            3,
+            0,
+            0,
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "club015",
+      "name": "Solano Vipers",
+      "short": "SOV",
+      "emblem": "015",
+      "stars": 3,
+      "playstyle": "wildcard",
+      "formation": "4-4-2",
+      "kickoff": [
+        8,
+        9
+      ],
+      "path": "mid",
+      "moment": "maradona",
+      "corner": "agg",
+      "dcorner": "bal",
+      "locked": false,
+      "kits": {
+        "home": {
+          "shirt": "#c6d93a",
+          "shorts": "#1b1b1d",
+          "socks": "#c6d93a"
+        },
+        "away": {
+          "shirt": "#1b1b1d",
+          "shorts": "#c6d93a",
+          "socks": "#1b1b1d"
+        },
+        "keeper": "#ff3fa8",
+        "keeperAway": "#22c8ff"
+      },
+      "players": [
+        {
+          "name": "Kaya",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Madsen",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Navarro",
+          "st": [
+            0,
+            3,
+            1,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Palmer",
+          "st": [
+            0,
+            2,
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "Rook",
+          "st": [
+            1,
+            0,
+            1,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "Stroud",
+          "st": [
+            1,
+            0,
+            1,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "Vance",
+          "st": [
+            1,
+            0,
+            1,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "Yilmaz",
+          "st": [
+            1,
+            0,
+            1,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "Andrade",
+          "st": [
+            2,
+            0,
+            0,
+            0,
+            3
+          ]
+        },
+        {
+          "name": "Blackwood",
+          "st": [
+            2,
+            0,
+            0,
+            0,
+            3
+          ]
+        }
+      ]
+    }
+  ]
+}
