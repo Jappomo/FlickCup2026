@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "models": {
+    "models/ball.glb": {
+      "Ball_007": {
+        "snapshot": "variations/models_ball.glb/Ball_007.glb",
+        "node": "SM_Ball_007_Negative",
+        "hash": "1fe2c23c428e945d",
+        "kind": "added",
+        "saved": "2026-10-19T21:24:28.184Z",
+        "name": "Negative",
+        "added": "2026-10-19T21:24:28.184Z",
+        "from": "mesh of Ball_001",
+        "textures": {
+          "Mat_Ball_001": {
+            "color": "Tx_Ball_007_Color.png"
+          }
+        },
+        "ref": "Ball_001"
+      }
+    }
+  },
+  "sources": {
+    "models/pin.glb": "Art/Pin/Scene_Pin_Collection.blend",
+    "models/ball.glb": "Art/Ball/Scene_Ball_Collection.blend",
+    "models/field.glb": "Art/Field/Scene_Field_Collection.blend",
+    "models/table.glb": "Art/Table/Scene_Table_Collection.blend",
+    "models/props.glb": "Art/Props/Scene_Props_Collection.blend",
+    "models/banner.glb": "Art/Banner/Scene_Banner_Collection.blend"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "objects": {
+    "Look/SM_Table_001_Classic_Wood/Loc_Banner_04/SM_Banner_001_Flick_Cup": {
+      "p": [
+        0,
+        0,
+        0.046
+      ],
+      "r": [
+        0,
+        0,
+        0
+      ],
+      "s": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Look/SM_Table_001_Classic_Wood/Loc_Banner_03/SM_Banner_001_Flick_Cup": {
+      "p": [
+        0,
+        0,
+        0.045
+      ],
+      "r": [
+        0,
+        0,
+        0
+      ],
+      "s": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Look/SM_Table_001_Classic_Wood/Loc_Banner_01/SM_Banner_001_Flick_Cup": {
+      "p": [
+        0,
+        0,
+        0.048
+      ],
+      "r": [
+        0,
+        0,
+        0
+      ],
+      "s": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Look/SM_Table_001_Classic_Wood/Loc_Banner_02/SM_Banner_001_Flick_Cup": {
+      "p": [
+        0,
+        0,
+        0.045
+      ],
+      "r": [
+        0,
+        0,
+        0
+      ],
+      "s": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "materials": {},
+  "camera": {},
+  "scenes": {}
+}
