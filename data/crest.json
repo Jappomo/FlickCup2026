@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "colors": [
+    {
+      "name": "White",
+      "hex": "#f4f2ec"
+    },
+    {
+      "name": "Black",
+      "hex": "#17161a"
+    },
+    {
+      "name": "Red",
+      "hex": "#c8322a"
+    },
+    {
+      "name": "Claret",
+      "hex": "#7b1e3a"
+    },
+    {
+      "name": "Orange",
+      "hex": "#ec7a1c"
+    },
+    {
+      "name": "Gold",
+      "hex": "#e2b23f"
+    },
+    {
+      "name": "Yellow",
+      "hex": "#f2d33a"
+    },
+    {
+      "name": "Lime",
+      "hex": "#8fd13b"
+    },
+    {
+      "name": "Green",
+      "hex": "#1f8a3e"
+    },
+    {
+      "name": "Teal",
+      "hex": "#138a8a"
+    },
+    {
+      "name": "Sky",
+      "hex": "#6fb7ea"
+    },
+    {
+      "name": "Blue",
+      "hex": "#2459c4"
+    },
+    {
+      "name": "Navy",
+      "hex": "#18264f"
+    },
+    {
+      "name": "Purple",
+      "hex": "#5b2a9e"
+    },
+    {
+      "name": "Pink",
+      "hex": "#e85a9c"
+    },
+    {
+      "name": "Silver",
+      "hex": "#a9b0bb"
+    }
+  ],
+  "gradients": [
+    {
+      "name": "Sunset",
+      "a": "#ffb02e",
+      "b": "#c8322a",
+      "angle": 90
+    },
+    {
+      "name": "Ocean",
+      "a": "#5cf2ea",
+      "b": "#2459c4",
+      "angle": 90
+    },
+    {
+      "name": "Gold",
+      "a": "#fff1b0",
+      "b": "#a87a22",
+      "angle": 135
+    },
+    {
+      "name": "Fire",
+      "a": "#f2d33a",
+      "b": "#c8322a",
+      "angle": 180
+    },
+    {
+      "name": "Forest",
+      "a": "#8fd13b",
+      "b": "#174f2a",
+      "angle": 90
+    },
+    {
+      "name": "Night",
+      "a": "#9a5cff",
+      "b": "#12073f",
+      "angle": 135
+    }
+  ],
+  "start": {
+    "s": 2,
+    "p": 10,
+    "c": 6,
+    "f": 19,
+    "pc": 0,
+    "b": 21,
+    "cc": 1
+  }
+}

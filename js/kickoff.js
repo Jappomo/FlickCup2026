@@ -23,13 +23,13 @@ function koForm(form,k,q){const F=formOf(q||{form});const sh=hexStr(k.shirt),ed=
   return `<svg class="ko-form" viewBox="0 0 80 112" aria-hidden="true"><rect x="2" y="2" width="76" height="108" rx="3" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.28)"/><path d="M2 2 H78 M24 110 V94 H56 V110 M28 2 a12 12 0 0 0 24 0" fill="none" stroke="rgba(255,255,255,.28)"/>`+
     F.pos.map(([x,z])=>`<circle cx="${(40+z/37*33).toFixed(1)}" cy="${(8+(30-x)/90*92).toFixed(1)}" r="4.2" fill="${sh}" stroke="${ed}" stroke-width="1.4"/>`).join('')+`<circle cx="40" cy="104" r="4.2" fill="${hexStr(k.gk)}" stroke="#fff" stroke-width="1.4"/></svg>`;}
 const koStars=n=>`<span class="ko-stars" aria-label="${n} of 3 stars">${[1,2,3].map(i=>`<i class="${i<=n?'on':''}">★</i>`).join('')}</span>`;
-function koCrest(q,k){const ini=(AB0(q)||'YOU').slice(0,3);
+function koCrest(q,k){const cu=typeof crestOf==='function'&&crestOf(q)?crestUrl(crestOf(q),200):'';if(cu)return `<div class="ko-crest mine"><img src="${cu}" alt="" style="width:100%;height:100%;object-fit:contain"></div>`;const ini=(AB0(q)||'YOU').slice(0,3);
   return `<div class="ko-crest mine">${shieldSVG(hexStr(k.shirt),hexStr(kitLum(k.shirt)>0.8?k.shorts:0xffffff))}<b style="color:${kitLum(k.shirt)>0.62?'#15151a':'#fff'}">${koEsc(ini)}</b></div>`;}
 // short name of one of your squads (the same rule as the scoreboard)
 function AB0(q){const w=(q.name||'').replace(/[^A-Za-z0-9 ]/g,'').trim().split(' ').filter(Boolean);if(!w.length)return '';return (w.length>1&&w[0].length<=3?w.map(x=>x[0]).join(''):w[0]).slice(0,3).toUpperCase();}
 const koEsc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function koKitRow(t){const row=document.createElement('div');row.className='kitrow';const q=mySquads[t];
-  if(q.look){const b=document.createElement('button');b.className='sw my';b.type='button';b.title='My kit (Customization > Kit look)';const L=q.look;
+  if(q.look){const b=document.createElement('button');b.className='sw my';b.type='button';b.title='My kit (My Club > Kit look)';const L=q.look;
     kitSwatch(b,{shirt:KIT_COLORS[L.s][1],shorts:KIT_COLORS[L.p][1],socks:KIT_COLORS[L.o][1]});b.setAttribute('aria-pressed',String(!!q.useLook));b.setAttribute('aria-label',(t?'Away':'Home')+' kit: my kit');
     b.onclick=()=>{q.useLook=true;saveSquads();if(!S.running)applyKits();renderKits();koRender();};row.appendChild(b);}
   KITS.forEach((k,i)=>{const b=document.createElement('button');b.className='sw';b.type='button';b.title=k.name;kitSwatch(b,k);
@@ -55,7 +55,7 @@ function koRender(){
   // right: the opponent (or Player 2)
   const op=$('#ko-opp');let html='';
   if(e.guest){const g=mySquads[1],gk=myKit(1);
-    html=koSide('Player 2',koCrest(g,gk),g.name||'Guest club',`<div class="ko-tags">${pathTag(g)}${momTag(g)}</div><p class="ko-desc">Your away squad, set up in Squad.</p>`,g.form,gk,'Guest kit',
+    html=koSide('Player 2',koCrest(g,gk),g.name||'Guest club',`<div class="ko-tags">${pathTag(g)}${momTag(g)}</div><p class="ko-desc">Your away squad, set up in My Club.</p>`,g.form,gk,'Guest kit',
       {q:g,facts:`<p><b>${g.form==='custom'?'Custom':koEsc(g.form)}</b><span>Formation</span></p><p><b>${Math.round(g.cards.reduce((a,c)=>a+cardOvr(c.st),0)/10)}</b><span>Rating</span></p>`});}
   else{const c=e.club,away=clubWearsAway(c,mk),ck=clubKit(c,away),P=TEAMS.playstyles[c.playstyle]||{name:c.playstyle,desc:''},T=TEAMS.tiers[c.stars]||{name:''},url=emblemUrl(c.emblem);
     const crest=`<div class="ko-crest">${url?`<img src="${url}" alt="">`:`<b>${koEsc(c.short)}</b>`}${c.locked?'<span class="ko-lock">Locked</span>':''}</div>`;
@@ -77,7 +77,7 @@ function koRender(){
   $('#ko-picks').querySelectorAll('[data-pp]').forEach(b=>b.onclick=()=>koPickItem(b.dataset.pp,+b.dataset.d));
   const go=$('#ko-go');go.disabled=!!(e.club&&e.club.locked);$('#ko-go-lbl').textContent=e.club&&e.club.locked?'Locked':'Kick off';
 }
-// ball / field / table: steps through what you own and equips it (as in Customization)
+// ball / field / table: steps through what you own and equips it (as in The Ground)
 function koPickItem(part,d){
   const all=part==='ball'?BALL.variants:LOOK[part],own=(all||[]).filter(v=>owns(part,v.id));if(own.length<2)return;
   const cur=part==='ball'?BALL.mine:LOOKSEL[part];let i=own.findIndex(v=>v.id===cur);i=((i<0?0:i)+d+own.length)%own.length;const id=own[i].id;

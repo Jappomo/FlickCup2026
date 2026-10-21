@@ -194,25 +194,31 @@ function idMapFor(mat){const nm=(mat.userData&&mat.userData.idmap)||(mat.map&&ma
   if(!(file in ID_MAPS)){const e={tex:null,users:[]};ID_MAPS[file]=e;new THREE.TextureLoader().load('models/'+file,t=>{t.flipY=false;e.tex=t;e.users.forEach(u=>{u.uIdMap.value=t;u.uHasId.value=1;});},undefined,()=>{e.failed=true;});}
   return ID_MAPS[file];}
 const kitMatCache=new Map();
+const patUniforms=()=>({uPat:{value:null},uHasPat:{value:0},uShirt2:{value:new THREE.Color(1,1,1)},uShorts2:{value:new THREE.Color(1,1,1)},uSocks2:{value:new THREE.Color(1,1,1)}});
 function kitMaskMaterial(src,M,gk){
   const key=src.uuid+'|'+M.shirt.uuid+'|'+(gk?1:0);if(kitMatCache.has(key))return kitMatCache.get(key);
-  const m=src.clone(),u={uIdMap:{value:null},uHasId:{value:0},uShirt:{value:(gk?M.gk:M.shirt).color},uShorts:{value:(gk?M.gk:M.shorts).color},uSocks:{value:(gk?M.gk:M.socks).color}};
+  // kit pattern (js/kitpattern.js): a mask in the figure's UV, R shirt / G shorts / B socks, takes the second colours.
+  // The keeper wears no pattern.
+  const P=gk?patUniforms():(M.pat||(M.pat=patUniforms()));
+  const m=src.clone(),u={uIdMap:{value:null},uHasId:{value:0},uShirt:{value:(gk?M.gk:M.shirt).color},uShorts:{value:(gk?M.gk:M.shorts).color},uSocks:{value:(gk?M.gk:M.socks).color},
+    uPat:P.uPat,uHasPat:P.uHasPat,uShirt2:P.uShirt2,uShorts2:P.uShorts2,uSocks2:P.uSocks2};
   const e=idMapFor(src);if(e){e.users.push(u);if(e.tex){u.uIdMap.value=e.tex;u.uHasId.value=1;}}
   m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,u);
-    sh.fragmentShader='uniform sampler2D uIdMap;uniform float uHasId;uniform vec3 uShirt;uniform vec3 uShorts;uniform vec3 uSocks;\n'+sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+    sh.fragmentShader='uniform sampler2D uIdMap;uniform float uHasId;uniform vec3 uShirt;uniform vec3 uShorts;uniform vec3 uSocks;uniform sampler2D uPat;uniform float uHasPat;uniform vec3 uShirt2;uniform vec3 uShorts2;uniform vec3 uSocks2;\n'+sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
   #ifdef USE_MAP
   vec3 idm=uHasId>0.5?texture2D(uIdMap,vUv).rgb:vec3(smoothstep(0.45,0.7,min(min(diffuseColor.r,diffuseColor.g),diffuseColor.b)),0.,0.);
-  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*uShirt,idm.r);
-  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*uShorts,idm.g);
-  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*uSocks,idm.b);
+  vec3 pm=uHasPat>0.5?texture2D(uPat,vUv).rgb:vec3(0.);
+  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*mix(uShirt,uShirt2,pm.r),idm.r);
+  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*mix(uShorts,uShorts2,pm.g),idm.g);
+  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*mix(uSocks,uSocks2,pm.b),idm.b);
   #endif`);};
-  m.customProgramCacheKey=()=>'kitmask';kitMatCache.set(key,m);return m;}
+  m.customProgramCacheKey=()=>'kitmask2';kitMatCache.set(key,m);return m;}
 const isKitMask=m=>!!(m&&m.map&&((m.userData&&(m.userData.idmap||m.userData.kitmask))||/_Player/i.test(m.name||'')));
 function loadModel(kind,urlOrBuffer,label){
   return new Promise(res=>{
     if(!THREE.GLTFLoader){MODEL_INFO[kind]={src:'Built-in',err:'The model loader could not be downloaded.'};renderModels();return res(false);}
     const L=new THREE.GLTFLoader();
-    const ok=g=>{try{nameTextures(g);APPLY[kind](g.scene,label);if(!S.running)formation(0);renderModels();res(true);}catch(e){MODEL_INFO[kind]=Object.assign(MODEL_INFO[kind]||{},{err:String(e.message||e)});renderModels();res(false);}};
+    const ok=g=>{try{nameTextures(g);APPLY[kind](g.scene,label,g);if(!S.running)formation(0);renderModels();res(true);}catch(e){MODEL_INFO[kind]=Object.assign(MODEL_INFO[kind]||{},{err:String(e.message||e)});renderModels();res(false);}};
     const fail=e=>{MODEL_INFO[kind]=Object.assign(MODEL_INFO[kind]||{src:'Built-in'},{err:typeof urlOrBuffer==='string'?null:'This file could not be read as a GLB.'});renderModels();res(false);};
     if(typeof urlOrBuffer==='string')L.load(urlOrBuffer,ok,undefined,fail);else L.parse(urlOrBuffer,'',ok,fail);
   });
@@ -220,8 +226,8 @@ function loadModel(kind,urlOrBuffer,label){
 function renderModels(){
   const box=document.getElementById('models-list');if(!box)return;
   box.innerHTML='';
-  [['ball','Ball','ball.glb'],['pin','Pins and keepers','pin.glb'],['table','Tables','table.glb'],['field','Fields','field.glb'],['trinket','Trinkets','trinket.glb'],['banner','Banners','banner.glb'],['emblem','Club emblems','emblem.glb']].forEach(([k,label,file])=>{
-    const I=MODEL_INFO[k],row=document.createElement('div');row.className='srow';
+  [['ball','Ball','ball.glb'],['pin','Pins and keepers','pin.glb'],['table','Tables','table.glb'],['field','Fields','field.glb'],['trinket','Trinkets','trinket.glb'],['banner','Banners','banner.glb'],['emblem','Club emblems','emblem.glb'],['card','Album cards','card.glb']].forEach(([k,label,file])=>{
+    const I=MODEL_INFO[k];if(!I||!APPLY[k])return;const row=document.createElement('div');row.className='srow';
     const t=document.createElement('div');t.innerHTML=`<span class="sl">${label}</span>`;
     const p=document.createElement('p');p.textContent=(I.src==='Built-in'?'Built-in shapes':'From '+I.src)+(I.note?' · '+I.note:'')+(I.err?' · '+I.err:'');if(I.err)p.style.color='var(--warn)';
     const ctl=document.createElement('div');ctl.className='seg';

@@ -24,9 +24,15 @@ function renderConcede(){
 /* ================= hub: play ================= */
 let menuMode='local',halfMin=5,kitSel=[mySquads[0].kit!=null?mySquads[0].kit:0,mySquads[1].kit!=null?mySquads[1].kit:1],hubTab='play';
 if(kitSel[0]===kitSel[1])kitSel[1]=(kitSel[0]+1)%KITS.length;
-const TABS=['play','squad','custom','rules','settings','balance'];
-const PAUSE_HIDE=['squad','custom'];
-function setTab(t){hubTab=t;$('#hub').classList.toggle('ko-on',t==='kickoff');document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==t);if(t==='squad')renderSquad();if(t==='custom'){if(custSec==='table')renderLook();else renderCustom();}if(t==='kickoff')koRender();}
+const TABS=['play','squad','custom','album','settings','rules','balance'];
+const PAUSE_HIDE=['squad','custom','album'];
+// My Club sections: tactics (formation, cards, path), kit look, history
+let clubSec='tactics';
+function setTab(t){hubTab=t;$('#hub').classList.toggle('ko-on',t==='kickoff');document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==t);if(t==='squad')setClubSec(clubSec);if(t==='custom')setCustSec(custSec);if(t==='album'&&typeof renderAlbum==='function')renderAlbum();if(t==='kickoff')koRender();}
+function setClubSec(sec){clubSec=sec;document.querySelectorAll('#club-sub [data-club]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.club===sec)));
+  $('#club-tactics').hidden=sec!=='tactics';$('#club-kit').hidden=sec!=='kit';$('#club-history').hidden=sec!=='history';$('#club-crest').hidden=sec!=='crest';
+  if(hubTab!=='squad')return;if(sec==='tactics')renderSquad();else if(sec==='kit')renderKitLook();else if(sec==='crest'){if(typeof renderCrest==='function')renderCrest();}else if(typeof renderHistory==='function')renderHistory();}
+document.querySelectorAll('#club-sub [data-club]').forEach(b=>b.addEventListener('click',()=>setClubSec(b.dataset.club)));
 let setSub='audio';
 function setSettingsSub(k){setSub=k;document.querySelectorAll('#set-sub [data-sub]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sub===k)));document.querySelectorAll('.set-grid [data-sub]').forEach(c=>c.classList.toggle('on',c.dataset.sub===k));}
 document.querySelectorAll('#set-sub [data-sub]').forEach(b=>b.addEventListener('click',()=>setSettingsSub(b.dataset.sub)));
@@ -37,11 +43,11 @@ function subStep(d){const pn=document.querySelector('#hub [data-panel]:not([hidd
   let k=bs.findIndex(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-current')==='true');k=(k<0?0:k+d+bs.length)%bs.length;bs[k].click();sfx('tock',6);}
 function stepTab(d){const paused=$('#hub').classList.contains('paused-match'),list=TABS.filter(t=>!(paused&&PAUSE_HIDE.includes(t)));let i=list.indexOf(hubTab);if(i<0)i=0;setTab(list[(i+d+list.length)%list.length]);}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
-function setMenuMode(m){menuMode=m;document.querySelectorAll('.tile').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));$('#online-panel').hidden=m!=='online';updateStartBtn();if(hubTab==='squad')renderSquad();}
+function setMenuMode(m){menuMode=m;document.querySelectorAll('.tile').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));$('#online-panel').hidden=m!=='online';updateStartBtn();if(hubTab==='squad'&&clubSec==='tactics')renderSquad();}
 function kitSwatch(b,k){b.style.background='none';b.innerHTML='';[['shirt',50],['shorts',30],['socks',20]].forEach(([p,h])=>{const i=document.createElement('i');i.className='kst';i.style.height=h+'%';i.style.background=typeof k[p]==='number'?hexStr(k[p]):k[p];b.appendChild(i);});}
 function renderKits(){
   for(let t=0;t<2;t++){const row=$('#kit'+t);row.innerHTML='';const q=mySquads[t];
-    if(q.look){const b=document.createElement('button');b.className='sw my';b.type='button';b.title='My kit (Customization > Kit look)';const L=q.look;
+    if(q.look){const b=document.createElement('button');b.className='sw my';b.type='button';b.title='My kit (My Club > Kit look)';const L=q.look;
       kitSwatch(b,{shirt:KIT_COLORS[L.s][1],shorts:KIT_COLORS[L.p][1],socks:KIT_COLORS[L.o][1]});b.setAttribute('aria-pressed',String(!!q.useLook));b.setAttribute('aria-label',(t?'Away':'Home')+' kit: my kit');
       b.onclick=()=>{q.useLook=true;saveSquads();if(!S.running)applyKits();renderKits();};row.appendChild(b);}
     KITS.forEach((k,i)=>{const b=document.createElement('button');b.className='sw';b.type='button';b.title=k.name;kitSwatch(b,k);

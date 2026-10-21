@@ -1,0 +1,1047 @@
+{
+  "version": 1,
+  "unlockRule": "free",
+  "rarities": {
+    "common": {
+      "name": "Common",
+      "weight": 70,
+      "dupe": 10,
+      "color": "#b8c0d4"
+    },
+    "uncommon": {
+      "name": "Uncommon",
+      "weight": 25,
+      "dupe": 25,
+      "color": "#4fd1a5"
+    },
+    "rare": {
+      "name": "Rare",
+      "weight": 5,
+      "dupe": 60,
+      "color": "#f6c443"
+    }
+  },
+  "packs": {
+    "win": 3,
+    "draw": 2,
+    "lose": 1,
+    "welcome": 1
+  },
+  "collections": [
+    {
+      "id": "moments",
+      "name": "Football Moments",
+      "desc": "Famous moments from football history, drawn by hand.",
+      "color": "#ff6a3d",
+      "unlocks": [
+        "banner",
+        "music"
+      ],
+      "reward": 150,
+      "cabinet": false
+    },
+    {
+      "id": "balls",
+      "name": "Famous Balls",
+      "desc": "Match balls through the years.",
+      "color": "#f6c443",
+      "unlocks": [
+        "ball"
+      ],
+      "reward": 150,
+      "cabinet": false
+    },
+    {
+      "id": "kits",
+      "name": "Historic Kits",
+      "desc": "Legendary kits, redrawn as designs of their era.",
+      "color": "#9a5cff",
+      "unlocks": [
+        "pattern"
+      ],
+      "reward": 150,
+      "cabinet": false
+    },
+    {
+      "id": "comebacks",
+      "name": "Greatest Comebacks",
+      "desc": "Matches turned around against the odds.",
+      "color": "#ff4fd8",
+      "unlocks": [
+        "banner",
+        "music"
+      ],
+      "reward": 150,
+      "cabinet": false
+    },
+    {
+      "id": "stadiums",
+      "name": "Historic Stadiums",
+      "desc": "Famous grounds and the tables they inspired.",
+      "color": "#2ef2ff",
+      "unlocks": [
+        "table",
+        "field"
+      ],
+      "reward": 200,
+      "cabinet": false
+    },
+    {
+      "id": "trophies",
+      "name": "Trophies",
+      "desc": "Famous cups. Each one takes its place in your trophy cabinet.",
+      "color": "#e2b94e",
+      "unlocks": [
+        "trinket"
+      ],
+      "reward": 200,
+      "cabinet": true
+    },
+    {
+      "id": "celebrations",
+      "name": "Goal Celebrations",
+      "desc": "The best ways to celebrate a goal.",
+      "color": "#4fd1a5",
+      "unlocks": [
+        "celebration"
+      ],
+      "reward": 150,
+      "cabinet": false
+    },
+    {
+      "id": "tricks",
+      "name": "Iconic Tricks",
+      "desc": "Famous pieces of skill.",
+      "color": "#7cc8ff",
+      "unlocks": [
+        "moment"
+      ],
+      "reward": 150,
+      "cabinet": false
+    },
+    {
+      "id": "formations",
+      "name": "Famous Formations",
+      "desc": "Tactical set-ups that changed the game.",
+      "color": "#b8c0d4",
+      "unlocks": [
+        "formation"
+      ],
+      "reward": 150,
+      "cabinet": false
+    },
+    {
+      "id": "patterns",
+      "name": "Patterns of Play",
+      "desc": "Team moves to replay on the table.",
+      "color": "#ffb02e",
+      "unlocks": [
+        "challenge"
+      ],
+      "reward": 250,
+      "cabinet": false
+    }
+  ],
+  "cards": [
+    {
+      "id": "moments-01",
+      "collection": "moments",
+      "no": 1,
+      "title": "Barefoot final, 1950s",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "banner",
+        "id": "002"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "moments-02",
+      "collection": "moments",
+      "no": 2,
+      "title": "The long-range lob",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "banner",
+        "id": "003"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "moments-03",
+      "collection": "moments",
+      "no": 3,
+      "title": "Last-minute header",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "banner",
+        "id": "004"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "moments-04",
+      "collection": "moments",
+      "no": 4,
+      "title": "Penalty under the snow",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "banner",
+        "id": "005"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "moments-05",
+      "collection": "moments",
+      "no": 5,
+      "title": "The ghost goal",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "music",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "moments-06",
+      "collection": "moments",
+      "no": 6,
+      "title": "A captain lifts the cup",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
+      "unlock": {
+        "type": "banner",
+        "id": "006"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "balls-01",
+      "collection": "balls",
+      "no": 1,
+      "title": "Leather lace-up, 1930s",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "ball",
+        "id": "004"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "balls-02",
+      "collection": "balls",
+      "no": 2,
+      "title": "Brown panel ball, 1950s",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "ball",
+        "id": "003"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "balls-03",
+      "collection": "balls",
+      "no": 3,
+      "title": "Black and white panels, 1970",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "ball",
+        "id": "002"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "balls-04",
+      "collection": "balls",
+      "no": 4,
+      "title": "The white ball of the 80s",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "ball",
+        "id": "007"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "balls-05",
+      "collection": "balls",
+      "no": 5,
+      "title": "Thermal-bonded, 2000s",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "ball",
+        "id": "006"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "balls-06",
+      "collection": "balls",
+      "no": 6,
+      "title": "Golden final ball",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
+      "unlock": {
+        "type": "ball",
+        "id": "005"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "kits-01",
+      "collection": "kits",
+      "no": 1,
+      "title": "Classic stripes",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "pattern",
+        "id": "001"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "kits-02",
+      "collection": "kits",
+      "no": 2,
+      "title": "Hoops of the north",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "pattern",
+        "id": "002"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "kits-03",
+      "collection": "kits",
+      "no": 3,
+      "title": "Halves and quarters",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "pattern",
+        "id": "003"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "kits-04",
+      "collection": "kits",
+      "no": 4,
+      "title": "The sash",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "pattern",
+        "id": "004"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "kits-05",
+      "collection": "kits",
+      "no": 5,
+      "title": "Pinstripe away kit",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "pattern",
+        "id": "005"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "kits-06",
+      "collection": "kits",
+      "no": 6,
+      "title": "The golden era shirt",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
+      "unlock": {
+        "type": "pattern",
+        "id": "007"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "comebacks-01",
+      "collection": "comebacks",
+      "no": 1,
+      "title": "Three down at half-time",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
+      "unlock": {
+        "type": "banner",
+        "id": "007"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "comebacks-02",
+      "collection": "comebacks",
+      "no": 2,
+      "title": "Two goals in injury time",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "banner",
+        "id": "008"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "comebacks-03",
+      "collection": "comebacks",
+      "no": 3,
+      "title": "From the brink, away leg",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "banner",
+        "id": "009"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "comebacks-04",
+      "collection": "comebacks",
+      "no": 4,
+      "title": "Ten men hold on",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "banner",
+        "id": "010"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "comebacks-05",
+      "collection": "comebacks",
+      "no": 5,
+      "title": "The second-leg miracle",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "banner",
+        "id": "011"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "comebacks-06",
+      "collection": "comebacks",
+      "no": 6,
+      "title": "Extra-time turnaround",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "banner",
+        "id": "012"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "stadiums-01",
+      "collection": "stadiums",
+      "no": 1,
+      "title": "The old wooden stand",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "table",
+        "id": "002"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "stadiums-02",
+      "collection": "stadiums",
+      "no": 2,
+      "title": "Floodlights on the hill",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "table",
+        "id": "003"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "stadiums-03",
+      "collection": "stadiums",
+      "no": 3,
+      "title": "The great bowl",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
+      "unlock": {
+        "type": "table",
+        "id": "004"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "stadiums-04",
+      "collection": "stadiums",
+      "no": 4,
+      "title": "Midnight pitch",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "field",
+        "id": "002"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "stadiums-05",
+      "collection": "stadiums",
+      "no": 5,
+      "title": "The retro baize",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "field",
+        "id": "003"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "stadiums-06",
+      "collection": "stadiums",
+      "no": 6,
+      "title": "Sunset at the coast",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "field",
+        "id": "004"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "trophies-01",
+      "collection": "trophies",
+      "no": 1,
+      "title": "The big-eared cup",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
+      "unlock": {
+        "type": "trinket",
+        "id": "003"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "trophies-02",
+      "collection": "trophies",
+      "no": 2,
+      "title": "The silver league plate",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "trinket",
+        "id": "002"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "trophies-03",
+      "collection": "trophies",
+      "no": 3,
+      "title": "The founders cup",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "trinket",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "trophies-04",
+      "collection": "trophies",
+      "no": 4,
+      "title": "The continental shield",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "trinket",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "trophies-05",
+      "collection": "trophies",
+      "no": 5,
+      "title": "The winter cup",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "trinket",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "trophies-06",
+      "collection": "trophies",
+      "no": 6,
+      "title": "The youth trophy",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "trinket",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "celebrations-01",
+      "collection": "celebrations",
+      "no": 1,
+      "title": "The knee slide",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "celebration",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "celebrations-02",
+      "collection": "celebrations",
+      "no": 2,
+      "title": "The corner-flag dance",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "celebration",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "celebrations-03",
+      "collection": "celebrations",
+      "no": 3,
+      "title": "The cradle rock",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "celebration",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "celebrations-04",
+      "collection": "celebrations",
+      "no": 4,
+      "title": "The somersault",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "celebration",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "celebrations-05",
+      "collection": "celebrations",
+      "no": 5,
+      "title": "Shirt over the head",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "celebration",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "celebrations-06",
+      "collection": "celebrations",
+      "no": 6,
+      "title": "The team pile-on",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
+      "unlock": {
+        "type": "celebration",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "tricks-01",
+      "collection": "tricks",
+      "no": 1,
+      "title": "Overhead kick, Turin, 2018",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
+      "unlock": {
+        "type": "moment",
+        "id": "bicycle"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "tricks-02",
+      "collection": "tricks",
+      "no": 2,
+      "title": "The solo run past five",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
+      "unlock": {
+        "type": "moment",
+        "id": "maradona"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "tricks-03",
+      "collection": "tricks",
+      "no": 3,
+      "title": "Curled into the top corner",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "moment",
+        "id": "finesse"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "tricks-04",
+      "collection": "tricks",
+      "no": 4,
+      "title": "The pass through the eye",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "moment",
+        "id": "thread"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "tricks-05",
+      "collection": "tricks",
+      "no": 5,
+      "title": "Cleared to the moon",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "moment",
+        "id": "moon"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "tricks-06",
+      "collection": "tricks",
+      "no": 6,
+      "title": "The step-over",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "pattern",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "formations-01",
+      "collection": "formations",
+      "no": 1,
+      "title": "The pyramid",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "formation",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "formations-02",
+      "collection": "formations",
+      "no": 2,
+      "title": "Two banks of four",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "formation",
+        "id": "4-4-2"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "formations-03",
+      "collection": "formations",
+      "no": 3,
+      "title": "The diamond",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "formation",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "formations-04",
+      "collection": "formations",
+      "no": 4,
+      "title": "Three at the back",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "formation",
+        "id": "3-5-2"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "formations-05",
+      "collection": "formations",
+      "no": 5,
+      "title": "The total-football shape",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
+      "unlock": {
+        "type": "formation",
+        "id": "4-3-3"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "formations-06",
+      "collection": "formations",
+      "no": 6,
+      "title": "The parked bus",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "formation",
+        "id": "5-3-2"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "patterns-01",
+      "collection": "patterns",
+      "no": 1,
+      "title": "The one-two",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "challenge",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "patterns-02",
+      "collection": "patterns",
+      "no": 2,
+      "title": "The wall pass",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "challenge",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "patterns-03",
+      "collection": "patterns",
+      "no": 3,
+      "title": "Overlap down the wing",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "challenge",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "patterns-04",
+      "collection": "patterns",
+      "no": 4,
+      "title": "Long switch, then cross",
+      "rarity": "uncommon",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack, about one in four cards.",
+      "unlock": {
+        "type": "challenge",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "patterns-05",
+      "collection": "patterns",
+      "no": 5,
+      "title": "Counter in three flicks",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
+      "unlock": {
+        "type": "challenge",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "patterns-06",
+      "collection": "patterns",
+      "no": 6,
+      "title": "The corner routine",
+      "rarity": "common",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "challenge",
+        "id": ""
+      },
+      "art": "",
+      "drop": true
+    }
+  ]
+}

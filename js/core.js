@@ -33,7 +33,8 @@ function kitOf(t){return kitFrom(KITS[S.kits[t]]||KITS[t]||KITS[0],typeof matchS
 // a squad's kit from a preset: an AI club wears its own colours (kitHex), your squads their kit look when it is on
 function kitFrom(base,q){if(q&&q.kitHex)return Object.assign({},base,q.kitHex);const L=q&&q.useLook&&q.look;
   if(!L)return base;const c=i=>KIT_COLORS[i]?KIT_COLORS[i][1]:0xffffff;
-  return Object.assign({},base,{shirt:c(L.s),shorts:c(L.p),socks:c(L.o),insert:c(L.s),gk:GK_COLORS[L.g]?GK_COLORS[L.g][1]:base.gk,ui:hexStr(c(L.s)===0xf2f0ea?c(L.p):c(L.s))});}
+  return Object.assign({},base,{shirt:c(L.s),shorts:c(L.p),socks:c(L.o),insert:c(L.s),gk:GK_COLORS[L.g]?GK_COLORS[L.g][1]:base.gk,ui:hexStr(c(L.s)===0xf2f0ea?c(L.p):c(L.s)),
+    pattern:L.pt||'',shirt2:c(L.s2|0),shorts2:c(L.p2|0),socks2:c(L.o2|0)});}
 const STATS=[
   {k:'sht',name:'Striker',ab:'SHT',desc:'Harder flicks when the ball is in the opponent\'s shooting area.'},
   {k:'pin',name:'Defender',ab:'PIN',desc:'Heavier base: gets knocked around less when opponents bump into it.'},
@@ -148,13 +149,15 @@ function defaultSquad(t){
   return{form:'4-4-2',corner:'bal',special:t===0?'finesse':'maradona',path:t===0?'att':'mid',cards,cc:CORNER_PRESETS.bal.spots.map(a=>a.slice()),dcorner:'bal',dcc:DEF_PRESETS.bal.spots.map(a=>a.slice())};
 }
 function cleanSquadName(v){return String(v||'').replace(/[\u0000-\u001f<>|]/g,'').replace(/\s+/g,' ').trim().slice(0,16);}
-function serSquad(q){return [q.form,q.corner,q.special,q.cards.map(c=>c.st.join('')).join(''),encCC(q.cc),q.dcorner,encCC(q.dcc),q.path||'mid',encodeURIComponent(q.name||''),q.cbase||'',q.cpos?'e'+q.cpos.map(a=>a.map(v=>Math.round(v*2)).join(',')).join(';'):'',q.kit!=null?q.kit:'',Array.isArray(q.kop)?q.kop.join(','):'',q.look?[q.look.s,q.look.p,q.look.o,q.look.g,q.useLook?1:0].join(','):''].join('|');}
+function serSquad(q){return [q.form,q.corner,q.special,q.cards.map(c=>c.st.join('')).join(''),encCC(q.cc),q.dcorner,encCC(q.dcc),q.path||'mid',encodeURIComponent(q.name||''),q.cbase||'',q.cpos?'e'+q.cpos.map(a=>a.map(v=>Math.round(v*2)).join(',')).join(';'):'',q.kit!=null?q.kit:'',Array.isArray(q.kop)?q.kop.join(','):'',q.look?[q.look.s,q.look.p,q.look.o,q.look.g,q.useLook?1:0,+(q.look.pt||0),q.look.s2|0,q.look.p2|0,q.look.o2|0].join(','):'',q.crest?[q.crest.s,q.crest.p,q.crest.c,q.crest.f,q.crest.pc,q.crest.b,q.crest.cc].join(','):(q.crestRaw||'')].join('|');}
 function encCC(cc){return cc.map(a=>a.map(v=>Math.round(v*2)).join(',')).join(';');}
 function decCC(str,cfg,n){if(!str)return null;const pairs=str.split(';');if(pairs.length!==n)return null;const cc=pairs.map((pr,k)=>{const [u,w]=pr.split(',').map(Number);return isFinite(u)&&isFinite(w)?clampSpot(cfg,k,u/2,w/2):null;});return cc.every(Boolean)?cc:null;}
 function parseSquad(s,t){
   const q=defaultSquad(t);if(typeof s!=='string')return q;
-  const p=s.split('|');if(p.length<4||p.length>14)return q;
-  if(p[13]){const L=p[13].split(',').map(Number);if(L.length===5&&L.every(Number.isInteger)){q.look={s:clamp(L[0],0,9),p:clamp(L[1],0,9),o:clamp(L[2],0,9),g:clamp(L[3],0,GK_COLORS.length-1)};q.useLook=L[4]===1;}}
+  const p=s.split('|');if(p.length<4||p.length>15)return q;
+  if(p[13]){const L=p[13].split(',').map(Number);if((L.length===5||L.length===9)&&L.every(Number.isInteger)){q.look={s:clamp(L[0],0,9),p:clamp(L[1],0,9),o:clamp(L[2],0,9),g:clamp(L[3],0,GK_COLORS.length-1)};q.useLook=L[4]===1;
+    if(L.length===9){q.look.pt=L[5]>0?String(clamp(L[5],1,999)).padStart(3,'0'):'';q.look.s2=clamp(L[6],0,9);q.look.p2=clamp(L[7],0,9);q.look.o2=clamp(L[8],0,9);}}}
+  if(p[14]&&/^\d+(,\d+){6}$/.test(p[14]))q.crestRaw=p[14]; // read by js/crest.js (crestOf)
   if(p[12]){const k=p[12].split(',').map(Number).filter(i=>Number.isInteger(i)&&i>=0&&i<10);if(k.length)q.kop=[...new Set(k)].slice(0,2);}
   if(p[11]!==undefined&&p[11]!==''&&KITS[+p[11]])q.kit=+p[11];
   if(FORMATIONS[p[9]])q.cbase=p[9];

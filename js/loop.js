@@ -8,8 +8,9 @@
 // In the Distal editor (?distal=edit) the table always draws: the editor shows its scenes through that render.
 const LOOP={n:0,hub:null,edit:/[?&]distal=edit/.test(location.search)};
 function mainOnScreen(){const h=LOOP.hub||(LOOP.hub=$('#hub'));return LOOP.edit||h.hidden||h.classList.contains('hub-in');}
-function previewFrame(){const h=LOOP.hub||(LOOP.hub=$('#hub'));if(h.hidden||hubTab!=='custom')return;
-  try{if(custSec==='ball')custTick();else if(custSec==='kit')kitTick();else if(custSec==='table')tableTick();}catch(e){console.error('[preview]',e);}}
+function previewFrame(){const h=LOOP.hub||(LOOP.hub=$('#hub'));if(h.hidden)return;
+  try{if(hubTab==='custom'){if(custSec==='ball')custTick();else if(custSec==='table')tableTick();}
+    else if(hubTab==='squad'&&clubSec==='kit')kitTick();else if(hubTab==='album')albumTick();}catch(e){console.error('[preview]',e);}}
 let last=performance.now(),remoteT=null,hudTick=0;
 const prevBall={x:0,z:0},rollAxis=new THREE.Vector3();
 function remoteView(){

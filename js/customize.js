@@ -1,5 +1,5 @@
 // Flick Cup 2026 · js/customize.js
-// Customization: ball, table looks, kit look, preview renderer; Hobby coins and unlocks.
+// The Ground (ball, table looks, music), the kit look (My Club), preview renderer; Hobby coins and unlocks.
 // Loaded by index.html as a classic script, in order: every file shares one scope, so names from earlier files work here.
 'use strict';
 /* ================= customization: ball ================= */
@@ -76,14 +76,14 @@ function renderCustom(rebuild){
     const nm=document.createElement('b');nm.textContent=v.name;
     b.append(img,nm);
     if(v.id===eqId){const e=document.createElement('span');e.className='eqp';e.textContent='Equipped';b.appendChild(e);}
-    else if(!owns('ball',v.id)){b.classList.add('locked');const t=document.createElement('span');t.className='lock';t.innerHTML=coinTag(priceOf('ball',v.id));b.appendChild(t);}
+    else if(!owns('ball',v.id)){b.classList.add('locked');const t=document.createElement('span');t.className='lock';t.innerHTML=lockTag('ball',v.id);b.appendChild(t);}
     b.onclick=()=>{custSel=v.id;renderCustom();};
     b.ondblclick=()=>{custSel=v.id;equipBall();};
     grid.appendChild(b);
   });
   const cur=list.find(v=>v.id===custSel)||list[0];
   $('#bp-no').textContent='Ball '+(cur.id||'001');$('#bp-name').textContent=cur.name;$('#bp-eq').hidden=cur.id!==eqId;
-  const btn=$('#btn-equip'),own=owns('ball',cur.id);btn.disabled=cur.id===eqId;btn.lastChild.textContent=cur.id===eqId?'Equipped':own?'Equip':`Buy · ${priceOf('ball',cur.id)} Hobby`;
+  const btn=$('#btn-equip'),own=owns('ball',cur.id);btn.disabled=cur.id===eqId;btn.lastChild.textContent=cur.id===eqId?'Equipped':own?'Equip':needCard('ball',cur.id)?'Needs an Album card':`Buy · ${priceOf('ball',cur.id)} Hobby`;
   $('#ball-note').textContent=S.mode==='online'&&S.running?'Online, the home player\'s ball is used for both of you.':'Every ball plays the same; only the look changes.';
   if(hubTab==='custom'&&custSec==='ball'&&initPreview()){sizePreview();previewObject(cur.id);}
 }
@@ -92,8 +92,8 @@ $('#btn-equip').addEventListener('click',equipBall);
 
 /* ================= customization: table looks ================= */
 let tR=null,tScene=null,tCam=null,tObj=null,tSpin={a:-0.5,v:0,drag:false,x:0},tThumbs={};
-function setCustSec(sec){custSec=sec;document.querySelectorAll('.cnav[data-sec]').forEach(b=>b.setAttribute('aria-current',String(b.dataset.sec===sec)));
-  $('#cust-ball').hidden=sec!=='ball';$('#cust-table').hidden=sec!=='table';$('#cust-kit').hidden=sec!=='kit';if(sec==='ball')renderCustom();else if(sec==='kit')renderKitLook();else renderLook();}
+function setCustSec(sec){if(!['ball','table','music'].includes(sec))sec='ball';custSec=sec;document.querySelectorAll('.cnav[data-sec]').forEach(b=>b.setAttribute('aria-current',String(b.dataset.sec===sec)));
+  $('#cust-ball').hidden=sec!=='ball';$('#cust-table').hidden=sec!=='table';$('#cust-music').hidden=sec!=='music';if(sec==='ball')renderCustom();else if(sec==='table')renderLook();else renderTracks();}
 document.querySelectorAll('.cnav[data-sec]').forEach(b=>b.addEventListener('click',()=>setCustSec(b.dataset.sec)));
 /* ---------- kit look editor ---------- */
 let kitView='player',kitTeam=0,kR=null,kScene=null,kCam=null,kObj=null;const kSpin={a:0.5,v:0,drag:false,x:0};
@@ -111,12 +111,12 @@ function kitPreviewObj(){const g=new THREE.Group(),only=kitView==='keeper';
   else{for(const gk of [only]){const f=buildFigure(0,0);scene.remove(f);f.traverse(o=>{if(!o.isMesh)return;const M=teamM[0];o.material=o.material===M.shirt?(gk?KIT_PM.gk:KIT_PM.shirt):o.material===M.shorts?(gk?KIT_PM.gk:KIT_PM.shorts):o.material===M.socks?(gk?KIT_PM.gk:KIT_PM.socks):o.material===M.insert?KIT_PM.insert:o.material===M.base?KIT_PM.base:o.material;});g.add(f);}}
   return g;}
 // kit preview frame (called by the central loop while the kit page is open)
-function kitTick(){if($('#hub').hidden||hubTab!=='custom'||custSec!=='kit'||!kR)return;
+function kitTick(){if($('#hub').hidden||hubTab!=='squad'||clubSec!=='kit'||!kR)return;
   if(!kSpin.drag){kSpin.v*=0.94;kSpin.a+=0.0022+kSpin.v*0.002;}if(kObj)kObj.rotation.y=kSpin.a;kGround=groundUnder(kScene,kGround,170,0);GROUND_U.uTime.value=performance.now()/1000; // TEST-GRASS
   
   previewCam('kits',kCam);previewDraw(kR,$('#kit-prev'),kScene,kCam,1);}
 function renderKitLook(){
-  if(hubTab!=='custom'||custSec!=='kit')return;
+  if(hubTab!=='squad'||clubSec!=='kit')return;
   const q=mySquads[kitTeam],L=lookOf(q,kitTeam);
   document.querySelectorAll('#kit-team .chip').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.team===kitTeam)));
   $('#kit-use').checked=!!q.useLook;$('#kit-team-l').textContent=kitTeam?'Away squad':'Home squad';$('#kit-name').textContent=q.name||KITS[kitSel[kitTeam]].name;
@@ -204,6 +204,9 @@ function earn(n,why){if(!ecoOn()||!(n>0))return 0;HOBBY.n=(HOBBY.n||0)+n;syncHob
 function buy(part,id){if(owns(part,id))return true;const p=priceOf(part,id);
   if((HOBBY.n||0)<p){hobbyToast(`Not enough Hobby: this costs ${p}, you have ${HOBBY.n||0}.`);sfx('clack',10);return false;}
   HOBBY.n=(HOBBY.n||0)-p;OWNED[part]=[...(OWNED[part]||[]),id];store.set('baize.owned',JSON.stringify(OWNED));syncHobby();hobbyToast(`Unlocked for ${p} Hobby`,true);sfx('tock',30);return true;}
+// a locked item: its price, or the Album card it needs (js/album.js)
+const needCard=(part,id)=>typeof cardLock==='function'?cardLock(part,id):null;
+function lockTag(part,id){const c=needCard(part,id);return c?`<span class="price cardtag" title="${String(c.title).replace(/"/g,'&quot;')}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2.2" fill="#f6c443" stroke="#6b4a08" stroke-width="1.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke="#6b4a08" stroke-width="1.6" stroke-linecap="round"/></svg>Card</span>`:coinTag(priceOf(part,id));}
 const coinTag=n=>`<span class="price">${'<svg class="hb-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#f6c443" stroke="#9a6d12" stroke-width="1.6"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#9a6d12" stroke-width="1.2" opacity=".6"/><path d="M9.2 7.5v9M14.8 7.5v9M9.2 12h5.6" stroke="#6b4a08" stroke-width="2" stroke-linecap="round"/></svg>'}${n}</span>`;
 let lookPend=null;
 function lookCard(part,v,on,disabled){
@@ -212,8 +215,8 @@ function lookCard(part,v,on,disabled){
   else{const n=document.createElement('span');n.className='none';n.textContent='None';b.appendChild(n);}
   const nm=document.createElement('b');nm.textContent=v?v.name:'None';b.appendChild(nm);
   const locked=v&&!owns(part,v.id),pend=locked&&lookPend&&lookPend.part===part&&lookPend.id===v.id;
-  if(locked){b.classList.add('locked');const t=document.createElement('span');t.className='lock';t.innerHTML=pend?'Buy · '+coinTag(priceOf(part,v.id)):coinTag(priceOf(part,v.id));if(pend)t.classList.add('buy');b.appendChild(t);}
-  b.onclick=()=>{if(locked){if(!pend){lookPend={part,id:v.id};renderLook();sfx('tock',10);return;}lookPend=null;if(!buy(part,v.id)){renderLook();return;}}
+  if(locked){b.classList.add('locked');const t=document.createElement('span');t.className='lock';t.innerHTML=pend&&!needCard(part,v.id)?'Buy · '+lockTag(part,v.id):lockTag(part,v.id);if(pend)t.classList.add('buy');b.appendChild(t);}
+  b.onclick=()=>{if(locked&&needCard(part,v.id)){buy(part,v.id);return;}if(locked){if(!pend){lookPend={part,id:v.id};renderLook();sfx('tock',10);return;}lookPend=null;if(!buy(part,v.id)){renderLook();return;}}
     lookPend=null;LOOKSEL[part]=v?v.id:'';saveLook();showLook();renderLook();sfx('tock',30);};
   return b;
 }

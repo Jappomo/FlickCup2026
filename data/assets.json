@@ -27,6 +27,9 @@
     "models/table.glb": "Art/Table/Scene_Table_Collection.blend",
     "models/props.glb": "Art/Props/Scene_Props_Collection.blend",
     "models/banner.glb": "Art/Banner/Scene_Banner_Collection.blend",
-    "models/emblem.glb": "Art/Emblems/SourceData/emblem.glb"
+    "models/emblem.glb": "Art/Emblems/SourceData/emblem.glb",
+    "models/card.glb": "Art/Cards/Scene_Card_Collection.blend",
+    "models/crest.glb": "Art/Emblems/Crest/Scene_Crest_Collection.blend",
+    "models/kitpattern.glb": "Art/Figure/Scene_KitPattern_Collection.blend"
   }
 }
