@@ -146,7 +146,7 @@ function openPack(){
   if(PACK.open||!ALBUM.packs.length)return false;
   const n=ALBUM.packs.shift();PACK.cards=[];for(let i=0;i<n;i++){const c=drawCard();if(!c)break;const g=giveCard(c.id);PACK.cards.push(g);}
   saveAlbum();if(!PACK.cards.length){hobbyToast('There are no cards in the Album yet.');return false;}
-  PACK.open=true;PACK.shown=0;ensureAudio();sfx('tock',30);try{PACK.pad=[...navigator.getGamepads()].filter(Boolean).map(g=>g.buttons.map(x=>x.pressed))[0]||null;}catch(e){}requestAnimationFrame(packPad);
+  PACK.open=true;PACK.shown=0;ensureAudio();sfx('tock',30);try{PACK.pad=padsNow().map(g=>g.buttons.map(x=>x.pressed))[0]||null;}catch(e){}requestAnimationFrame(packPad);
   const row=$('#pack-row');row.innerHTML='';
   PACK.cards.forEach((g,i)=>{const c=g.card,R=CARDS.rarities[c.rarity],b=document.createElement('button');b.type='button';b.className='pk r-'+c.rarity;b.style.setProperty('--rc',R.color);b.style.setProperty('--cc',colOf(c.collection).color);
     b.innerHTML=`<span class="pk-in"><span class="pk-back"></span><span class="pk-front"><img alt="" src="${cardArtUrl(c)}"><b>${albEsc(c.title)}</b><small>${albEsc(R.name)} · ${g.first?'<em>New</em>':'Duplicate'}</small></span></span>`;
@@ -161,7 +161,7 @@ function packAll(){PACK.cards.forEach((_,i)=>setTimeout(()=>packTurn(i),i*160));
 function packDone(){if(!PACK.open)return;for(let i=0;i<PACK.cards.length;i++)packTurn(i);PACK.open=false;$('#pack').hidden=true;const ft=$('#btn-ft-pack');if(ft)ftPackBtn();if(hubTab==='album')renderAlbum();}
 $('#pack-all').addEventListener('click',packAll);
 // controller on the pack screen: A turns the next card (then Done), X turns all, B is Done
-function packPad(){if(!PACK.open)return;let gp=null;try{gp=[...navigator.getGamepads()].find(g=>g&&g.connected);}catch(e){}
+function packPad(){if(!PACK.open)return;let gp=null;try{gp=padsNow()[0]||null;}catch(e){}
   if(gp){const p=gp.buttons.map(x=>x.pressed),o=PACK.pad||p;const ed=i=>p[i]&&!o[i];PACK.pad=p;
     if(ed(0)){const i=[...$('#pack-row').children].findIndex(b=>!b.classList.contains('on'));if(i>=0)packTurn(i);else packDone();}
     else if(ed(2))packAll();else if(ed(1))packDone();}

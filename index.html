@@ -9,6 +9,34 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Barlow:wght@400;500;600;700&display=swap">
 <style>
+/* ===== UI scale (solution B, 22 Oct 2026): every UI layer is laid out at a 1600 x 900 reference and zoomed to the
+   screen by --uiz (js/uiscale.js). Wider or taller screens give the layer more room, so edges stay anchored. Inside
+   the zoomed layers use var(--vw) / var(--vh) instead of vw / vh (those would be zoomed twice). ===== */
+:root{--uiz:1;--vw:calc(1vw / var(--uiz));--vh:calc(1vh / var(--uiz))}
+#title,#sb,#net-banner,#prompt,.dock,#plays,#prac,#coach,#toast,#hub,#ft,#htoast,#np,#pack,#rotate,#osk{zoom:var(--uiz)}
+#rotate{position:fixed;inset:0;z-index:9999;display:none;place-items:center;text-align:center;background:#0b1220;color:#fff;font:700 40px/1.2 'Barlow Condensed',sans-serif;padding:40px}
+#rotate i{display:block;font-size:90px;font-style:normal;margin-bottom:14px}
+html.portrait #rotate{display:grid}
+/* ===== controls (js/controls.js): icons per controller, prompt bar, on-screen keyboard; nodev = a handheld build without dev tools ===== */
+html.nodev :is(.tab[data-tab="balance"],.filebtn),html.nodev .cardbox:has(#models-list){display:none!important}
+html[data-pad=ps] .glyph.a{background:#6f9bff;color:#fff}html[data-pad=ps] .glyph.x{background:#ff7ad9;color:#fff}html[data-pad=ps] .glyph.y{background:#3ddc84;color:#07142c}
+html[data-pad=deck] :is(.glyph.a,.glyph.b,.glyph.x,.glyph.y),html[data-pad=switch] :is(.glyph.a,.glyph.b,.glyph.x,.glyph.y){background:#e9eefc;color:#07142c}
+body.padnav :is(#ft,#osk) :is(button,input,select,[tabindex="0"]):focus{outline:3px solid var(--cyan);outline-offset:3px;box-shadow:0 0 0 6px rgba(92,242,234,.25)}
+#padbar{position:absolute;right:18px;bottom:14px;display:none;gap:16px;align-items:center;font-family:var(--f-display);font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:#dfe6ff;pointer-events:none;z-index:5}
+#padbar b{margin-left:6px;font-weight:800}#padbar .glyph+.glyph{margin-left:3px}
+body.padmode #hub:not(.paused-match) #padbar,body.padmode #hub.paused-match #padbar{display:flex}
+body.padmode #hub .hub-main{padding-bottom:56px}
+#osk{position:fixed;inset:0;z-index:9000;display:grid;place-items:end center;background:rgba(5,8,22,.55)}
+#osk[hidden]{display:none}
+.osk-in{width:min(980px,96%);margin-bottom:28px;background:#121a3a;border:1px solid var(--line);box-shadow:0 18px 60px rgba(0,0,0,.6);padding:18px 18px 12px}
+.osk-val{font:700 30px/1.3 var(--f-display);background:#0a1030;border:1px solid var(--line);padding:8px 14px;margin:8px 0 14px;min-height:52px;white-space:pre;overflow:hidden}
+.osk-row{display:flex;gap:8px;justify-content:center;margin-bottom:8px}
+.osk-k{flex:1 1 0;max-width:84px;height:58px;font:800 24px var(--f-display);background:rgba(255,255,255,.07);border:1px solid var(--line);color:#fff}
+.osk-k.wide{max-width:200px;flex:2 1 0;font-size:18px;text-transform:uppercase}
+.osk-k.on{background:var(--accent);border-color:#fff;outline:3px solid var(--cyan);outline-offset:2px}
+.osk-k.lit{color:var(--cyan)}
+.osk-help{display:flex;gap:10px;align-items:center;justify-content:center;font-size:14px;color:#c6cff0;margin:6px 0 0}
+
 /* Layout: full-bleed 3D table. Broadcast scoreboard top-left, contextual action strip bottom-centre, moment + meter bottom-left, controls bottom-right. Menus are a full-screen hub with tabs (Play / Squad / How to play). */
 :root{
   --bg0:#12073f;
@@ -103,9 +131,9 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 /* ---------- banner toast ---------- */
 #toast{position:fixed;z-index:6;left:0;right:0;top:36%;pointer-events:none;display:flex;justify-content:center;opacity:0}
-#toast .band{--tc:var(--accent2);width:min(760px,96vw);background:linear-gradient(90deg,transparent,var(--tc) 14%,var(--tc) 86%,transparent);transform:skewX(-14deg);padding:10px 40px 12px;text-align:center}
+#toast .band{--tc:var(--accent2);width:min(760px,calc(96*var(--vw)));background:linear-gradient(90deg,transparent,var(--tc) 14%,var(--tc) 86%,transparent);transform:skewX(-14deg);padding:10px 40px 12px;text-align:center}
 #toast .band > *{transform:skewX(14deg)}
-#toast .tt{font-family:var(--f-display);font-style:italic;font-weight:900;font-size:clamp(40px,9vw,84px);line-height:.9;text-transform:uppercase;letter-spacing:.02em;text-shadow:0 3px 0 rgba(0,0,0,.35)}
+#toast .tt{font-family:var(--f-display);font-style:italic;font-weight:900;font-size:clamp(40px,calc(9*var(--vw)),84px);line-height:.9;text-transform:uppercase;letter-spacing:.02em;text-shadow:0 3px 0 rgba(0,0,0,.35)}
 #toast .ts{margin-top:6px;font-weight:600;font-size:15px}
 #toast.on{animation:sweep 1.9s cubic-bezier(.2,.8,.2,1) forwards}
 #toast.long.on{animation-duration:2.5s}
@@ -210,21 +238,6 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .ctl div{font-size:14px;line-height:1.5}
 .ftbox{max-width:460px;margin:auto;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
 .ftscore{font-family:var(--f-display);font-weight:900;font-size:80px;line-height:1;font-variant-numeric:tabular-nums}
-@media (max-width:820px){
-  .tiles{grid-template-columns:1fr}
-  .tile{min-height:110px}
-  .squad,.grid2,.ctl{grid-template-columns:1fr}
-  .specials{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .sb-team{font-size:16px;padding:0 7px}
-  .sb-score{font-size:19px}
-  .sb-clock{font-size:16px}
-  .ctx{bottom:calc(env(safe-area-inset-bottom,0px) + 132px)}
-  .ctx-t{font-size:18px}
-  .moment{min-width:120px}
-  .pill .lbl{display:none}
-  .pill{padding-right:16px}
-  .dock.r{max-width:calc(100% - 170px)}
-}
 /* ---------- now playing ---------- */
 .np{position:fixed;z-index:12;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 16px);display:flex;align-items:center;gap:12px;background:linear-gradient(100deg,rgba(6,16,38,.96),rgba(17,42,87,.94));border:1px solid var(--line);border-left:4px solid var(--gold);padding:9px 22px 9px 12px;max-width:min(440px,calc(100% - 32px));clip-path:polygon(0 0,100% 0,95% 100%,0 100%);transform:translateX(-120%);opacity:0;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .5s}
 .np.on{transform:none;opacity:1}
@@ -291,7 +304,6 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .tbtn.gold{background:linear-gradient(110deg,#8a6a18,#c99a2e);color:#1c1402;border-color:transparent}
 .tbtn:hover,.dbtn:hover{filter:brightness(1.15)}
 .dtools select{min-width:0;background:#050c1c;color:var(--text);border:1px solid var(--line);padding:4px 6px;font:inherit;font-size:12px;font-weight:600}
-@media (max-width:820px){#prac{bottom:calc(env(safe-area-inset-bottom,0px) + 120px)}.tiles.two{grid-template-columns:1fr}.side{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 190px);max-height:45vh}}
 /* ---------- customization ---------- */
 .cust{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;align-items:start}
 .cust-nav{display:flex;flex-direction:column;gap:6px}
@@ -304,7 +316,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .stage::after{content:"";position:absolute;left:18%;right:18%;bottom:14%;height:7%;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.55),transparent 70%);pointer-events:none}
 .stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
 .stage .cap{position:absolute;left:16px;top:14px;right:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;pointer-events:none}
-.stage .cap b{display:block;font-family:var(--f-display);font-weight:900;font-style:italic;font-size:clamp(26px,4vw,40px);line-height:.95;text-transform:uppercase}
+.stage .cap b{display:block;font-family:var(--f-display);font-weight:900;font-style:italic;font-size:clamp(26px,calc(4*var(--vw)),40px);line-height:.95;text-transform:uppercase}
 .stage .cap small{font-family:var(--f-display);font-weight:800;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 .eqp{font-family:var(--f-display);font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;background:var(--gold);color:#2a1d03;padding:3px 8px}
 .stage .hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:12px;color:var(--muted);pointer-events:none}
@@ -315,8 +327,6 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .bcard b{font-family:var(--f-display);font-weight:900;font-style:italic;font-size:18px;line-height:1;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bcard[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--accent);background:linear-gradient(170deg,#1b6b5a,#0c2c46)}
 .bcard .eqp{position:absolute;top:8px;right:8px}
-@media (max-width:980px){.cust-main{grid-template-columns:1fr}}
-@media (max-width:820px){.cust{grid-template-columns:1fr}.cust-nav{flex-direction:row;overflow-x:auto}.cnav{flex:none}}
 /* ---------- settings ---------- */
 .set-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;align-items:start}
 .tracks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
@@ -341,7 +351,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .srow label,.srow .sl{font-family:var(--f-display);font-weight:800;font-size:16px;letter-spacing:.05em;text-transform:uppercase}
 .srow p{grid-column:1/-1;margin:0;color:var(--muted);font-size:12px;line-height:1.35}
 .rng{display:flex;align-items:center;gap:10px}
-.rng input[type=range]{width:min(200px,40vw);accent-color:var(--accent)}
+.rng input[type=range]{width:min(200px,calc(40*var(--vw)));accent-color:var(--accent)}
 .rng output{min-width:40px;text-align:right;font-variant-numeric:tabular-nums;font-family:var(--f-display);font-weight:800;font-size:16px}
 .filebtn{position:relative;overflow:hidden}
 .filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
@@ -560,7 +570,6 @@ body.calm #btn-start{animation:none}
 .tour-cta{justify-content:center;margin-top:12px}
 #tour-start,#tour-play{animation:breath 2.4s ease-in-out infinite}
 .big.concede{background:rgba(255,106,85,.16);color:#ffd2cb;box-shadow:inset 6px 0 0 var(--warn)}
-@media (max-width:820px){.tour-grid{grid-template-columns:1fr}}
 /* play modes */
 .modes{display:grid;grid-template-columns:1.15fr 1fr 1fr 1fr;grid-template-rows:auto auto;gap:10px}
 .modes .tile{min-height:112px}
@@ -576,7 +585,6 @@ body.calm .setup{animation:none}
 #squad-name{background:#0e0640;border:1px solid var(--line);color:var(--text);font-family:var(--f-display);font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;padding:6px 10px;width:220px;-webkit-user-select:text;user-select:text}
 .sq-name{display:flex;align-items:center;gap:8px}
 .sq-name label{font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
-@media (max-width:820px){.modes{grid-template-columns:1fr 1fr}.m-kick,.m-online,.m-versus{grid-column:auto;grid-row:auto;min-height:120px!important}.m-versus{grid-column:1/3}.m-tut,.m-prac{grid-column:auto;grid-row:auto}}
 /* table looks */
 .look-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px}
 .lcard{position:relative;display:flex;flex-direction:column;gap:3px;padding:5px 5px 7px;background:var(--tile);border:1px solid var(--line);text-align:left;min-width:0}
@@ -588,11 +596,9 @@ body.calm .setup{animation:none}
 #cust-table .col{gap:8px}
 #cust-table .cardbox{padding:10px 12px}
 #cust-table .cardbox .h{margin-bottom:6px}
-@media (max-width:820px){.squad,.pcard{grid-template-columns:1fr}.fut{margin:0 auto}}
 @media (prefers-reduced-motion:reduce){.hub-bg *{animation:none!important}}
 #vcur{position:fixed;z-index:7;width:22px;height:22px;margin:-11px 0 0 -11px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,.35);pointer-events:none}
 #vcur::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#fff}
-@media (max-width:820px){.set-grid{grid-template-columns:1fr}.np .ttl{font-size:17px}}
 @media (prefers-reduced-motion:reduce){#toast.on{animation-duration:.01s}.moment.ready{animation:none}.np .eq i{animation:none;height:60%}}
 /* squad: identity bar, formation, player card strip */
 .idbar{display:grid;grid-template-columns:minmax(0,1.3fr) auto auto;gap:14px 28px;align-items:end;margin-bottom:12px}
@@ -633,20 +639,8 @@ body.calm .setup{animation:none}
 .pc-strip .pcard{grid-template-columns:156px minmax(0,1fr);align-items:center;gap:20px}
 .pc-strip .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
 .pc-strip .stat{grid-template-columns:1fr;justify-items:center;text-align:center;gap:8px;padding:14px 6px}
-@media (max-width:980px){.pc-strip .stats{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}}
-@media (max-width:820px){
-  .idbar{grid-template-columns:1fr}
-  .formwrap{grid-template-columns:1fr}
-  .fcol{width:auto}.kopbtns{max-width:110px}
-  #formations{flex-direction:row;flex-wrap:wrap;width:auto}
-  #formations .chip{width:auto;padding:6px 10px}
-  .pc-strip .pcard{grid-template-columns:1fr;justify-items:center}
-  .pc-strip .stats{width:100%}
-}
 .logo b{font-size:23px;white-space:nowrap}
-@media (max-width:1280px){.tab{padding:10px 8px 12px;font-size:17px}.tabs{gap:2px}}
 .logo b em{font-style:inherit;font-size:.72em;color:var(--cyan);letter-spacing:.06em}
-@media (max-width:820px){.logo b{font-size:19px}}
 .tile .live{position:absolute;top:34px;left:16px;right:auto;display:flex;align-items:center;gap:5px;padding:3px 8px 3px 7px;background:rgba(0,0,0,.35);border:1px solid var(--line);font-family:var(--f-display);font-weight:800;font-size:13px;line-height:1;color:#fff}
 .tile .live i{width:7px;height:7px;border-radius:50%;background:#39e07a;box-shadow:0 0 6px #39e07a;animation:livep 1.8s ease-in-out infinite}
 .tile .live svg{position:static;width:13px;height:13px;display:block;opacity:1;color:#fff}
@@ -659,9 +653,9 @@ body.padnav #hub :is(button,input,select,[tabindex="0"]):focus{outline:3px solid
 #hub.paused-match .tab:is([data-tab=squad],[data-tab=custom],[data-tab=album]){display:none}
 #hub.paused-match [data-panel=play] .modes,#hub.paused-match #match-settings,#hub.paused-match #online-panel,#hub.paused-match #btn-start{display:none!important}
 #hub.paused-match #mode-setup{display:block!important}
-#hub.paused-match [data-panel=play] .cta{justify-content:center;padding-top:16vh;gap:16px}
+#hub.paused-match [data-panel=play] .cta{justify-content:center;padding-top:calc(16*var(--vh));gap:16px}
 #hub.paused-match [data-panel=play] .cta .big{min-width:220px;min-height:64px;font-size:20px;justify-content:center;gap:10px}
-#hub.paused-match [data-panel=play] .cta::before{content:'Paused';position:absolute;left:0;right:0;top:calc(16vh - 86px);text-align:center;font:900 italic 44px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:#fff;opacity:.9}
+#hub.paused-match [data-panel=play] .cta::before{content:'Paused';position:absolute;left:0;right:0;top:calc(calc(16*var(--vh)) - 86px);text-align:center;font:900 italic 44px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:#fff;opacity:.9}
 #hub.paused-match [data-panel=play] .cta{position:relative}
 /* sub-menus: a dark strip so the choices read on the bright background */
 .subnav{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;width:max-content;max-width:100%;margin-left:auto;margin-right:auto}
@@ -714,7 +708,6 @@ body.padmode #np-next .npg{display:inline-grid}
 .plays-list li.empty{border-left-color:transparent;opacity:.6;font-size:12px}
 .plays-list b{display:block;font-family:var(--f-display);font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#fff}
 .plays-list small{display:block;font-size:11.5px;line-height:1.3;color:#d9d2ff}
-@media (max-width:820px){.plays{width:190px;top:calc(env(safe-area-inset-top,0px) + 64px)}}
 /* Hobby wallet, speaker icon, price tags */
 .hobby{display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 7px;background:rgba(10,4,38,.72);border:1px solid rgba(246,196,67,.45);font-family:var(--f-display);font-weight:900;font-size:16px;color:#ffe08a;letter-spacing:.04em}
 .hobby[hidden]{display:none}
@@ -749,16 +742,16 @@ body.padmode #np-next .npg{display:inline-grid}
   background:radial-gradient(ellipse 75% 65% at 50% 46%,rgba(18,7,63,.3) 0%,rgba(18,7,63,.42) 55%,rgba(10,4,38,.92) 100%),linear-gradient(180deg,rgba(10,4,38,.55) 0%,rgba(10,4,38,0) 28%,rgba(10,4,38,0) 62%,rgba(10,4,38,.85) 100%)}
 .title[hidden]{display:none}
 html.titleon body>*:not(#title):not(#c):not(script){visibility:hidden!important}
-.t-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(18px,4vh,44px);padding:24px 16px;text-align:center}
+.t-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(18px,calc(4*var(--vh)),44px);padding:24px 16px;text-align:center}
 .t-logo{display:flex;flex-direction:column;align-items:center;gap:6px;animation:tIn .9s cubic-bezier(.2,.9,.25,1) both}
-.t-mark{width:clamp(64px,9vw,104px);aspect-ratio:1;display:grid;place-items:center;background:var(--accent);box-shadow:inset 8px 0 0 var(--orange),0 18px 50px rgba(154,92,255,.45);font-family:var(--f-display);font-weight:900;font-style:italic;font-size:clamp(34px,4.8vw,56px);margin-bottom:10px}
-.t-name{font-family:var(--f-display);font-weight:900;font-style:italic;text-transform:uppercase;line-height:.86;letter-spacing:.02em;font-size:clamp(64px,12vw,168px);text-shadow:0 6px 0 rgba(0,0,0,.25),0 20px 60px rgba(0,0,0,.45)}
+.t-mark{width:clamp(64px,calc(9*var(--vw)),104px);aspect-ratio:1;display:grid;place-items:center;background:var(--accent);box-shadow:inset 8px 0 0 var(--orange),0 18px 50px rgba(154,92,255,.45);font-family:var(--f-display);font-weight:900;font-style:italic;font-size:clamp(34px,calc(4.8*var(--vw)),56px);margin-bottom:10px}
+.t-name{font-family:var(--f-display);font-weight:900;font-style:italic;text-transform:uppercase;line-height:.86;letter-spacing:.02em;font-size:clamp(64px,calc(12*var(--vw)),168px);text-shadow:0 6px 0 rgba(0,0,0,.25),0 20px 60px rgba(0,0,0,.45)}
 .t-name em{font-style:inherit;color:var(--cyan);font-size:.5em;letter-spacing:.08em;display:block;margin-top:.12em}
-.t-sub{font-family:var(--f-body);font-weight:600;font-size:clamp(12px,1.3vw,15px);letter-spacing:.42em;text-transform:uppercase;color:var(--muted);margin-top:8px}
-.t-press{display:flex;align-items:center;gap:12px;font-family:var(--f-display);font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:.12em;font-size:clamp(18px,2.2vw,26px);padding:12px 26px;background:rgba(18,7,63,.55);border-left:4px solid var(--orange);animation:tIn .9s .35s cubic-bezier(.2,.9,.25,1) both,tPulse 2.2s 1.3s ease-in-out infinite}
+.t-sub{font-family:var(--f-body);font-weight:600;font-size:clamp(12px,calc(1.3*var(--vw)),15px);letter-spacing:.42em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.t-press{display:flex;align-items:center;gap:12px;font-family:var(--f-display);font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:.12em;font-size:clamp(18px,calc(2.2*var(--vw)),26px);padding:12px 26px;background:rgba(18,7,63,.55);border-left:4px solid var(--orange);animation:tIn .9s .35s cubic-bezier(.2,.9,.25,1) both,tPulse 2.2s 1.3s ease-in-out infinite}
 .t-press .glyph{font-size:14px;min-width:28px;height:28px;border-radius:14px}
 .t-press .glyph[hidden]{display:none}
-.t-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:0 max(16px,3vw) max(14px,2.6vh);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);animation:tFade 1s .6s both}
+.t-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:0 max(16px,calc(3*var(--vw))) max(14px,calc(2.6*var(--vh)));font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);animation:tFade 1s .6s both}
 .t-foot span{display:flex;align-items:center;gap:8px}
 .t-foot i{width:8px;height:8px;border-radius:50%;background:#3ddc84;box-shadow:0 0 10px #3ddc84}
 .t-foot .pad svg{width:20px;height:20px}
@@ -840,7 +833,6 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 .ko-pv b{font-family:var(--f-display);font-weight:800;font-size:17px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
 .ko-pa{width:30px;height:30px;padding:0;background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:18px;line-height:1}
 .ko-strip .big{margin-left:auto}
-@media (max-width:900px){.ko-main{grid-template-columns:1fr}.ko-vs{flex-direction:row;flex-wrap:wrap}.ko-vs .seg{flex-direction:row}.ko-head{grid-template-columns:auto 1fr}.ko-keys{display:none}.ko-title{text-align:left}}
 @media (prefers-reduced-motion:reduce){.ko-swap .ko-card{animation:none}}
 
 /* ---------- My Club, The Ground, Album (21 Oct 2026) ---------- */
@@ -880,7 +872,6 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 .hs-op img,.hs-noem{width:24px;height:24px;object-fit:contain;display:inline-block}
 .hs-noem{border:1px dashed var(--line)}
 .hs-sc{font-family:var(--f-display);font-weight:900;font-size:17px}.hs-sc.w{color:var(--accent2)}.hs-sc.l{color:var(--warn)}
-@media (max-width:900px){.hs-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}.hs-grid{grid-template-columns:1fr}.hs-cab{grid-column:auto}}
 /* album */
 .al-sub .chip{display:inline-flex;align-items:center;gap:6px;position:relative;font-size:14px;padding:7px 12px}
 .al-sub small{opacity:.7;font-size:12px}
@@ -919,14 +910,12 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 .al-un{display:flex;flex-direction:column;gap:3px;padding:10px;border:1px solid var(--line);background:rgba(0,0,0,.2)}
 .al-un small{color:var(--muted)}
 .al-un .chip,.al-dupe{align-self:flex-start;margin-top:4px}
-@media (max-width:980px){.album{grid-template-columns:1fr}.al-page{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media (max-width:560px){.al-page{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* pack */
 .pack{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,rgba(80,40,200,.55),rgba(6,2,24,.94) 70%);padding:16px}
 .pack-in{display:flex;flex-direction:column;align-items:center;gap:14px;max-width:100%}
 .pack-in>.h{font-size:26px;margin:0}
 .pack-row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
-.pk{width:clamp(130px,17vw,200px);aspect-ratio:63/88;border:0;padding:0;background:none;perspective:900px}
+.pk{width:clamp(130px,calc(17*var(--vw)),200px);aspect-ratio:63/88;border:0;padding:0;background:none;perspective:900px}
 .pk-in{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
 .pk.on .pk-in{transform:rotateY(180deg)}
 .pk-back,.pk-front{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 14px 30px rgba(0,0,0,.5)}
@@ -964,7 +953,6 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 .cr-sw{aspect-ratio:1/1;border:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);padding:0}
 .cr-sw.on{box-shadow:0 0 0 3px var(--orange)}
 .cr-sw.grad{border-radius:50%}
-@media (max-width:820px){.cr-wrap{grid-template-columns:1fr}.cr-left{position:static}}
 .kp-pats{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px}
 .kpat{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px;background:var(--tile);border:0;box-shadow:inset 0 0 0 1px var(--line)}
 .kpat img,.kpat-ph{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
@@ -985,6 +973,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 @media (prefers-reduced-motion:reduce){.acard.r-uncommon::after,.pk.r-uncommon .pk-front::after,.acard.r-rare{animation:none}}
 </style>
 
+<script>/* UI scale before the first paint (js/uiscale.js keeps it up to date) */(function(){var t=matchMedia('(pointer:coarse)').matches&&!matchMedia('(pointer:fine)').matches,u=t?140:100;try{u=(JSON.parse(localStorage.getItem('baize.settings')||'{}').ui)||u;}catch(e){}var z=Math.min(Math.min(innerWidth/1600,innerHeight/900)*u/100,innerWidth/1480);document.documentElement.style.setProperty('--uiz',Math.max(z,0.5).toFixed(4));})();</script>
 <section class="title" id="title" role="button" tabindex="0" aria-label="Flick Cup 2026. Press any button to start">
   <div class="t-mid">
     <div class="t-logo"><span class="t-mark" aria-hidden="true">FC</span><div class="t-name">Flick Cup<em>2026</em></div><div class="t-sub">Table football</div></div>
@@ -1419,6 +1408,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 
 <div class="pack" id="pack" hidden><div class="pack-in"><p class="h" id="pack-title">Card pack</p><div class="pack-row" id="pack-row"></div><p class="note" id="pack-note">Tap a card to turn it over.</p><div class="cta" style="justify-content:center"><button class="big alt" id="pack-all" type="button">Turn all</button><button class="big go" id="pack-done" type="button"><span class="glyph a">A</span>Done</button></div></div></div>
 
+<div id="rotate" role="alert"><div><i aria-hidden="true">⟳</i>Turn your device sideways to play</div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <!-- game code: classic scripts, loaded in this order (they share one scope) -->
@@ -1438,6 +1428,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="js/menus.js"></script>
 <script src="js/customize.js"></script>
 <script src="js/settings.js"></script>
+<script src="js/controls.js"></script>
 <script src="js/loop.js"></script>
 <script src="js/practice.js"></script>
 <script src="js/data.js"></script>
@@ -1448,6 +1439,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="js/kitpattern.js"></script>
 <script src="js/vfx.js"></script>
 <script src="js/club.js"></script>
+<script src="js/uiscale.js"></script>
 <script src="js/start.js"></script>
 
 </html>

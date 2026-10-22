@@ -1,0 +1,84 @@
+{
+ "version": 1,
+ "about": "Control mapping, edited in Distal > Settings > Control mapping. platforms.<p>.buttons: action -> physical button number (browser standard mapping: 0 bottom, 1 right, 2 left, 3 top face button, 4/5 bumpers, 6/7 triggers, 8 View, 9 Menu, 10/11 stick clicks, 12-15 D-pad up, down, left, right). keys: action -> keyboard code.",
+ "platforms": {
+  "xbox": {
+   "buttons": {
+    "confirm": 0,
+    "back": 1,
+    "moment": 2,
+    "camera": 3,
+    "prev": 4,
+    "next": 5,
+    "ltrig": 6,
+    "rtrig": 7,
+    "menu": 9,
+    "music": 11,
+    "keeper": 12
+   },
+   "swapSticks": false
+  },
+  "ps": {
+   "buttons": {
+    "confirm": 0,
+    "back": 1,
+    "moment": 2,
+    "camera": 3,
+    "prev": 4,
+    "next": 5,
+    "ltrig": 6,
+    "rtrig": 7,
+    "menu": 9,
+    "music": 11,
+    "keeper": 12
+   },
+   "swapSticks": false
+  },
+  "deck": {
+   "buttons": {
+    "confirm": 0,
+    "back": 1,
+    "moment": 2,
+    "camera": 3,
+    "prev": 4,
+    "next": 5,
+    "ltrig": 6,
+    "rtrig": 7,
+    "menu": 9,
+    "music": 11,
+    "keeper": 12
+   },
+   "swapSticks": false
+  },
+  "switch": {
+   "buttons": {
+    "confirm": 1,
+    "back": 0,
+    "moment": 3,
+    "camera": 2,
+    "prev": 4,
+    "next": 5,
+    "ltrig": 6,
+    "rtrig": 7,
+    "menu": 9,
+    "music": 11,
+    "keeper": 12
+   },
+   "swapSticks": false
+  }
+ },
+ "keys": {
+  "menu": "Escape",
+  "camera": "KeyC",
+  "moment": "KeyM",
+  "keeper": "KeyG",
+  "skip": "Space",
+  "nextFig": "Tab",
+  "curlL": "KeyQ",
+  "curlR": "KeyE",
+  "music": "KeyN",
+  "spot1": "Digit1",
+  "spot2": "Digit2",
+  "spot3": "Digit3"
+ }
+}

@@ -135,23 +135,24 @@ window.addEventListener('keydown',e=>{
   if(TITLE.on){if(!/^(F\d+|Alt|Control|Shift|Meta|Tab|CapsLock|OS)/.test(e.key)){e.preventDefault();titleGo();}return;}
   if(e.target&&e.target.tagName==='INPUT')return;
   ensureAudio();keys[e.code]=true;if(lastInput==='pad')setInput('pointer');
-  if(takeTurn()&&(e.code==='Digit1'||e.code==='Digit2'||e.code==='Digit3')){placeAtSpot(+e.code.slice(-1)-1);return;}
-  if(takeTurn()&&e.code==='Tab'){e.preventDefault();cycleSel(e.shiftKey?-1:1);updateHud();return;}
+  if(takeTurn()){const sp=['spot1','spot2','spot3'].findIndex(a=>e.code===KEY(a));if(sp>=0){placeAtSpot(sp);return;}}
+  if(takeTurn()&&e.code===KEY('nextFig')){e.preventDefault();cycleSel(e.shiftKey?-1:1);updateHud();return;}
   if(!$('#hub').hidden&&hubTab==='kickoff'){
     if(e.code==='Escape'){e.preventDefault();koBack();return;}
     if(e.code==='KeyQ'||e.code==='ArrowLeft'){e.preventDefault();koStep(-1);return;}
     if(e.code==='KeyE'||e.code==='ArrowRight'){e.preventDefault();koStep(1);return;}
     if(e.code==='Enter'&&(!document.activeElement||document.activeElement===document.body)){e.preventDefault();koGo();return;}}
-  if(e.code==='Escape'){e.preventDefault();if(ptr.on){cancelPull();return;}if(!$('#cam-menu').hidden){closeCamMenu();return;}toggleMenu();return;}
+  if(e.code==='Escape'&&ptr.on){e.preventDefault();cancelPull();return;}
+  if(e.code===KEY('menu')){e.preventDefault();if(ptr.on){cancelPull();return;}if(!$('#cam-menu').hidden){closeCamMenu();return;}toggleMenu();return;}
   if(!$('#hub').hidden)return;
-  if(e.code==='KeyC'){cycleCam();return;}
+  if(e.code===KEY('camera')){cycleCam();return;}
   if(!localTurn())return;
-  if(e.code==='Space'){e.preventDefault();if(S.phase==='defend')skipDefend();}
-  if(e.code==='Tab'){e.preventDefault();cycleSel(e.shiftKey?-1:1);}
-  if(e.code==='KeyM')activateMoment(S.active);
-  if(e.code==='KeyN'){ensureAudio();music.next();}
-  if(e.code==='KeyG'&&localTurn())gkToggle(S.active);
-  if(S.phase==='attack'&&S.armed==='finesse'&&S.armedTeam===S.active){if(e.code==='KeyQ')setCurl(-1);if(e.code==='KeyE')setCurl(1);}
+  if(e.code===KEY('skip')){e.preventDefault();if(S.phase==='defend')skipDefend();}
+  if(e.code===KEY('nextFig')){e.preventDefault();cycleSel(e.shiftKey?-1:1);}
+  if(e.code===KEY('moment'))activateMoment(S.active);
+  if(e.code===KEY('music')){ensureAudio();music.next();}
+  if(e.code===KEY('keeper')&&localTurn())gkToggle(S.active);
+  if(S.phase==='attack'&&S.armed==='finesse'&&S.armedTeam===S.active){if(e.code===KEY('curlL'))setCurl(-1);if(e.code===KEY('curlR'))setCurl(1);}
 });
 window.addEventListener('keyup',e=>{keys[e.code]=false;});
 window.addEventListener('blur',()=>{keys.KeyF=false;});
@@ -160,8 +161,10 @@ function setCurl(s){curlSign=s;$('#curl-l').setAttribute('aria-pressed',String(s
 /* ================= gamepad: Skate-style right stick ================= */
 const padSt=[];
 // spatial focus for controllers: pick the nearest visible control in the pressed direction
-function padCands(){return [...document.querySelectorAll('#hub .tabs .tab, #hub [data-panel]:not([hidden]) :is(button,input,select,[tabindex="0"])')].filter(el=>{if(el.disabled)return false;const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&el.offsetParent!==null&&getComputedStyle(el).visibility!=='hidden';});}
-function padFocusEl(){const a=document.activeElement;return a&&a!==document.body&&$('#hub').contains(a)?a:null;}
+// the layer the controller works in: the full-time screen when it is up, otherwise the menu (pack and keyboard have their own)
+let PAD_ROOT='#hub';
+function padCands(){return [...document.querySelectorAll(PAD_ROOT==='#hub'?'#hub .tabs .tab, #hub [data-panel]:not([hidden]) :is(button,input,select,[tabindex="0"])':PAD_ROOT+' :is(button,input,select,[tabindex="0"])')].filter(el=>{if(el.disabled)return false;const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&el.offsetParent!==null&&getComputedStyle(el).visibility!=='hidden';});}
+function padFocusEl(){const a=document.activeElement;return a&&a!==document.body&&$(PAD_ROOT).contains(a)?a:null;}
 function padZone(el){return !el?'':el.closest('.tabs')?'tabs':el.closest('.subnav')?'sub':'content';}
 function padPick(el){if(!el)return;el.focus({preventScroll:true});el.scrollIntoView({block:'nearest',inline:'nearest'});}
 function padSubBtns(){const pn=document.querySelector('#hub [data-panel]:not([hidden])'),nav=pn&&pn.querySelector('.subnav');return nav&&!nav.hidden&&nav.offsetParent?[...nav.querySelectorAll('button')].filter(b=>!b.disabled&&b.offsetParent):[];}
@@ -175,7 +178,7 @@ function padNav(dir){
       if(z==='tabs'){stepTab(dir==='r'?1:-1);padPick(document.querySelector('.tab[aria-selected="true"]'));return;}
       const bs=padSubBtns();let k=bs.indexOf(cur);k=(k<0?0:k+(dir==='r'?1:-1)+bs.length)%bs.length;bs[k].click();padPick(bs[k]);return;}
     if(dir==='u'){if(z==='sub')padPick(document.querySelector('.tab[aria-selected="true"]'));return;}
-    if(z==='tabs'){const bs=padSubBtns();if(bs.length){padPick(bs.find(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-current')==='true')||bs[0]);return;}}
+    if(z==='tabs'){const mem=PAD_MEM[hubTab];if(mem&&mem.isConnected&&mem.offsetParent&&!mem.disabled&&padZone(mem)==='content'){padPick(mem);return;}const bs=padSubBtns();if(bs.length){padPick(bs.find(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-current')==='true')||bs[0]);return;}}
     const list=padCands().filter(el=>padZone(el)==='content'&&el.getBoundingClientRect().top>(cur?cur.getBoundingClientRect().bottom-2:0));
     if(list.length){const c=cur.getBoundingClientRect(),cx=c.left+c.width/2;list.sort((a,b)=>{const ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect();return (ra.top-c.bottom)+Math.abs(ra.left+ra.width/2-cx)*0.5-((rb.top-c.bottom)+Math.abs(rb.left+rb.width/2-cx)*0.5);});padPick(list[0]);}
     return;}
@@ -222,13 +225,22 @@ function retPad(gp,st,dt,pressed){
 }
 addEventListener('mousemove',e=>{if(ret.on&&(Math.abs(e.movementX)+Math.abs(e.movementY))>2)retShow(false);});
 function rumble(strong,ms){if(!SET.rumble||lastInput!=='pad')return;try{for(const gp of navigator.getGamepads()){if(gp&&gp.vibrationActuator&&gp.vibrationActuator.playEffect)gp.vibrationActuator.playEffect('dual-rumble',{duration:ms,strongMagnitude:strong,weakMagnitude:Math.min(1,strong+0.2)}).catch(()=>{});}}catch(e){}}
+const PAD_MEM={};addEventListener('focusin',e=>{const t=e.target;if(t&&t.closest&&t.closest('#hub [data-panel]')&&typeof hubTab!=='undefined')PAD_MEM[hubTab]=t;});
 function pollPads(dt){
-  let pads=[];try{pads=navigator.getGamepads?Array.from(navigator.getGamepads()).filter(p=>p&&p.connected):[];}catch(e){pads=[];}
+  const pads=padsNow();
   if(lastInput!=='pad'&&pads.some(gp=>gp.axes.some(a=>Math.abs(a)>0.4)||gp.buttons.some(b=>b.pressed)))setInput('pad');
   pads.forEach((gp,i)=>{
     const st=padSt[i]||(padSt[i]={btn:[],rs:'idle',peak:0,dx:0,dz:0,peakT:0,nT:0,ls:true});
     const pressed=k=>gp.buttons[k]&&gp.buttons[k].pressed,edge=k=>pressed(k)&&!st.btn[k];
     if(TITLE.on){if(gp.buttons.some((b,k)=>b.pressed&&!st.btn[k]))titleGo();st.btn=gp.buttons.map(b=>b.pressed);return;}
+    if(oskOpen()){oskPad(gp,st,dt);st.btn=gp.buttons.map(b=>b.pressed);return;}
+    if(typeof PACK!=='undefined'&&PACK.open){st.btn=gp.buttons.map(b=>b.pressed);return;}   // the pack screen reads the pad itself
+    const ftOpen=!$('#ft').hidden;PAD_ROOT=ftOpen?'#ft':'#hub';
+    if(ftOpen){const lx=gp.axes[0]||0,ly=gp.axes[1]||0,now=performance.now();
+      const dir=pressed(12)?'u':pressed(13)?'d':pressed(14)?'l':pressed(15)?'r':Math.abs(ly)>0.6&&Math.abs(ly)>=Math.abs(lx)?(ly<0?'u':'d'):Math.abs(lx)>0.6?(lx<0?'l':'r'):'';
+      if(!dir)st.navD='';else if(dir!==st.navD){st.navD=dir;st.navT=now+380;padNavContent(dir);}else if(now>st.navT){st.navT=now+150;padNavContent(dir);}
+      if(edge(0)){const f=padFocusEl();if(f)f.click();else padNavContent('d');}
+      st.btn=gp.buttons.map(b=>b.pressed);return;}
     const hubOpen=!$('#hub').hidden;
     if(edge(11)&&tokMove<0){ensureAudio();music.next();}
     if(edge(9)){if(hubOpen&&S.running&&S.phase!=='end')closeMenu();else toggleMenu();}
@@ -250,7 +262,7 @@ function pollPads(dt){
       if(!stickNav&&Math.abs(ly)>0.25){const hm=document.querySelector('#hub .hub-main');if(hm)hm.scrollTop+=Math.sign(ly)*(Math.abs(ly)-0.25)/0.75*1100*dt;}
       let dir=pressed(12)?'u':pressed(13)?'d':pressed(14)?'l':pressed(15)?'r':!stickNav?'':Math.abs(ly)>0.6&&Math.abs(ly)>=Math.abs(lx)?(ly<0?'u':'d'):Math.abs(lx)>0.6?(lx<0?'l':'r'):'';
       if(!dir)st.navD='';else if(dir!==st.navD){st.navD=dir;st.navT=now+380;padNav(dir);}else if(now>st.navT){st.navT=now+150;padNav(dir);}
-      if(edge(0)&&!ret.on){const f=padFocusEl();if(f&&f.classList.contains('tok')){squadMoveStart([...$('#mini').querySelectorAll('.tok')].indexOf(f));}else if(f){f.click();if(f.matches('input[type=text],input:not([type]),input[type=password]'))f.focus();}else if(hubTab==='play')$('#btn-start').click();else if(hubTab==='kickoff')koGo();}
+      if(edge(0)&&!ret.on){const f=padFocusEl();if(f&&f.classList.contains('tok')){squadMoveStart([...$('#mini').querySelectorAll('.tok')].indexOf(f));}else if(f){if(isTextField(f)){oskShow(f);}else f.click();}else if(hubTab==='play')$('#btn-start').click();else if(hubTab==='kickoff')koGo();}
       if(edge(1)){const f=padFocusEl();if(f&&f.matches('input'))f.blur();else if(hubTab==='kickoff')koBack();else if(!$('#btn-resume').hidden)closeMenu();else if(hubTab==='play'&&menuMode){setMenuMode('');}}
       st.btn=gp.buttons.map(b=>b.pressed);return;}
     let team;if(S.mode==='local')team=pads.length>=2?i:S.active;else if(S.mode==='cpu')team=1-cpuTeam;else team=net.myTeam;
