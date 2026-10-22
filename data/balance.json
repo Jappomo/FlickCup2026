@@ -1,0 +1,87 @@
+{
+  "stats": {
+    "sht": {
+      "base": 1,
+      "step": 0.04
+    },
+    "pin": {
+      "base": 1,
+      "step": 0.27
+    },
+    "mae": {
+      "base": 0.12,
+      "step": -0.03
+    },
+    "b2b": {
+      "base": 1,
+      "step": 0.033
+    },
+    "trk": {
+      "base": 0,
+      "step": 0.15
+    },
+    "trkd": {
+      "base": 30,
+      "step": 0
+    }
+  },
+  "paths": {
+    "att": {
+      "sht": 1,
+      "pin": 0,
+      "mae": 0,
+      "b2b": 0,
+      "trk": 0
+    },
+    "mid": {
+      "sht": 0,
+      "pin": 0,
+      "mae": 0.5,
+      "b2b": 0.5,
+      "trk": 0
+    },
+    "def": {
+      "sht": 0,
+      "pin": 1,
+      "mae": 0,
+      "b2b": 0,
+      "trk": 0
+    }
+  },
+  "unlock": {
+    "att": [
+      "finesse",
+      "bicycle"
+    ],
+    "mid": [
+      "bicycle",
+      "maradona",
+      "thread"
+    ],
+    "def": [
+      "thread",
+      "moon"
+    ]
+  },
+  "bar": {
+    "keep": 6,
+    "chain": 4,
+    "area": 10,
+    "steal": 10,
+    "goal": 20,
+    "moon": 8
+  },
+  "eco": {
+    "on": false,
+    "start": 100,
+    "tutorial": 400,
+    "lose": 40,
+    "draw": 60,
+    "win": 100,
+    "field": 100,
+    "table": 250,
+    "trinket": 50,
+    "banner": 50,
+    "ball": 200
+  }
+}

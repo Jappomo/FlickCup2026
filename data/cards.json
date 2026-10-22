@@ -6,19 +6,25 @@
       "name": "Common",
       "weight": 70,
       "dupe": 10,
-      "color": "#b8c0d4"
+      "color": "#b8c0d4",
+      "shader": "card_common",
+      "strength": 1
     },
     "uncommon": {
       "name": "Uncommon",
       "weight": 25,
       "dupe": 25,
-      "color": "#4fd1a5"
+      "color": "#4fd1a5",
+      "shader": "card_foil",
+      "strength": 1
     },
     "rare": {
       "name": "Rare",
       "weight": 5,
       "dupe": 60,
-      "color": "#f6c443"
+      "color": "#f6c443",
+      "shader": "card_depth",
+      "strength": 1
     }
   },
   "packs": {
@@ -230,6 +236,33 @@
         "type": "banner",
         "id": "006"
       },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "tricks-08",
+      "collection": "moments",
+      "no": 8,
+      "title": "Standing Ovation",
+      "rarity": "rare",
+      "desc": "",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "table",
+        "id": "007"
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "moments-07",
+      "collection": "moments",
+      "no": 9,
+      "title": "New card",
+      "rarity": "common",
+      "desc": "",
+      "tip": "Drops from any pack.",
+      "unlock": null,
       "art": "",
       "drop": true
     },
@@ -774,6 +807,21 @@
       "drop": true
     },
     {
+      "id": "patterns-06",
+      "collection": "celebrations",
+      "no": 7,
+      "title": "C Walk",
+      "rarity": "rare",
+      "desc": "Placeholder card: the hand-drawn art comes later.",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "music",
+        "id": "gh_Home End Reply - SnoopSnoop.mp3"
+      },
+      "art": "Card_063_The_corner_routine",
+      "drop": true
+    },
+    {
       "id": "tricks-01",
       "collection": "tricks",
       "no": 1,
@@ -859,6 +907,21 @@
       "unlock": {
         "type": "pattern",
         "id": ""
+      },
+      "art": "",
+      "drop": true
+    },
+    {
+      "id": "tricks-07",
+      "collection": "tricks",
+      "no": 7,
+      "title": "Rabona",
+      "rarity": "common",
+      "desc": "",
+      "tip": "Drops from any pack.",
+      "unlock": {
+        "type": "pattern",
+        "id": "006"
       },
       "art": "",
       "drop": true
@@ -1021,21 +1084,6 @@
       "rarity": "rare",
       "desc": "Placeholder card: the hand-drawn art comes later.",
       "tip": "Rare: about one in twenty cards. Win to open bigger packs.",
-      "unlock": {
-        "type": "challenge",
-        "id": ""
-      },
-      "art": "",
-      "drop": true
-    },
-    {
-      "id": "patterns-06",
-      "collection": "patterns",
-      "no": 6,
-      "title": "The corner routine",
-      "rarity": "common",
-      "desc": "Placeholder card: the hand-drawn art comes later.",
-      "tip": "Drops from any pack.",
       "unlock": {
         "type": "challenge",
         "id": ""

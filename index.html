@@ -973,6 +973,16 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 .kpat.locked img{opacity:.5}.kpat .lock{position:absolute;top:4px;right:4px}
 .kp-two{margin-top:10px}.kp-two .h{font-size:11px;margin:0 0 4px}
 .hs-crest{width:64px;height:64px;object-fit:contain;float:left;margin-right:12px}
+
+/* card rarity looks in the menus (the 3D card uses the card shaders in shaders/) */
+.acard:not(.miss)::after,.pk-front::after{content:"";position:absolute;inset:0;pointer-events:none}
+.acard.r-uncommon:not(.miss)::after,.pk.r-uncommon .pk-front::after{background:linear-gradient(115deg,transparent 22%,rgba(255,80,200,.38) 36%,rgba(80,255,255,.38) 50%,rgba(255,255,90,.38) 64%,transparent 78%);background-size:300% 300%;mix-blend-mode:color-dodge;animation:foil 5s linear infinite}
+@keyframes foil{0%{background-position:120% 0}100%{background-position:-120% 0}}
+.acard.r-rare:not(.miss){animation:rareglow 2.4s ease-in-out infinite alternate}
+.acard.r-rare:not(.miss) img,.pk.r-rare .pk-front img{transform:scale(1.1) translate(var(--px,0px),var(--py,0px));transition:transform .25s ease-out}
+.acard.r-rare:not(.miss)::after,.pk.r-rare .pk-front::after{background:radial-gradient(circle at var(--gx,30%) var(--gy,20%),rgba(255,230,150,.35),transparent 45%)}
+@keyframes rareglow{from{box-shadow:0 0 0 2px var(--rc),0 8px 18px rgba(0,0,0,.4)}to{box-shadow:0 0 0 2px var(--rc),0 0 22px var(--rc),0 8px 18px rgba(0,0,0,.4)}}
+@media (prefers-reduced-motion:reduce){.acard.r-uncommon::after,.pk.r-uncommon .pk-front::after,.acard.r-rare{animation:none}}
 </style>
 
 <section class="title" id="title" role="button" tabindex="0" aria-label="Flick Cup 2026. Press any button to start">
@@ -1413,6 +1423,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <!-- game code: classic scripts, loaded in this order (they share one scope) -->
 <script src="js/core.js"></script>
+<script src="js/shaders.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/physics.js"></script>
 <script src="js/rules.js"></script>
@@ -1435,6 +1446,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="js/album.js"></script>
 <script src="js/crest.js"></script>
 <script src="js/kitpattern.js"></script>
+<script src="js/vfx.js"></script>
 <script src="js/club.js"></script>
 <script src="js/start.js"></script>
 

@@ -204,15 +204,9 @@ function kitMaskMaterial(src,M,gk){
     uPat:P.uPat,uHasPat:P.uHasPat,uShirt2:P.uShirt2,uShorts2:P.uShorts2,uSocks2:P.uSocks2};
   const e=idMapFor(src);if(e){e.users.push(u);if(e.tex){u.uIdMap.value=e.tex;u.uHasId.value=1;}}
   m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,u);
-    sh.fragmentShader='uniform sampler2D uIdMap;uniform float uHasId;uniform vec3 uShirt;uniform vec3 uShorts;uniform vec3 uSocks;uniform sampler2D uPat;uniform float uHasPat;uniform vec3 uShirt2;uniform vec3 uShorts2;uniform vec3 uSocks2;\n'+sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
-  #ifdef USE_MAP
-  vec3 idm=uHasId>0.5?texture2D(uIdMap,vUv).rgb:vec3(smoothstep(0.45,0.7,min(min(diffuseColor.r,diffuseColor.g),diffuseColor.b)),0.,0.);
-  vec3 pm=uHasPat>0.5?texture2D(uPat,vUv).rgb:vec3(0.);
-  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*mix(uShirt,uShirt2,pm.r),idm.r);
-  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*mix(uShorts,uShorts2,pm.g),idm.g);
-  diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*mix(uSocks,uSocks2,pm.b),idm.b);
-  #endif`);};
-  m.customProgramCacheKey=()=>'kitmask2';kitMatCache.set(key,m);return m;}
+    sh.fragmentShader='uniform sampler2D uIdMap;uniform float uHasId;uniform vec3 uShirt;uniform vec3 uShorts;uniform vec3 uSocks;uniform sampler2D uPat;uniform float uHasPat;uniform vec3 uShirt2;uniform vec3 uShorts2;uniform vec3 uSocks2;\n'+sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n'+shaderSrc('kit_mask'));};
+  // the code is shaders/kit_mask.glsl (js/shaders.js); a change there recompiles these materials
+  shaderUse(m,'kit_mask');m.customProgramCacheKey=()=>'kitmask2'+shaderKey('kit_mask');kitMatCache.set(key,m);return m;}
 const isKitMask=m=>!!(m&&m.map&&((m.userData&&(m.userData.idmap||m.userData.kitmask))||/_Player/i.test(m.name||'')));
 function loadModel(kind,urlOrBuffer,label){
   return new Promise(res=>{

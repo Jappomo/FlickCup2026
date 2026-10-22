@@ -138,17 +138,10 @@ let GROUND_VIS=null,prevGround=null,kGround=null;
 // and are lit the same on both sides (no dark back faces)
 const GROUND_U={uTime:{value:0},uR:{value:0.0095}};
 function groundMat(m,blades){m=m.clone();m.onBeforeCompile=sh=>{sh.uniforms.uTime=GROUND_U.uTime;sh.uniforms.uR=GROUND_U.uR;
-  if(blades)sh.vertexShader='uniform float uTime;uniform float uR;\n'+sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
-  float gh=max(transformed.y,0.0);vec2 gp=transformed.xz;float gd=length(gp);
-  float near=1.0-smoothstep(uR*0.8,uR*1.5,gd);
-  vec2 gdir=gd>1e-6?gp/gd:vec2(1.0,0.0);
-  transformed.xz+=gdir*gh*0.28*near;
-  transformed.y-=gh*0.05*near;
-  transformed.x+=sin(uTime*0.4+gp.x*420.0+gp.y*310.0)*gh*gh*40.0;
-  transformed.z+=cos(uTime*0.3+gp.y*380.0)*gh*gh*22.0;`);
-  sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_begin>',`#include <normal_fragment_begin>
-  normal=normalize(mix(normalize((viewMatrix*vec4(0.0,1.0,0.0,0.0)).xyz),vec3(0.0,0.0,1.0),0.55));`);};
-  m.customProgramCacheKey=()=>'ground'+(blades?'b':'p');return m;}
+  // the code is shaders/grass_blades.glsl and shaders/grass_light.glsl (js/shaders.js)
+  if(blades)sh.vertexShader='uniform float uTime;uniform float uR;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n'+shaderSrc('grass_blades'));
+  sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_begin>','#include <normal_fragment_begin>\n'+shaderSrc('grass_light'));};
+  shaderUse(m,'grass_blades','grass_light');m.customProgramCacheKey=()=>'ground'+(blades?'b':'p')+shaderKey('grass_blades')+shaderKey('grass_light');return m;}
 // props.glb: general props. The preview ground is SM_Ground_###_Name (e.g. SM_Ground_001_Pitch_Turf) under 'Ground';
 // inside it, a mesh or material named ..._Turf is the flat plane, everything else is grass blades. The lowest number is used.
 (function(){if(!THREE.GLTFLoader)return;new THREE.GLTFLoader().load('models/props.glb',g=>{const r=g.scene.getObjectByName('Ground')||g.scene;stripColliders(r);

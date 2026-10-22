@@ -42,7 +42,7 @@ const CARD_SEED={
 };
 const TIPS={common:'Drops from any pack.',uncommon:'Drops from any pack, about one in four cards.',rare:'Rare: about one in twenty cards. Win to open bigger packs.'};
 const CARDS_DEF={version:1,unlockRule:'free',
-  rarities:{common:{name:'Common',weight:70,dupe:10,color:'#b8c0d4'},uncommon:{name:'Uncommon',weight:25,dupe:25,color:'#4fd1a5'},rare:{name:'Rare',weight:5,dupe:60,color:'#f6c443'}},
+  rarities:{common:{name:'Common',weight:70,dupe:10,color:'#b8c0d4',shader:'card_common',strength:1},uncommon:{name:'Uncommon',weight:25,dupe:25,color:'#4fd1a5',shader:'card_foil',strength:1},rare:{name:'Rare',weight:5,dupe:60,color:'#f6c443',shader:'card_depth',strength:1}},
   packs:{win:3,draw:2,lose:1,welcome:1},
   collections:COL_DEF.map(([id,name,desc,color,unlocks,reward,cabinet])=>({id,name,desc,color,unlocks,reward,cabinet:!!cabinet})),
   cards:[]};
@@ -56,7 +56,7 @@ function cleanCards(o){
   const num=(v,lo,hi,d)=>{v=Number(v);return isFinite(v)?Math.max(lo,Math.min(hi,v)):d;};
   const col=v=>typeof v==='string'&&/^#[0-9a-f]{6}$/i.test(v)?v.toLowerCase():null;
   const out={version:1,unlockRule:UNLOCK_RULES[o.unlockRule]?o.unlockRule:D.unlockRule,rarities:{},packs:{},collections:[],cards:[]};
-  RARITY_KEYS.forEach(k=>{const x=(o.rarities||{})[k]||{},d=D.rarities[k];out.rarities[k]={name:str(x.name,16,d.name)||d.name,weight:num(x.weight,0,1000,d.weight),dupe:Math.round(num(x.dupe,0,100000,d.dupe)),color:col(x.color)||d.color};});
+  RARITY_KEYS.forEach(k=>{const x=(o.rarities||{})[k]||{},d=D.rarities[k];out.rarities[k]={name:str(x.name,16,d.name)||d.name,weight:num(x.weight,0,1000,d.weight),dupe:Math.round(num(x.dupe,0,100000,d.dupe)),color:col(x.color)||d.color,shader:typeof x.shader==='string'&&/^[a-z0-9_]{1,40}$/.test(x.shader)?x.shader:d.shader,strength:num(x.strength,0,4,d.strength)};});
   if(!RARITY_KEYS.some(k=>out.rarities[k].weight>0))out.rarities.common.weight=1;
   Object.keys(D.packs).forEach(k=>out.packs[k]=Math.round(num((o.packs||{})[k],0,10,D.packs[k])));
   const cols=Array.isArray(o.collections)?o.collections:D.collections,seen=new Set();
@@ -150,7 +150,7 @@ function openPack(){
   const row=$('#pack-row');row.innerHTML='';
   PACK.cards.forEach((g,i)=>{const c=g.card,R=CARDS.rarities[c.rarity],b=document.createElement('button');b.type='button';b.className='pk r-'+c.rarity;b.style.setProperty('--rc',R.color);b.style.setProperty('--cc',colOf(c.collection).color);
     b.innerHTML=`<span class="pk-in"><span class="pk-back"></span><span class="pk-front"><img alt="" src="${cardArtUrl(c)}"><b>${albEsc(c.title)}</b><small>${albEsc(R.name)} · ${g.first?'<em>New</em>':'Duplicate'}</small></span></span>`;
-    b.onclick=()=>packTurn(i);row.appendChild(b);});
+    b.onclick=()=>packTurn(i);if(c.rarity==='rare')rareTilt(b);row.appendChild(b);});
   $('#pack-title').textContent=PACK.cards.length===1?'One card':PACK.cards.length+' cards';$('#pack-note').textContent='Tap a card to turn it over.';
   $('#pack').hidden=false;$('#pack-all').hidden=false;setTimeout(()=>{const f=$('#pack-row .pk');if(f)f.focus();},50);
   if(hubTab==='album')renderAlbum();albumDot();return true;}
@@ -194,7 +194,7 @@ function applyCardModel(scene3,label,g){
   const fi=(J.materials||[]).findIndex(m=>/Card_Front/i.test(m.name||''));
   (J.meshes||[]).forEach(me=>(me.primitives||[]).forEach(pr=>{if(fi>=0&&pr.material!==fi)return;const L=pr.extensions&&pr.extensions.KHR_materials_variants;(L&&L.mappings||[]).forEach(m=>(m.variants||[]).forEach(vi=>{if(names[vi]&&!found.has(names[vi]))found.set(names[vi],m.material);}));}));
   (J.materials||[]).forEach((m,i)=>{const k=/^M_(Card_\d+.*)$/.exec(m.name||'');if(k&&!found.has(k[1]))found.set(k[1],i);});
-  const jobs=[...found].map(([name,mi])=>P.getDependency('material',mi).then(m=>{const img=m&&m.map&&m.map.image;CARD3D.art[name]={mat:m,url:img?artPic(img):''};}).catch(()=>{}));
+  const jobs=[...found].map(([name,mi])=>P.getDependency('material',mi).then(m=>{const t=m&&m.map;CARD3D.art[name]={mat:m,url:t?artPic(t):''};}).catch(()=>{}));
   MODEL_INFO.card={src:label,note:`card mesh ${vs[0].node.name} · ${found.size} card art${found.size===1?'':'s'}`};
   Promise.all(jobs).then(()=>{CARD3D.list=[...found.keys()].filter(n=>CARD3D.art[n]);artCache.clear();if(hubTab==='album')renderAlbum();});
 }
@@ -202,7 +202,16 @@ APPLY.card=applyCardModel;MODEL_INFO.card={src:'Built-in'};
 {const baseReset=resetModel;resetModel=function(kind){if(kind==='card'){CARD3D.node=null;CARD3D.front=null;CARD3D.art={};CARD3D.list=[];artCache.clear();if(hubTab==='album')renderAlbum();}return baseReset(kind);};}
 loadModel('card','models/card.glb','card.glb');
 // art picture for menus (the variant's texture, or a placeholder) as a data URL
-function artPic(img){try{const w0=img.width||img.naturalWidth,h0=img.height||img.naturalHeight;if(!w0||!h0)return '';const s=Math.min(1,360/w0),c=document.createElement('canvas');c.width=Math.round(w0*s);c.height=Math.round(h0*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',0.88);}catch(e){return '';}}
+// the art's colour as a menu picture. Drawn with WebGL: the art's alpha is the shader mask (foil, depth), and a 2D canvas
+// would turn it into transparency.
+let ART_PIC=null;
+function artPic(tex){try{const img=tex.image,w0=img.width||img.naturalWidth,h0=img.height||img.naturalHeight;if(!w0||!h0)return '';
+  const r=previewRenderer(),w=Math.min(360,w0),h=Math.round(w*h0/w0);
+  if(!ART_PIC){const m=new THREE.ShaderMaterial({uniforms:{map:{value:null}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy*2.0,0.0,1.0);}',
+      fragmentShader:'uniform sampler2D map;varying vec2 vUv;void main(){gl_FragColor=vec4(texture2D(map,vec2(vUv.x,1.0-vUv.y)).rgb,1.0);}',depthTest:false,depthWrite:false});
+    const sc=new THREE.Scene();sc.add(new THREE.Mesh(new THREE.PlaneGeometry(1,1),m));ART_PIC={m,sc,cam:new THREE.OrthographicCamera(-1,1,1,-1,0,1)};}
+  const keep=new THREE.Vector2();r.getSize(keep);ART_PIC.m.uniforms.map.value=tex;r.setSize(w,h,false);r.setClearColor(0x000000,1);r.render(ART_PIC.sc,ART_PIC.cam);
+  const url=r.domElement.toDataURL('image/jpeg',0.9);r.setClearColor(0x000000,0);r.setSize(keep.x,keep.y,false);return url;}catch(e){console.error('[card art]',e);return '';}}
 const artCache=new Map();
 function cardArtUrl(c){const a=c.art&&CARD3D.art[c.art];if(a&&a.url)return a.url;
   const k=c.id+'|'+c.title+'|'+c.rarity+'|'+c.collection+'|'+c.no;if(!artCache.has(k))artCache.set(k,cardPlaceholder(c).toDataURL('image/png'));return artCache.get(k);}
@@ -226,6 +235,10 @@ function cardPlaceholder(c,w){w=w||360;const h=Math.round(w*88/63),cv=document.c
 /* ================= Album page ================= */
 const albEsc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
 const AL={col:'',sel:''};
+// rare cards in the menus: the picture shifts against the frame as the pointer moves (a 2D hint of the depth shader)
+function rareTilt(el){el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-0.5,y=(e.clientY-r.top)/r.height-0.5;
+  el.style.setProperty('--px',(-x*10).toFixed(1)+'px');el.style.setProperty('--py',(-y*10).toFixed(1)+'px');el.style.setProperty('--gx',((x+0.5)*100).toFixed(0)+'%');el.style.setProperty('--gy',((y+0.5)*100).toFixed(0)+'%');});
+  el.addEventListener('pointerleave',()=>{['--px','--py','--gx','--gy'].forEach(k=>el.style.removeProperty(k));});}
 function renderAlbum(){
   if(hubTab!=='album')return;
   if(!CARDS.collections.some(c=>c.id===AL.col))AL.col=CARDS.collections[0].id;
@@ -240,7 +253,7 @@ function renderAlbum(){
   cards.forEach(c=>{const n=ALBUM.cards[c.id]||0,R=CARDS.rarities[c.rarity],b=document.createElement('button');b.type='button';b.className='acard r-'+c.rarity+(n?'':' miss');b.style.setProperty('--rc',R.color);b.setAttribute('aria-pressed',String(c.id===AL.sel));
     b.innerHTML=n?`<img alt="" src="${cardArtUrl(c)}">${c.art&&CARD3D.art[c.art]?`<span class="ac-no">#${String(c.no).padStart(2,'0')}</span>`:''}<b>${albEsc(c.title)}</b>${n>1?`<span class="ac-dup">×${n}</span>`:''}${ALBUM.fresh[c.id]?'<span class="ac-new">New</span>':''}`
       :`<span class="ac-slot">#${String(c.no).padStart(2,'0')}</span><b>${albEsc(c.title)}</b><small>${albEsc(c.tip||R.name)}</small>`;
-    b.title=c.title+(n?'':' · not found yet');b.onclick=()=>{AL.sel=c.id;renderAlbum();sfx('tock',6);};page.appendChild(b);});
+    b.title=c.title+(n?'':' · not found yet');b.onclick=()=>{AL.sel=c.id;renderAlbum();sfx('tock',6);};if(n&&c.rarity==='rare')rareTilt(b);page.appendChild(b);});
   if(!cards.length)page.innerHTML='<p class="note">No cards in this collection yet.</p>';
   const tot=CARDS.cards.length,own=CARDS.cards.filter(c=>hasCard(c.id)).length;
   $('#al-total').textContent=`${own} of ${tot} cards`+(ALBUM.packs.length?` · ${ALBUM.packs.length} pack${ALBUM.packs.length>1?'s':''} to open`:' · win matches for more packs');
@@ -286,13 +299,37 @@ function initAlbumPreview(){if(aScene)return true;try{const cv=$('#al-prev');aR=
   cv.addEventListener('pointerdown',e=>{aSpin.drag=true;aSpin.x=e.clientX;try{cv.setPointerCapture(e.pointerId);}catch(_){}});
   cv.addEventListener('pointermove',e=>{if(!aSpin.drag)return;const dx=e.clientX-aSpin.x;aSpin.x=e.clientX;aSpin.a+=dx*0.012;aSpin.v=dx*0.5;});
   const up=()=>{aSpin.drag=false;};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);return true;}catch(e){aScene=null;return false;}}
+// the placeholder's mask (its alpha): white frame at the front, the picture area behind it (grey)
+function cardPlaceholderMask(c,w){const h=Math.round(w*88/63),cv=document.createElement('canvas');cv.width=w;cv.height=h;const x=cv.getContext('2d'),u=w/360;
+  x.fillStyle='#fff';x.fillRect(0,0,w,h);           // the frame stands at the front
+  x.fillStyle='#5a5a5a';x.fillRect(24*u,70*u,w-48*u,h-170*u);  // the picture sits behind it
+  return cv;}
+// placeholder art with its mask in the alpha, built byte by byte (a 2D canvas would lose the colour under a low alpha)
+function placeholderTex(c,owned){const cv=cardPlaceholder(c,512);
+  if(!owned){const x=cv.getContext('2d');x.fillStyle='rgba(8,4,30,.72)';x.fillRect(0,0,cv.width,cv.height);x.fillStyle='#fff';x.textAlign='center';x.font='800 34px system-ui,Arial,sans-serif';x.fillText('NOT FOUND YET',cv.width/2,cv.height/2);}
+  const W=cv.width,H=cv.height,rgb=cv.getContext('2d').getImageData(0,0,W,H).data,mk=cardPlaceholderMask(c,512).getContext('2d').getImageData(0,0,W,H).data,d=new Uint8Array(W*H*4);
+  for(let i=0;i<d.length;i+=4){d[i]=rgb[i];d[i+1]=rgb[i+1];d[i+2]=rgb[i+2];d[i+3]=owned?mk[i]:255;}
+  const t=new THREE.DataTexture(d,W,H,THREE.RGBAFormat);t.flipY=false;t.encoding=THREE.sRGBEncoding;t.minFilter=THREE.LinearFilter;t.generateMipmaps=false;t.anisotropy=4;t.needsUpdate=true;return t;}
+// the card front: the rarity's card shader (shaders/card_*.glsl) on top of the card's lit material
+const CARD_U={uTime:{value:0}};
+// Distal's Card scene can show a card with another rarity's look, or any card shader (ALBUM_LOOK, set through link.js)
+const ALBUM_LOOK={rarity:'',shader:''};
 function cardFrontMat(c,owned){
-  const a=c.art&&CARD3D.art[c.art];
-  if(a&&a.mat&&owned)return a.mat;
-  const key=c.id+'|'+c.title+'|'+c.rarity+'|'+c.no+'|'+(owned?1:0);let t=aTex.get(key);
-  if(!t){const cv=cardPlaceholder(c,512);if(!owned){const x=cv.getContext('2d');x.fillStyle='rgba(8,4,30,.72)';x.fillRect(0,0,cv.width,cv.height);x.fillStyle='#fff';x.textAlign='center';x.font='800 34px system-ui,Arial,sans-serif';x.fillText('NOT FOUND YET',cv.width/2,cv.height/2);}
-    t=new THREE.CanvasTexture(cv);t.flipY=false;t.encoding=THREE.sRGBEncoding;t.anisotropy=4;aTex.set(key,t);while(aTex.size>24){const k0=aTex.keys().next().value;aTex.get(k0).dispose();aTex.delete(k0);}}
-  const base=CARD3D.front||new THREE.MeshStandardMaterial({roughness:0.45});const m=base.clone();m.name='M_Card_Front';m.map=t;m.color.setRGB(1,1,1);return m;}
+  const a=c.art&&CARD3D.art[c.art],R=CARDS.rarities[c.rarity]||{},want=ALBUM_LOOK.shader||R.shader,shader=owned&&SHADERS[want]&&SHADERS[want].kind==='card'?want:'card_common';
+  let t;if(a&&a.mat&&a.mat.map&&owned)t=a.mat.map;
+  else{const key=c.id+'|'+c.title+'|'+c.rarity+'|'+c.no+'|'+(owned?1:0);t=aTex.get(key);if(!t){t=placeholderTex(c,owned);aTex.set(key,t);while(aTex.size>24){const k0=aTex.keys().next().value;aTex.get(k0).dispose();aTex.delete(k0);}}}
+  const base=(a&&a.mat&&owned)?a.mat:(CARD3D.front||new THREE.MeshStandardMaterial({roughness:0.45}));const m=base.clone();m.name='M_Card_Front';m.map=t;m.color.setRGB(1,1,1);m.transparent=false;m.alphaTest=0;
+  const u={uTime:CARD_U.uTime,uStrength:{value:R.strength!=null?R.strength:1},uCamObj:{value:new THREE.Vector3(0,0,1)}};m.userData.cardU=u;
+  m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,u);
+    sh.vertexShader='varying vec3 vCardPos;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvCardPos=position;');
+    sh.fragmentShader='uniform float uTime;uniform float uStrength;uniform vec3 uCamObj;varying vec3 vCardPos;\n'+sh.fragmentShader
+      .replace('void main() {','#ifdef USE_MAP\n'+shaderSrc(shader)+'\n#endif\nvoid main() {')
+      .replace('#include <map_fragment>','#ifdef USE_MAP\nvec3 cardV=normalize(uCamObj-vCardPos);vec2 cardUv=cardUV(vUv,cardV);vec4 cardArt=texture2D(map,cardUv);diffuseColor.rgb*=mapTexelToLinear(vec4(cardArt.rgb,1.0)).rgb;\n#endif')
+      .replace('gl_FragColor = vec4( outgoingLight, diffuseColor.a );','#ifdef USE_MAP\noutgoingLight=cardColor(outgoingLight,cardArt,cardUv,cardV,normal);\n#endif\ngl_FragColor = vec4( outgoingLight, 1.0 );');};
+  shaderUse(m,shader);m.customProgramCacheKey=()=>'card|'+shaderKey(shader);return m;}
+// the card shaders need the camera in the card's own space
+function cardCamHook(o){o.traverse(x=>{if(!x.isMesh)return;const ms=Array.isArray(x.material)?x.material:[x.material];if(!ms.some(m=>m.userData.cardU))return;
+  x.onBeforeRender=(r,s,cam)=>{ms.forEach(m=>{const u=m.userData.cardU;if(u){u.uCamObj.value.setFromMatrixPosition(cam.matrixWorld);x.worldToLocal(u.uCamObj.value);}});};});}
 function cardObject(c,owned){let o;
   if(CARD3D.node){o=CARD3D.node.clone(true);o.traverse(x=>{if(!x.isMesh)return;if(Array.isArray(x.material))x.material=x.material.map(m=>/Card_Front/i.test(m.name||'')?cardFrontMat(c,owned):m);else if(/Card_Front/i.test(x.material.name||''))x.material=cardFrontMat(c,owned);});}
   else{const back=new THREE.MeshStandardMaterial({color:0x2a1890,roughness:0.5}),edge=new THREE.MeshStandardMaterial({color:0xeae4d2,roughness:0.6});
@@ -300,9 +337,10 @@ function cardObject(c,owned){let o;
   return o;}
 // (re)build the card shown in the Album preview (Distal calls this for its Card scene too)
 function albumPreviewBuild(){if(!initAlbumPreview())return;
-  const c=cardById(AL.sel)||CARDS.cards[0];if(aObj){aScene.remove(aObj);gpuRetire(aObj);aObj=null;}if(!c)return;
-  const o=cardObject(c,hasCard(c.id)||/[?&]distal=/.test(location.search));aObj=fitGroup(o);aObj.name='Card';aScene.add(aObj);try{applySceneData();}catch(e){}}
-function albumTick(){if(!aScene||!aObj)return;
+  let c=cardById(AL.sel)||CARDS.cards[0];if(aObj){aScene.remove(aObj);gpuRetire(aObj);aObj=null;}if(!c)return;
+  if(ALBUM_LOOK.rarity&&CARDS.rarities[ALBUM_LOOK.rarity])c=Object.assign({},c,{rarity:ALBUM_LOOK.rarity});
+  const o=cardObject(c,hasCard(c.id)||/[?&]distal=/.test(location.search));aObj=fitGroup(o);cardCamHook(aObj);aObj.name='Card';aScene.add(aObj);try{applySceneData();}catch(e){}}
+function albumTick(){if(!aScene||!aObj)return;CARD_U.uTime.value=performance.now()/1000;
   if(!aSpin.drag){aSpin.v*=0.94;aSpin.a+=Math.sin(performance.now()/2600)*0.0016+aSpin.v*0.002;}aObj.rotation.y=aSpin.a;
   previewCam('album',aCam);previewDraw(aR,$('#al-prev'),aScene,aCam,1.05);}
 

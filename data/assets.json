@@ -18,6 +18,38 @@
         },
         "ref": "Ball_001"
       }
+    },
+    "models/kitpattern.glb": {
+      "KitPattern_001": {
+        "snapshot": "variations/models_kitpattern.glb/KitPattern_001.glb",
+        "node": "SM_KitPattern_001_Stripes",
+        "hash": "8f7125cae46a620f",
+        "kind": "retextured",
+        "saved": "2026-10-22T00:02:07.716Z",
+        "name": "Stripes",
+        "retextured": "2026-10-21T23:56:54.989Z",
+        "adopted": false
+      },
+      "KitPattern_002": {
+        "snapshot": "variations/models_kitpattern.glb/KitPattern_002.glb",
+        "node": "SM_KitPattern_002_Hoops",
+        "hash": "54c64a62390b9973",
+        "kind": "retextured",
+        "saved": "2026-10-22T00:02:07.725Z",
+        "name": "Hoops",
+        "retextured": "2026-10-22T00:01:27.713Z",
+        "adopted": false
+      },
+      "KitPattern_003": {
+        "snapshot": "variations/models_kitpattern.glb/KitPattern_003.glb",
+        "node": "SM_KitPattern_003_Halves",
+        "hash": "134d80d563eaec8a",
+        "kind": "retextured",
+        "saved": "2026-10-22T00:09:27.950Z",
+        "name": "Halves",
+        "retextured": "2026-10-22T00:09:27.950Z",
+        "adopted": false
+      }
     }
   },
   "sources": {
@@ -30,6 +62,7 @@
     "models/emblem.glb": "Art/Emblems/SourceData/emblem.glb",
     "models/card.glb": "Art/Cards/Scene_Card_Collection.blend",
     "models/crest.glb": "Art/Emblems/Crest/Scene_Crest_Collection.blend",
-    "models/kitpattern.glb": "Art/Figure/Scene_KitPattern_Collection.blend"
+    "models/kitpattern.glb": "Art/Figure/Scene_KitPattern_Collection.blend",
+    "models/vfx.glb": "Art/VFX/Scene_Vfx_Collection.blend"
   }
 }

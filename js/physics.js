@@ -36,7 +36,7 @@ function circlePair(a,b,ctx){
   const e=isBall?E_BALL:E_FIG,j=-(1+e)*rv/sum;
   a.vx-=j*nx*ia;a.vz-=j*nz*ia;b.vx+=j*nx*ib;b.vz+=j*nz*ib;
   if(!isBall){const tw=(rv*0.15)*(Math.random()-0.5);a.spin+=tw;b.spin-=tw;}
-  if(rv<-0.3){contact(a,b,ctx);sfx(isBall?'tock':'clack',-rv);}
+  if(rv<-0.3){contact(a,b,ctx);sfx(isBall?'tock':'clack',-rv);if(!isBall&&typeof vfxHit==='function')vfxHit(a,b,nx,nz,-rv);}
 }
 function contact(a,b,ctx){
   if(!ctx||ctx.done)return;
