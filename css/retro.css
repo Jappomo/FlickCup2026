@@ -27,7 +27,7 @@ html.ui-menu .np{zoom:var(--mz)}
 #hub [data-panel=balance]:not([hidden]){display:block;overflow-y:auto;padding-right:10px;scrollbar-width:thin;scrollbar-color:var(--mus) rgba(0,0,0,.25)}
 
 /* ===================== backdrop ===================== */
-.hub-bg{background:url(menu-art.svg?v=20261024e) center/cover no-repeat,var(--n1)}
+.hub-bg{background:url(menu-art.svg?v=20261024h) center/cover no-repeat,var(--n1)}
 .hub-bg svg{display:none}
 .hub-bg::after{content:"";position:absolute;inset:0;background:var(--grain);mix-blend-mode:screen;opacity:.9}
 #hub,#ft,#title{font-family:var(--f-display);color:var(--cream)}
@@ -442,6 +442,37 @@ html[data-dev=kbd] :is(.big,.ko-back) .glyph.b::after{content:"Esc";font-size:12
 .on-act .big{min-height:56px;font-size:24px}
 .on-act .on-hold{min-height:40px!important}
 /* the button sits at the bottom of the middle column, level with the side panels */
-#hub .ko-vs>b,.on-vs{margin-top:auto}
+#hub .ko-vs>b{margin-top:auto}
+/* Friendly's middle column stays put: VS, code and half length at the top; Start / Ready appears at the bottom once there is a room */
+.on-vs{margin-top:0}
 #hub .ko-vs #ko-go,.on-mid>.big{margin-top:auto}
 .on-mid{justify-content:flex-start}
+
+/* ===================== Kick-off: symmetric, crest on top with the info under it ===================== */
+#hub [data-panel=kickoff] .ko-main{grid-template-columns:minmax(0,1fr) 360px minmax(0,1fr)}
+#hub [data-panel=kickoff] .ko-side{display:flex;flex-direction:column;justify-content:flex-start}
+#hub [data-panel=kickoff] .ko-card{display:flex;flex-direction:column;flex:1;min-height:0}
+#hub [data-panel=kickoff] .ko-id{flex-direction:column;align-items:center;text-align:center;gap:6px;min-height:0}
+#hub [data-panel=kickoff] .ko-nm{display:flex;flex-direction:column;align-items:center;gap:4px}
+#hub [data-panel=kickoff] :is(.ko-tags,.ko-tier){justify-content:center}
+#hub [data-panel=kickoff] .ko-desc{text-align:center}
+/* both tops are 170 high (your crest / the carousel), then 'Club n / 15' or the same gap, so the names line up */
+#ko-me .ko-id>.ko-crest{width:150px;height:150px;margin:10px 0}
+/* the upper part (crest and club info) is the same height on both sides, so the line under it is level across the screen */
+#hub [data-panel=kickoff] .ko-id{flex:0 0 300px;justify-content:flex-start;overflow:hidden}
+#hub [data-panel=kickoff] .ko-look{margin-top:0}
+#ko-me .ko-kits,#ko-opp .ko-kits{margin-top:auto}
+.ko-carousel{display:flex;align-items:center;justify-content:center;gap:16px;height:170px;width:100%}
+.kc-cur .ko-crest{width:150px;height:150px}
+.kc-cur .ko-crest img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(3px 4px 0 rgba(5,12,24,.45))}
+.kc-n{width:76px;height:76px;padding:0;border:0;background:none;opacity:.55;display:grid;place-items:center}
+.kc-n img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(2px 3px 0 rgba(5,12,24,.4))}
+.kc-n b{font:900 italic 22px var(--f-display);color:var(--cream)}
+.kc-n.lock{filter:grayscale(1)}
+.kc-n:hover{opacity:.85}
+#hub .ko-carousel .ko-arr{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 8px;min-width:0;background:rgba(5,12,24,.45);border:0;color:var(--cream);font:900 italic 30px/1 var(--f-display)}
+#hub .ko-carousel .ko-arr .pg{display:inline-grid;font-size:11px}
+html:not([data-dev=pad]) #hub .ko-carousel .ko-arr .pg{display:none}
+#ko-opp.ko-swap .kc-cur{animation:kcIn .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes kcIn{from{opacity:.2;transform:scale(.85)}to{opacity:1;transform:none}}
+.on-room .status{min-height:2.9em}
