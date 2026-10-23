@@ -200,7 +200,7 @@ function pollPads(dt){
     // the menus (and the full-time screen) go through the UI system (js/ui.js): one focus, one input layer
     if(ftOpen){uiPad(gp,st);st.btn=gp.buttons.map(b=>b.pressed);return;}
     const hubOpen=!$('#hub').hidden;
-    if(edge(11)&&tokMove<0){ensureAudio();music.next();}
+    if(hubOpen&&edge(11)&&tokMove<0){ensureAudio();music.next();}
     if(edge(9)){if(hubOpen&&S.running&&S.phase!=='end')closeMenu();else toggleMenu();}
     if(hubOpen){
       // moving a formation shield: either stick or the D-pad nudges it, X puts it down
@@ -212,34 +212,54 @@ function pollPads(dt){
           if(mx||my)squadNudge(tokMove,mx*34*dt,my*34*dt);
           if(edge(2)||edge(0)||edge(1))squadMoveEnd();
           st.btn=gp.buttons.map(b=>b.pressed);return;}}
-      // the right stick still drives a pointer (it moves the same focus); A clicks where it points while it shows
-      retPad(gp,st,dt,pressed);
-      if(!ret.on)uiPad(gp,st);
+      // L3 switches the left stick between moving the focus and driving a pointer (A clicks where it points)
+      if(edge(10)){UI.ptrMode=!UI.ptrMode;retShow(UI.ptrMode);if(UI.ptrMode){ret.x=innerWidth/2;ret.y=innerHeight/2;const R=$('#reticle');R.style.left=ret.x+'px';R.style.top=ret.y+'px';}uiSnd.tab();uiBarRender();}
+      if(UI.ptrMode){retPad({axes:[0,0,gp.axes[0]||0,gp.axes[1]||0]},st,dt,pressed);uiPad(gp,st,{dpadOnly:true,noConfirm:true});}
+      else uiPad(gp,st);
+      // the right stick turns the 3D preview on screen (ball, table, kit, album card)
+      uiSpin(gp.axes[2]||0,dt);
       st.btn=gp.buttons.map(b=>b.pressed);return;}
     let team;if(S.mode==='local')team=pads.length>=2?i:S.active;else if(S.mode==='cpu')team=1-cpuTeam;else team=net.myTeam;
-    if(edge(3))cycleCam();
-    if(takeTurn()&&team===S.active){if(edge(4))cycleSel(-1);if(edge(5))cycleSel(1);if(edge(0))placeAtSpot(1);if(edge(2))placeAtSpot(0);if(edge(1))placeAtSpot(2);}
-    if(localTurn()&&team===S.active&&edge(12))gkToggle(team);
+    // Match controls (agreed 24 Oct 2026). Left stick: aim, flick it to shoot. L2: soft flick. L1: cancel a charge, else
+    // the next figure. Right stick: camera (with RB: zoom). R3: reset the camera, hold it for the camera views.
+    // X: Moment. Y + RB: keeper out or back. RB + left stick: slide the keeper. D-pad down: last plays (press again
+    // for more, hold to close). R2 in Finesse: switch the curl. B: skip the block.
+    const DZ=clamp((SET.dz||20)/100,0.05,0.5),now=performance.now(),R1=pressed(5);
+    const lx=gp.axes[0]||0,ly=gp.axes[1]||0,m=Math.hypot(lx,ly),rx=gp.axes[2]||0,ry=gp.axes[3]||0;
+    // the camera views menu (hold R3): up and down pick, A takes it, B or R3 closes
+    if(!$('#cam-menu').hidden&&st.camPad){padCamMenu(gp,st,edge,pressed);st.btn=gp.buttons.map(b=>b.pressed);return;}
+    if(pressed(11)){if(!st.r3T)st.r3T=now;else if(now-st.r3T>450&&!st.r3Held){st.r3Held=true;openCamMenu();st.camPad=true;st.camI=-1;padCamMenu(gp,st,()=>false,pressed);}}
+    else{if(st.r3T&&!st.r3Held)resetCam();st.r3T=0;st.r3Held=false;}
+    // right stick: orbit the camera, or zoom while RB is held
+    if(Math.hypot(rx,ry)>DZ&&!(ptr.on&&ptr.mode==='pull')){const cs=(SET.csens||100)/100,ax=Math.abs(rx)>DZ?rx:0,ay=Math.abs(ry)>DZ?ry:0;
+      if(R1)cam.zoom=clamp(cam.zoom*(1+ay*dt*1.1),0.5,1.7);
+      else{cam.yaw+=ax*dt*2.2*cs;cam.pitch=clamp(cam.pitch+ay*dt*1.3*cs*(SET.invY?-1:1),-0.75,0.55);}}
+    // D-pad down: last plays. A press opens it, the next press shows more, holding it closes it
+    if(pressed(13)){if(!st.dnT)st.dnT=now;else if(now-st.dnT>500&&!st.dnHeld){st.dnHeld=true;padPlays('close');}}
+    else{if(st.dnT&&!st.dnHeld)padPlays('step');st.dnT=0;st.dnHeld=false;}
+    if(takeTurn()&&team===S.active){if(edge(4))cycleSel(1);if(edge(0))placeAtSpot(1);if(edge(2))placeAtSpot(0);if(edge(1))placeAtSpot(2);}
+    if(localTurn()&&team===S.active&&((edge(3)&&R1)||(edge(5)&&pressed(3))))gkToggle(team);
     const mine=localTurn()&&team===S.active;
-    const rx=gp.axes[2]||0,ry=gp.axes[3]||0,m=Math.hypot(rx,ry);
     if(mine){
-      if(edge(0)&&S.phase==='defend')skipDefend();
+      // B: skip the block when defending, otherwise drop the aim
+      if(edge(1)){st.rs='cool';clearAim();if(S.phase==='defend')skipDefend();}
       if(edge(2))activateMoment(team);
-      if(edge(4))cycleSel(-1);if(edge(5))cycleSel(1);
-      if(edge(1)){st.rs='cool';clearAim();}
+      if(S.phase==='attack'&&S.armed==='finesse'&&S.armedTeam===team&&edge(7))setCurl(curlSign<0?1:-1);
+      // L1: cancel the charge, or move to the next figure
+      if(edge(4)){if(st.rs==='load'&&(st.dx||st.dz)){st.rs='cool';clearAim();flashSub('Flick cancelled');sfx('clack',8);}else cycleSel(1);}
       const B=camBasis();
-      const lt=gp.buttons[6]?gp.buttons[6].value:0,rt=gp.buttons[7]?gp.buttons[7].value:0,tv=rt-lt;
-      if(S.phase==='defend'&&Math.abs(tv)>0.1){const k=keepers[S.active],s=Math.sign(B.rz||1);k.z=k.target=clamp(k.z+tv*s*14*dt,-K_RANGE,K_RANGE);sendKeeper();}
-      if(S.phase==='attack'&&S.armed==='finesse'&&S.armedTeam===team){if(lt>0.6)setCurl(-1);if(rt>0.6)setCurl(1);}
-      const lx=gp.axes[0]||0,ly=gp.axes[1]||0,lm=Math.hypot(lx,ly);
-      if(lm>0.6&&st.ls){st.ls=false;selectToward(B.rx*lx-B.fx*ly,B.rz*lx-B.fz*ly);}else if(lm<0.3)st.ls=true;
-      const now=performance.now();
-      const DZ=clamp((SET.dz||20)/100,0.05,0.5);
-      if(st.rs==='cool'){if(m<DZ)st.rs='idle';}
+      // RB held: the left stick slides the keeper (during a block) instead of aiming
+      if(R1){if(st.rs==='load'){st.rs='cool';clearAim();}
+        if(S.phase==='defend'&&Math.abs(lx)>DZ){const k=keepers[S.active],s=Math.sign(B.rz||1);k.z=k.target=clamp(k.z+lx*s*14*dt,-K_RANGE,K_RANGE);sendKeeper();}
+        if(m<DZ&&st.rs==='cool')st.rs='idle';}
+      // L2: soft flick, the arrow as it is now
+      else if(edge(6)&&st.rs==='load'&&sel>=0&&(st.dx||st.dz)){st.rs='cool';startFlick(sel,st.dx,st.dz,clamp(st.peak,0,1)*SOFT,S.phase,true);}
+      // left stick: pull back to aim, flick it forward to shoot (Skate style)
+      else if(st.rs==='cool'){if(m<DZ)st.rs='idle';}
       else if(st.rs==='idle'){if(m>DZ+0.05&&sel>=0){st.rs='load';st.peak=0;st.nT=0;st.dx=0;st.dz=0;}}
       else if(st.rs==='load'){
         if(m>=DZ+0.05){
-          const w=screenDirToWorld(-rx/m,-ry/m,sel),sx=w.dx,sz=w.dz;
+          const w=screenDirToWorld(-lx/m,-ly/m,sel),sx=w.dx,sz=w.dz;
           if(st.peak>0.3&&(st.dx||st.dz)){const L1=Math.hypot(sx,sz)||1,L2=Math.hypot(st.dx,st.dz)||1;
             if((-sx*st.dx-sz*st.dz)/(L1*L2)>0.5&&m>0.3){const el=now-st.peakT,snap=clamp(1-(el-60)/320,0,1);st.rs='cool';
               if(sel>=0)startFlick(sel,st.dx,st.dz,clamp(st.peak,0,1)*SOFT*(1+snap/3),S.phase,snap<0.15);}
@@ -256,6 +276,21 @@ function pollPads(dt){
     st.btn=gp.buttons.map(b=>b.pressed);
   });
 }
+// the camera views menu with a controller: a highlight on one view, A takes it
+function padCamMenu(gp,st,edge,pressed){
+  const bs=[...document.querySelectorAll('#cam-menu [data-cam]')];if(!bs.length)return;
+  if(st.camI<0)st.camI=Math.max(0,bs.findIndex(b=>b.getAttribute('aria-checked')==='true'));
+  const ly=gp.axes[1]||0,dir=pressed(12)||ly<-0.6?-1:pressed(13)||ly>0.6?1:0;
+  if(dir&&dir!==st.camD){st.camI=(st.camI+dir+bs.length)%bs.length;sfx('tock',6);}st.camD=dir;
+  bs.forEach((b,k)=>b.classList.toggle('pad-on',k===st.camI));
+  if(edge(0)){st.camPad=false;bs[st.camI].click();}
+  else if(edge(1)||edge(11)){st.camPad=false;closeCamMenu();}}
+// D-pad down in a match: open the last plays, then show more; 'close' (held) shuts it
+function padPlays(how){const box=$('#plays'),closed=box.classList.contains('closed');
+  if(how==='close'){if(PL.more)$('#plays-more').click();if(!box.classList.contains('closed'))$('#plays-toggle').click();sfx('clack',6);return;}
+  if(closed){if(PL.more)$('#plays-more').click();if(box.classList.contains('closed'))$('#plays-toggle').click();}
+  else if(!PL.more)$('#plays-more').click();
+  sfx('tock',6);}
 function selectToward(wx,wz){
   if(sel<0){autoSelect();return;}
   const s=bodies[sel];let best=-1,bs=-1e9;const L=Math.hypot(wx,wz)||1;

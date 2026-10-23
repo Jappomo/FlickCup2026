@@ -970,7 +970,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 @keyframes rareglow{from{box-shadow:0 0 0 2px var(--rc),0 8px 18px rgba(0,0,0,.4)}to{box-shadow:0 0 0 2px var(--rc),0 0 22px var(--rc),0 8px 18px rgba(0,0,0,.4)}}
 @media (prefers-reduced-motion:reduce){.acard.r-uncommon::after,.pk.r-uncommon .pk-front::after,.acard.r-rare{animation:none}}
 </style>
-<link rel="stylesheet" href="css/retro.css?v=20261024a">
+<link rel="stylesheet" href="css/retro.css?v=20261024b">
 
 <script>/* UI scale before the first paint (js/uiscale.js keeps it up to date) */(function(){var t=matchMedia('(pointer:coarse)').matches&&!matchMedia('(pointer:fine)').matches,u=t?140:100;try{u=(JSON.parse(localStorage.getItem('baize.settings')||'{}').ui)||u;}catch(e){}var z=Math.min(Math.min(innerWidth/1600,innerHeight/900)*u/100,innerWidth/1480);document.documentElement.style.setProperty('--uiz',Math.max(z,0.5).toFixed(4));document.documentElement.style.setProperty('--mz',Math.min(innerWidth/1600,innerHeight/900).toFixed(4));})();</script>
 <section class="title" id="title" role="button" tabindex="0" aria-label="Flick Cup 2026. Press any button to start">
@@ -1314,7 +1314,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
         <p class="h">Controls</p>
         <div class="ctl">
           <div><b>Mouse and touch.</b> Press anywhere and drag back to aim the selected figure, in any direction. While you pull, the mouse is locked so the screen edge never limits your pull (turn this off in Settings). Tap a figure to select it. Let go and the figure travels the arrow, give or take a little. Snap forward through your start point to hit harder; the gold tick on the meter shows a full snap. Drag your keeper during a block. Hold the middle mouse button and drag to rotate the camera (locked while you aim); Reset cam puts it back, and the arrow next to it picks the view it resets to: Vertical, Broadcast or Eagle Eye. To cancel a flick while pulling, right-click, press Esc, or tap with a second finger.</div>
-          <div><b>Controller.</b> Right stick: pull back, then flick it forward, Skate style. Left stick or LB/RB: pick a figure. X: Moment. LT/RT: keeper during a block, curl during Finesse. A: skip block. D-pad up: keeper out or back. Y: reset camera. Start: pause.</div>
+          <div><b>Controller.</b> Left stick: pull back to aim, flick it forward to shoot; L2 plays a soft flick, L1 cancels (or picks the next figure). X: Moment. B: skip the block. Hold RB: the left stick slides the keeper, the right stick zooms; RB + Y: keeper out or back. Right stick: turn the camera. R3: reset the camera, hold it for the camera views. R2 in Finesse: switch the curl. D-pad down: last plays. Start: pause.</div>
           <div><b>Keyboard.</b> Tab: next figure. M: Moment. Q/E: keeper or curl. Space: skip block. G: keeper out or back. C: reset camera. Hold F: frame the ball. Esc: pause.</div>
         </div>
       </div>
@@ -1419,35 +1419,35 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <!-- game code: classic scripts, loaded in this order (they share one scope) -->
 <!-- ?v= on every local file: bump it with each release, so a browser never mixes cached old files with new ones -->
-<script src="js/core.js?v=20261024a"></script>
-<script src="js/shaders.js?v=20261024a"></script>
-<script src="js/audio.js?v=20261024a"></script>
-<script src="js/physics.js?v=20261024a"></script>
-<script src="js/rules.js?v=20261024a"></script>
-<script src="js/scene.js?v=20261024a"></script>
-<script src="js/models.js?v=20261024a"></script>
-<script src="js/camera.js?v=20261024a"></script>
-<script src="js/input.js?v=20261024a"></script>
-<script src="js/cpu.js?v=20261024a"></script>
-<script src="js/net.js?v=20261024a"></script>
-<script src="js/hud.js?v=20261024a"></script>
-<script src="js/tournament.js?v=20261024a"></script>
-<script src="js/menus.js?v=20261024a"></script>
-<script src="js/customize.js?v=20261024a"></script>
-<script src="js/settings.js?v=20261024a"></script>
-<script src="js/controls.js?v=20261024a"></script>
-<script src="js/loop.js?v=20261024a"></script>
-<script src="js/practice.js?v=20261024a"></script>
-<script src="js/data.js?v=20261024a"></script>
-<script src="js/clubs.js?v=20261024a"></script>
-<script src="js/kickoff.js?v=20261024a"></script>
-<script src="js/album.js?v=20261024a"></script>
-<script src="js/crest.js?v=20261024a"></script>
-<script src="js/kitpattern.js?v=20261024a"></script>
-<script src="js/vfx.js?v=20261024a"></script>
-<script src="js/club.js?v=20261024a"></script>
-<script src="js/ui.js?v=20261024a"></script>
-<script src="js/uiscale.js?v=20261024a"></script>
-<script src="js/start.js?v=20261024a"></script>
+<script src="js/core.js?v=20261024b"></script>
+<script src="js/shaders.js?v=20261024b"></script>
+<script src="js/audio.js?v=20261024b"></script>
+<script src="js/physics.js?v=20261024b"></script>
+<script src="js/rules.js?v=20261024b"></script>
+<script src="js/scene.js?v=20261024b"></script>
+<script src="js/models.js?v=20261024b"></script>
+<script src="js/camera.js?v=20261024b"></script>
+<script src="js/input.js?v=20261024b"></script>
+<script src="js/cpu.js?v=20261024b"></script>
+<script src="js/net.js?v=20261024b"></script>
+<script src="js/hud.js?v=20261024b"></script>
+<script src="js/tournament.js?v=20261024b"></script>
+<script src="js/menus.js?v=20261024b"></script>
+<script src="js/customize.js?v=20261024b"></script>
+<script src="js/settings.js?v=20261024b"></script>
+<script src="js/controls.js?v=20261024b"></script>
+<script src="js/loop.js?v=20261024b"></script>
+<script src="js/practice.js?v=20261024b"></script>
+<script src="js/data.js?v=20261024b"></script>
+<script src="js/clubs.js?v=20261024b"></script>
+<script src="js/kickoff.js?v=20261024b"></script>
+<script src="js/album.js?v=20261024b"></script>
+<script src="js/crest.js?v=20261024b"></script>
+<script src="js/kitpattern.js?v=20261024b"></script>
+<script src="js/vfx.js?v=20261024b"></script>
+<script src="js/club.js?v=20261024b"></script>
+<script src="js/ui.js?v=20261024b"></script>
+<script src="js/uiscale.js?v=20261024b"></script>
+<script src="js/start.js?v=20261024b"></script>
 
 </html>

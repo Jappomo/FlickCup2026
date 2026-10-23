@@ -21,6 +21,8 @@ const UI_FOC='button,input:not([type=file]):not([type=hidden]),select,textarea,[
 // switched with LB/RB and LT/RT (Q/E, Z/C) or the mouse, never focused; the Album's collection list is a list to move
 // through like any other (it is also its section bar)
 const UI_BARS='.tabs,.subnav:not(#al-sub)';
+// left out of the D-pad path too, but pressed with a button: the Album's Equip is Y (F on the keyboard)
+const UI_OFFPATH=UI_BARS+',#al-detail';
 // [selector, type, options]: the first ancestor of a control that matches one of these is its group.
 // row: left/right, col: up/down, grid: both (columns from the layout), map: the nearest control in that direction.
 // follow: moving onto a member presses it (tabs, sections, game modes). wrap: the ends join up.
@@ -48,14 +50,14 @@ const UI_LINKS=[
   ['#squad-name',{r:'#sq-kit'}],['#sq-kit',{l:'#squad-name',r:'#sq-crest'}],['#sq-crest',{l:'#sq-kit'}],
   ['#formations',{r:'#mini'}],['.kopbtns',{r:'#mini'}],['#mini',{l:'#formations'}],
   ['#fut',{r:'#stats'}],['#stats',{l:'#fut'}],
-  ['#al-sub',{r:'#al-page'}],['#al-page',{l:'#al-sub',r:'#al-detail'}],['#al-detail',{l:'#al-page'}],
+  ['#al-sub',{r:'#al-page'}],['#al-page',{l:'#al-sub'}],
 ];
 // where focus lands on a page it has no memory of
 const UI_DEFAULT={album:['#al-page [aria-pressed="true"]','#al-sub [aria-pressed="true"]'],play:['#hub.paused-match #btn-resume','.modes [aria-pressed="true"]','.modes .tile'],kickoff:['#ko-go']};
 // B inside the first selector goes to the selected control of the second (before the section bar and the tabs)
 const UI_BACK=[['#mode-setup','.modes']];
 
-const UI={cur:null,addr:null,dev:'mouse',mem:{},hold:{},kdir:'',layer:'',sw:0,glide:0,lastTick:0,box:null,depth:0};
+const UI={ptrMode:false,cur:null,addr:null,dev:'mouse',mem:{},hold:{},kdir:'',layer:'',sw:0,glide:0,lastTick:0,box:null,depth:0};
 const uiRing=document.createElement('div');uiRing.id='ui-ring';uiRing.setAttribute('aria-hidden','true');document.body.appendChild(uiRing);
 const uiBar=document.createElement('div');uiBar.id='ui-bar';uiBar.setAttribute('aria-hidden','true');uiBar.innerHTML='<p class="ui-help"></p><div class="ui-keys"></div>';document.body.appendChild(uiBar);
 
@@ -80,7 +82,7 @@ function uiLayer(){
 function uiScopes(){return UI.layer==='ft'?[$('#ft')]:UI.layer==='hub'?[...document.querySelectorAll('#hub [data-panel]:not([hidden])')]:[];}
 function uiPanel(){return document.querySelector('#hub [data-panel]:not([hidden])');}
 function uiUsable(el){
-  if(!el||!el.isConnected||el.closest('[hidden]')||el.closest(UI_BARS))return false;
+  if(!el||!el.isConnected||el.closest('[hidden]')||el.closest(UI_OFFPATH))return false;
   const r=el.getClientRects();if(!r.length||(r[0].width<1&&r[0].height<1))return false;
   if(el.closest('.glyph'))return false;
   return getComputedStyle(el).visibility!=='hidden';}
@@ -311,14 +313,24 @@ function uiHold(src,dir){const now=performance.now(),s=UI.hold[src]||(UI.hold[sr
   if(dir!==s.d){s.d=dir;s.n=0;if(dir){uiMove(dir,src==='kbd'?'kbd':'pad',false);s.t=now+360;}return;}
   if(dir&&now>=s.t){s.n++;uiMove(dir,src==='kbd'?'kbd':'pad',true);s.t=now+Math.max(45,150*Math.pow(0.86,s.n));}}
 // one controller in the menus (called from pollPads)
-function uiPad(gp,st){
+// o.dpadOnly / o.noConfirm: in pointer mode (L3) the left stick and A belong to the pointer
+function uiPad(gp,st,o){o=o||{};
   const pressed=k=>gp.buttons[k]&&gp.buttons[k].pressed,edge=k=>pressed(k)&&!st.btn[k];
-  const lx=gp.axes[0]||0,ly=gp.axes[1]||0,DZ=0.55;
+  const lx=o.dpadOnly?0:gp.axes[0]||0,ly=o.dpadOnly?0:gp.axes[1]||0,DZ=0.55;
   const dir=pressed(12)?'u':pressed(13)?'d':pressed(14)?'l':pressed(15)?'r':Math.abs(ly)>DZ&&Math.abs(ly)>=Math.abs(lx)?(ly<0?'u':'d'):Math.abs(lx)>DZ?(lx<0?'l':'r'):'';
   uiHold('pad'+gp.index,dir);
-  if(edge(0))uiConfirm('pad');
+  if(edge(0)&&!o.noConfirm)uiConfirm('pad');
   if(edge(1))uiBack();
+  if(edge(3))uiAction();
   if(UI.layer==='hub'){if(edge(4))uiTab(-1);if(edge(5))uiTab(1);if(edge(6))uiSection(-1);if(edge(7))uiSection(1);}}
+// Y (F on the keyboard): the page's own action. In the Album it equips what the selected card unlocks.
+function uiActionEl(){if(UI.layer!=='hub'||hubTab!=='album')return null;const b=$('#al-equip');return b&&uiShown(b)?b:null;}
+function uiAction(){const b=uiActionEl();if(!b||b.disabled){uiNo(null);return;}uiSnd.ok();uiPress(b);b.click();}
+// the right stick turns the 3D preview on screen, the same as dragging it
+function uiSpin(x,dt){if(Math.abs(x)<0.2||UI.layer!=='hub')return;let sp=null;
+  try{if(hubTab==='custom')sp=custSec==='ball'?prevSpin:custSec==='table'?tSpin:null;else if(hubTab==='squad'&&clubSec==='kit')sp=kSpin;else if(hubTab==='album')sp=aSpin;}catch(e){}
+  if(sp){sp.a+=x*dt*3;sp.v=0;}}
+const uiSpinOn=()=>UI.layer==='hub'&&(hubTab==='album'||(hubTab==='custom'&&(custSec==='ball'||custSec==='table'))||(hubTab==='squad'&&clubSec==='kit'));
 const UI_KDIR={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'};
 addEventListener('keydown',e=>{
   if(!UI.layer||oskOpen()||e.ctrlKey||e.metaKey||e.altKey)return;
@@ -336,6 +348,7 @@ addEventListener('keydown',e=>{
   if(e.key==='Escape'||e.key==='Backspace'){e.preventDefault();e.stopPropagation();uiBack();return;}
   if(e.code==='KeyQ'||e.code==='KeyE'){e.preventDefault();e.stopPropagation();uiTab(e.code==='KeyE'?1:-1);return;}
   if(e.code==='KeyZ'||e.code==='KeyC'){e.preventDefault();e.stopPropagation();uiSection(e.code==='KeyC'?1:-1);return;}
+  if(e.code==='KeyF'&&uiActionEl()){e.preventDefault();e.stopPropagation();uiAction();return;}
 },true);
 addEventListener('keyup',e=>{const d=UI_KDIR[e.key];if(d&&UI.kdir===d)UI.kdir='';});
 addEventListener('blur',()=>{UI.kdir='';});
@@ -357,7 +370,7 @@ addEventListener('click',e=>{if(!UI.layer||!e.isTrusted||e.detail===0)return;con
   if(el.closest(UI_BARS)&&el.closest('#hub')){uiSnd.tab();return;}if(!uiInScope(el))return;uiSnd.ok();},true);
 
 /* ---------- the prompt bar ---------- */
-const UI_KEYS={A:'Enter',B:'Esc',LB:'Q',RB:'E',LT:'Z',RT:'C',X:'X',Y:'Y'};
+const UI_KEYS={A:'Enter',B:'Esc',LB:'Q',RB:'E',LT:'Z',RT:'C',X:'X',Y:'F'};
 function uiBarRender(){
   // the bar stays while a menu is on screen, also under the on-screen keyboard or a card pack
   const shown=!uiTitleOn()&&(!$('#hub').hidden||!$('#ft').hidden);uiBar.hidden=!shown;document.documentElement.classList.toggle('ui-menu',shown);
@@ -370,8 +383,10 @@ function uiBarRender(){
   items.push({g:['B'],t:UI.layer==='ft'?'Main menu':'Back'});
   if(UI.layer==='hub')items.push({g:['LB','RB'],t:ko?'Club':'Tabs'});
   if(hasSub)items.push({g:['LT','RT'],t:'Sections'});
+  if(uiActionEl())items.push({g:['Y'],t:'Equip'});
+  if(pad&&UI.layer==='hub'){if(uiSpinOn())items.push({g:['RS'],t:'Rotate'});items.push({g:['L3'],t:UI.ptrMode?'Focus':'Pointer'});}
   const cap=g=>{if(g==='✥'||g==='↑↓←→')return `<span class="kcap dpad">${g}</span>`;
-    if(pad)return `<span class="glyph ${g==='A'?'a':g==='B'?'b':''}">${padLabel(GLYPH_X[g])}</span>`;
+    if(pad)return g==='RS'?`<span class="kcap">RS</span>`:`<span class="glyph ${g==='A'?'a':g==='B'?'b':g==='Y'?'y':''}">${padLabel(GLYPH_X[g])}</span>`;
     return `<span class="kcap">${UI_KEYS[g]||g}</span>`;};
   const html=items.map(it=>`<span class="ui-k">${it.g.map(cap).join('')}<b>${it.t}</b></span>`).join('');
   const k=uiBar.querySelector('.ui-keys');if(k.dataset.h!==html){k.dataset.h=html;k.innerHTML=html;}
@@ -386,6 +401,7 @@ function uiTick(){
   requestAnimationFrame(uiTick);
   const layer=uiLayer();
   if(layer!==UI.layer){UI.layer=layer;for(const k in UI.hold)UI.hold[k].d='';
+    if(UI.ptrMode&&layer!=='hub'){UI.ptrMode=false;retShow(false);}
     if(layer){const d=uiDefault();UI.cur=null;if(d)uiSet(d,{src:'silent'});}
     uiBarRender();}
   if(!layer){uiRing.classList.remove('on');return;}

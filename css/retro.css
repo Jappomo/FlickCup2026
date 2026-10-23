@@ -27,7 +27,7 @@ html.ui-menu .np{zoom:var(--mz)}
 #hub [data-panel=balance]:not([hidden]){display:block;overflow-y:auto;padding-right:10px;scrollbar-width:thin;scrollbar-color:var(--mus) rgba(0,0,0,.25)}
 
 /* ===================== backdrop ===================== */
-.hub-bg{background:url(menu-art.svg?v=20261024a) center/cover no-repeat,var(--n1)}
+.hub-bg{background:url(menu-art.svg?v=20261024b) center/cover no-repeat,var(--n1)}
 .hub-bg svg{display:none}
 .hub-bg::after{content:"";position:absolute;inset:0;background:var(--grain);mix-blend-mode:screen;opacity:.9}
 #hub,#ft,#title{font-family:var(--f-display);color:var(--cream)}
@@ -337,3 +337,6 @@ html[data-dev=kbd] :is(.big,.ko-back) .glyph.b::after{content:"Esc";font-size:12
 #hub [data-panel=play]:has(#online-panel:not([hidden])) .setup{gap:10px}
 #hub [data-panel=play] #online-panel .seats{margin-top:6px}
 #hub.paused-match .logo{visibility:hidden}
+/* the camera views menu, opened by holding R3: the controller's choice */
+.cam-menu button.pad-on{background:var(--mus);color:var(--ink)}
+.cam-menu button.pad-on :is(small,i){color:var(--ink)}

@@ -18,18 +18,19 @@ const PAD_FAMILIES={
   switch:{name:'Switch 2',btn:['B','A','Y','X','L','R','ZL','ZR','−','+','LS','RS','▲','▼','◀','▶']},
 };
 // the actions a controller button can do; b = the logical button (Xbox layout) the game's code reads for it
+// (the ids stay as they were so saved mappings in data/controls.json keep working; name and does are what they do now)
 const PAD_ACTIONS=[
-  {id:'confirm',b:0,name:'Confirm',does:'Select in menus · skip defending · place at spot 2'},
-  {id:'back',b:1,name:'Back',does:'Back in menus · cancel the aim · place at spot 3'},
+  {id:'confirm',b:0,name:'Confirm',does:'Select in menus · place at spot 2'},
+  {id:'back',b:1,name:'Back',does:'Back in menus · skip the block · drop the aim · place at spot 3'},
   {id:'moment',b:2,name:'Moment',does:'Use your Moment · place at spot 1 · turn all cards'},
-  {id:'camera',b:3,name:'Camera',does:'Reset the camera'},
-  {id:'prev',b:4,name:'Previous',does:'Previous figure · previous tab'},
-  {id:'next',b:5,name:'Next',does:'Next figure · next tab'},
-  {id:'ltrig',b:6,name:'Left trigger',does:'Keeper left · curl left · previous section'},
-  {id:'rtrig',b:7,name:'Right trigger',does:'Keeper right · curl right · next section'},
+  {id:'camera',b:3,name:'Keeper / Equip',does:'With RB: keeper out or back · equip in the Album'},
+  {id:'prev',b:4,name:'Figure / Cancel',does:'Next figure · cancel a charge · previous tab'},
+  {id:'next',b:5,name:'Modifier',does:'Hold: left stick slides the keeper, right stick zooms · next tab'},
+  {id:'ltrig',b:6,name:'Soft flick',does:'Soft flick · previous section'},
+  {id:'rtrig',b:7,name:'Curl',does:'Switch the curl in Finesse · next section'},
   {id:'menu',b:9,name:'Menu',does:'Pause menu'},
-  {id:'music',b:11,name:'Next track',does:'Next music track'},
-  {id:'keeper',b:12,name:'Keeper out',does:'Bring the keeper out'},
+  {id:'music',b:11,name:'Camera / Track',does:'Reset the camera (hold: camera views) · next track in menus'},
+  {id:'keeper',b:12,name:'D-pad up',does:'Move up in menus'},
 ];
 const KEY_ACTIONS=[
   {id:'menu',name:'Menu and back',def:'Escape'},{id:'camera',name:'Reset camera',def:'KeyC'},{id:'moment',name:'Moment',def:'KeyM'},
@@ -86,7 +87,7 @@ function padsNow(){const raw=padsRaw();const act=raw.find(g=>g.buttons.some(b=>b
 function padLabel(b,fam){fam=fam||padFamily();const F=PAD_FAMILIES[fam]||PAD_FAMILIES.xbox,p=padMapNow(fam)[b];return F.btn[p==null?b:p]||'?';}
 
 /* ---------- button icons on screen: every .glyph written in the Xbox layout is shown for the pad in use ---------- */
-const GLYPH_X={A:0,B:1,X:2,Y:3,LB:4,RB:5,LT:6,RT:7,'≡':9,R3:11,'▲':12};
+const GLYPH_X={A:0,B:1,X:2,Y:3,LB:4,RB:5,LT:6,RT:7,'≡':9,L3:10,R3:11,'▲':12,'▼':13};
 function glyphPass(){
   document.documentElement.dataset.pad=padFamily();
   document.querySelectorAll('.glyph').forEach(el=>{
@@ -149,17 +150,19 @@ function padBarRender(){
 /* ---------- Settings > Controls: the button map, written from the mapping (data/controls.json) ---------- */
 function ctlMapRender(){const box=document.querySelector('#hub .ctl-map');if(!box)return;
   const k=a=>keyName(KEY(a)),g=a=>{const x=PAD_ACTIONS.find(p=>p.id===a);return x?padLabel(x.b):'?';};
-  const rows=[['Flick','Press on the pitch, pull back, release','Right stick: pull back, then flick'],
-    ['Pick a figure','Click it, or '+k('nextFig'),'Left stick, '+g('prev')+' / '+g('next')],['Moment',k('moment'),g('moment')],
-    ['Curl (Finesse)',k('curlL')+' / '+k('curlR'),g('ltrig')+' / '+g('rtrig')],['Slide keeper (block)','Drag him, or '+k('curlL')+' / '+k('curlR'),g('ltrig')+' / '+g('rtrig')],
-    ['Skip block',k('skip'),g('confirm')],['Keeper out / back',k('keeper'),g('keeper')],['Set-piece spot',k('spot1')+' / '+k('spot2')+' / '+k('spot3'),g('moment')+' / '+g('confirm')+' / '+g('back')],
-    ['Reset camera',k('camera'),g('camera')],['Orbit camera','Hold middle mouse and drag','–'],['Frame the ball','Hold F','–'],
-    ['Cancel a pull','Right click, or Esc',g('back')],['Pause',k('menu'),g('menu')],['Next song',k('music'),g('music')],
-    ['Move a formation shield','Drag it',g('confirm')+' to pick it, right stick to move, '+g('moment')+' to confirm'],
+  const L3=padLabel(10),R3=padLabel(11),DN=padLabel(13);
+  const rows=[['Flick','Press on the pitch, pull back, release','Left stick: pull back, then flick it forward'],
+    ['Soft flick','Let go slowly',g('ltrig')+' while aiming'],['Cancel the aim','Right click, or Esc',g('prev')+' while aiming'],
+    ['Pick a figure','Click it, or '+k('nextFig'),g('prev')],['Moment',k('moment'),g('moment')],
+    ['Curl (Finesse)',k('curlL')+' / '+k('curlR'),g('rtrig')+' switches it'],['Slide keeper (block)','Drag him, or '+k('curlL')+' / '+k('curlR'),'Hold '+g('next')+' + left stick'],
+    ['Skip block',k('skip'),g('back')],['Keeper out / back',k('keeper'),'Hold '+g('next')+' + '+g('camera')],['Set-piece spot',k('spot1')+' / '+k('spot2')+' / '+k('spot3'),g('moment')+' / '+g('confirm')+' / '+g('back')],
+    ['Turn the camera','Hold middle mouse and drag','Right stick'],['Zoom','Mouse wheel','Hold '+g('next')+' + right stick'],
+    ['Reset camera',k('camera'),R3],['Camera views','The arrow next to Reset cam','Hold '+R3],['Frame the ball','Hold F','–'],
+    ['Last plays','Click Last plays',DN+': open, again for more, hold to close'],['Pause',k('menu'),g('menu')],['Next song',k('music'),R3+' in the menus'],
     ['Menu tabs','Click, or Q / E',g('prev')+' / '+g('next')],['Sub-menus','Click, or Z / C',g('ltrig')+' / '+g('rtrig')],
-    ['Move in menus','Hover, or the arrow keys (hold to speed up)','D-pad or left stick (hold to speed up)'],['Press and go back','Click, Enter or Space · Esc or Backspace',g('confirm')+' to press, '+g('back')+' to go back'],
-    ['Change a value','Arrow left / right on a slider, toggle or list','Left / right on a slider, toggle or list'],['Menu pointer','Mouse','Right stick, '+g('confirm')+' to click or drag'],
-    ['Type a name','Keyboard',g('confirm')+' on the field opens the on-screen keyboard']];
+    ['Move in menus','The arrow keys (hold to speed up)','D-pad or left stick (hold to speed up)'],['Press and go back','Click, Enter or Space · Esc or Backspace',g('confirm')+' to press, '+g('back')+' to go back'],
+    ['Menu pointer','Mouse',L3+' switches the left stick to a pointer and back'],['Turn a 3D preview','Drag it','Right stick'],['Equip (Album)','F, or click Equip',g('camera')],
+    ['Move a formation shield','Drag it',g('confirm')+' to pick it, a stick to move, '+g('moment')+' to confirm'],['Type a name','Keyboard',g('confirm')+' on the field opens the on-screen keyboard']];
   const fam=PAD_FAMILIES[padFamily()].name,e=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   const html='<div class="cm-h"></div><div class="cm-h">Keyboard and mouse</div><div class="cm-h">Controller ('+e(fam)+')</div>'+rows.map(r=>'<div class="cm-a">'+e(r[0])+'</div><div>'+e(r[1])+'</div><div>'+e(r[2])+'</div>').join('');
   if(box.dataset.h!==html){box.dataset.h=html;box.innerHTML=html;}}

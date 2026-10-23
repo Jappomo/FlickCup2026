@@ -52,7 +52,9 @@ function setInput(k){if(lastInput===k)return;lastInput=k;updateGlyphs();if(typeo
 function updateGlyphs(){
   const pad=lastInput==='pad',touch=lastInput==='touch';document.body.classList.toggle('padmode',pad);
   const g=(id,padTxt,keyTxt,cls)=>{const el=$(id);el.textContent=pad?padTxt:keyTxt;el.className='glyph'+(pad&&cls?' '+cls:'');el.hidden=touch;};
-  g('#g-skip','A','Space','a');g('#g-cam','Y','C','y');g('#g-menu','≡','Esc','');g('#mglyph','X','M','x');g('#g-gk','▲','G','');
+  g('#g-skip','B','Space','b');g('#g-cam','R3','C','');g('#g-menu','≡','Esc','');g('#mglyph','X','M','x');
+  // keeper out is RB + Y on a controller: both icons for the pad in use (controls.js), written out here
+  g('#g-gk',typeof padLabel==='function'?padLabel(5)+'+'+padLabel(3):'RB+Y','G','');
   $('#g-lb').hidden=false;$('#g-rb').hidden=false;$('#g-lb').style.visibility=$('#g-rb').style.visibility=pad?'visible':'hidden';
 }
 function showMeter(p){const m=$('#meter');if(p<0){m.hidden=true;return;}m.hidden=false;$('#meter-fill').style.height=(clamp(p,0,1)*100)+'%';$('#meter-snap').style.bottom=(clamp(p*4/3,0,1)*100)+'%';}
