@@ -29,7 +29,7 @@ const UI_OFFPATH=UI_BARS+',#al-detail';
 const UI_GROUPS=[
   ['#hub.paused-match #concede-row','col'],
   ['.modes','col',{follow:1}],['#al-sub','col',{follow:1}],['.al-page','grid',{follow:1}],['#formations','col'],['#mini','map'],['#tree','map'],
-  ['.ko-dots','grid'],['.ko-car','row'],['.ko-pv','row'],['.ko-head','row'],
+  ['.ko-carousel','row'],['.ko-pv','row'],['.ko-head','row'],
   ['.kitpal,.kp-pats,.ball-grid,.look-row','grid'],['#tracks','col'],
   ['#tour-bracket','map'],['#on-kv','grid'],['.on-act','row'],
   ['.seg,.kitrow,.field,.cta,.kopbtns,.starbtns,.kitview,.pc-head,.bal-pw','row'],
@@ -43,8 +43,7 @@ const UI_LINKS=[
   ['#ko-back',{d:'#ko-me'}],
   ['#ko-me',{r:'.ko-vs',u:'#ko-back',d:'none'}],
   ['#ko-go',{d:'none'}],['#ko-half',{u:'#ko-back'}],['.ko-vs',{l:'#ko-me',r:'#ko-opp'}],
-  ['.ko-car',{l:'.ko-vs',u:'#ko-back',d:'.ko-dots'}],
-  ['.ko-dots',{l:'.ko-vs',u:'.ko-car',d:['#ko-opp .ko-kits','none']}],
+  ['.ko-carousel',{l:'.ko-vs',u:'#ko-back',d:['#ko-opp .ko-kits','none']}],
   ['#ko-opp',{l:'.ko-vs',d:'none'}],
   ['.modes',{r:'#mode-setup',d:'none'}],
   ['#mode-setup',{l:'.modes'}],
@@ -234,7 +233,7 @@ function uiBack(){
   if(!$('#btn-resume').hidden){uiSnd.back();closeMenu();return;}
   uiNo(cur);}
 function uiTab(d){if(UI.layer!=='hub')return;
-  if(hubTab==='kickoff'){koStep(d);uiPress($('#ko-opp .ko-card')||$('#ko-opp'));return;}
+  if(hubTab==='kickoff'){koStep(d);uiPress($('#ko-opp .kc-cur')||$('#ko-opp'));return;}
   if(hubTab==='online'){uiNo(null);return;}
   stepTab(d);uiSnd.tab();}
 function uiSection(d){if(UI.layer!=='hub')return;const pn=uiPanel(),nav=pn&&pn.querySelector('.subnav');

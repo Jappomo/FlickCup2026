@@ -62,8 +62,14 @@ function koRender(){
     const ovr=Math.round(c.players.reduce((a,p)=>a+cardOvr(p.st),0)/10);
     html=koSide(KO.mode==='local'?'Player 2':'Opponent',crest,c.name,`<div class="ko-tier">${koStars(c.stars)}<span>${koEsc(T.name)}</span></div><div class="ko-tags"><span class="ko-tag style">${koEsc(P.name)}</span>${pathTag({path:c.path})}${SPECIALS[c.moment]?`<span class="ko-tag mom">${SPECIALS[c.moment].name}</span>`:''}</div><p class="ko-desc">${koEsc(P.desc)}</p>`,
       c.formation,ck,away?'Away kit · colour clash':'Home kit',{q:{form:c.formation,kop:c.kickoff},facts:`<p><b>${koEsc(c.formation)}</b><span>Formation</span></p><p><b>${ovr}</b><span>Rating</span></p>`});}
-  op.innerHTML=`<div class="ko-car"><button class="ko-arr" data-ko="-1" aria-label="Previous club"><span class="glyph pg">LB</span><span class="kg">‹</span></button><div class="ko-card">${html}</div><button class="ko-arr" data-ko="1" aria-label="Next club"><span class="kg">›</span><span class="glyph pg">RB</span></button></div>`+
-    `<div class="ko-dots">${L.map((x,i)=>{const on=i===KO.idx[KO.mode];if(x.guest)return `<button class="ko-dot g${on?' on':''}" data-ki="${i}" title="Guest club" aria-label="Guest club"><b>P2</b></button>`;const u=emblemUrl(x.club.emblem);return `<button class="ko-dot${on?' on':''}${x.club.locked?' lock':''}" data-ki="${i}" title="${koEsc(x.club.name)}" aria-label="${koEsc(x.club.name)}">${u?`<img src="${u}" alt="">`:`<b>${koEsc(x.club.short)}</b>`}</button>`;}).join('')}</div>`;
+  // the opponent's crest sits in a carousel: ‹ LB · previous · this club · next · RB › (clicking a neighbour picks it)
+  op.innerHTML=`<div class="ko-card">${html}</div>`;
+  {const at=d=>(KO.idx[KO.mode]+d+L.length)%L.length,small=d=>{const x=L[at(d)];if(x.guest)return `<button class="kc-n g" data-ki="${at(d)}" title="Guest club" aria-label="Guest club"><b>P2</b></button>`;
+      const u=emblemUrl(x.club.emblem);return `<button class="kc-n${x.club.locked?' lock':''}" data-ki="${at(d)}" title="${koEsc(x.club.name)}" aria-label="${koEsc(x.club.name)}">${u?`<img src="${u}" alt="">`:`<b>${koEsc(x.club.short)}</b>`}</button>`;};
+    const cur=op.querySelector('.ko-id>.ko-crest'),car=document.createElement('div');car.className='ko-carousel';
+    car.innerHTML=`<button class="ko-arr" data-ko="-1" aria-label="Previous club"><span class="kg">‹</span><span class="glyph pg">LB</span></button>${small(-1)}<div class="kc-cur"></div>${small(1)}<button class="ko-arr" data-ko="1" aria-label="Next club"><span class="kg">›</span><span class="glyph pg">RB</span></button>`;
+    cur.replaceWith(car);car.querySelector('.kc-cur').appendChild(cur);
+    const pos=document.createElement('p');pos.className='kc-pos';pos.textContent=`Club ${KO.idx[KO.mode]+1} / ${L.length}`;car.after(pos);}
   if(e.guest){const kr2=document.createElement('div');kr2.className='ko-kits';kr2.innerHTML='<p class="h">Guest kit</p>';kr2.appendChild(koKitRow(1));op.querySelector('.ko-card').appendChild(kr2);}
   op.querySelectorAll('[data-ko]').forEach(b=>b.onclick=()=>koStep(+b.dataset.ko));
   op.querySelectorAll('[data-ki]').forEach(b=>b.onclick=()=>{KO.idx[KO.mode]=+b.dataset.ki;sfx('tock',8);koRender();});
