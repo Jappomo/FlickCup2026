@@ -2,6 +2,17 @@
 // Concede, hub Play tab, squad builder, balancing sheet.
 // Loaded by index.html as a classic script, in order: every file shares one scope, so names from earlier files work here.
 'use strict';
+/* ================= update in place ================= */
+// Lists in the menus are kept, not rebuilt (UI rule 5): uiList() reuses the child with the same key, makes the missing
+// ones, drops the extra ones and puts them in order. upd() writes the current state into each one. The focus, the
+// scroll and any running animation on a kept child survive the update.
+function uiList(box,items,key,make,upd){
+  const old=new Map();[...box.children].forEach(c=>{if(c.dataset.uk!=null)old.set(c.dataset.uk,c);});
+  let prev=null;items.forEach((it,i)=>{const k=String(key(it,i));let el=old.get(k);if(el)old.delete(k);else{el=make(it,i);el.dataset.uk=k;}
+    upd(el,it,i);const want=prev?prev.nextSibling:box.firstChild;if(el!==want)box.insertBefore(el,want);prev=el;});
+  old.forEach(el=>el.remove());}
+const setAttr=(el,a,v)=>{v=String(v);if(el.getAttribute(a)!==v)el.setAttribute(a,v);};
+
 /* ================= concede ================= */
 function concede(team){
   if(!S.running||S.phase==='end'||!(team===0||team===1))return;
@@ -37,6 +48,10 @@ let setSub='audio';
 function setSettingsSub(k){setSub=k;document.querySelectorAll('#set-sub [data-sub]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sub===k)));document.querySelectorAll('.set-grid [data-sub]').forEach(c=>c.classList.toggle('on',c.dataset.sub===k));}
 document.querySelectorAll('#set-sub [data-sub]').forEach(b=>b.addEventListener('click',()=>setSettingsSub(b.dataset.sub)));
 setSettingsSub('audio');
+// How to play: Rules, Controls, Cards and Moments, one at a time (LT / RT or a click)
+let rulesSub='rules';
+function setRulesSub(k){rulesSub=k;document.querySelectorAll('#rules-sub [data-rsec]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.rsec===k)));document.querySelectorAll('[data-panel=rules]>.cardbox[data-rsec]').forEach(c=>c.hidden=c.dataset.rsec!==k);}
+document.querySelectorAll('#rules-sub [data-rsec]').forEach(b=>b.addEventListener('click',()=>setRulesSub(b.dataset.rsec)));
 // LT / RT: step through the sub-menu of the open tab
 function subStep(d){const pn=document.querySelector('#hub [data-panel]:not([hidden])');const nav=pn&&pn.querySelector('.subnav');if(!nav||nav.hidden||!nav.offsetParent)return;
   const bs=[...nav.querySelectorAll('button')].filter(b=>!b.disabled&&b.offsetParent);if(bs.length<2)return;
@@ -46,13 +61,16 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setT
 function setMenuMode(m){menuMode=m;document.querySelectorAll('.tile').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));$('#online-panel').hidden=m!=='online';updateStartBtn();if(hubTab==='squad'&&clubSec==='tactics')renderSquad();}
 function kitSwatch(b,k){b.style.background='none';b.innerHTML='';[['shirt',50],['shorts',30],['socks',20]].forEach(([p,h])=>{const i=document.createElement('i');i.className='kst';i.style.height=h+'%';i.style.background=typeof k[p]==='number'?hexStr(k[p]):k[p];b.appendChild(i);});}
 function renderKits(){
-  for(let t=0;t<2;t++){const row=$('#kit'+t);row.innerHTML='';const q=mySquads[t];
-    if(q.look){const b=document.createElement('button');b.className='sw my';b.type='button';b.title='My kit (My Club > Kit look)';const L=q.look;
-      kitSwatch(b,{shirt:KIT_COLORS[L.s][1],shorts:KIT_COLORS[L.p][1],socks:KIT_COLORS[L.o][1]});b.setAttribute('aria-pressed',String(!!q.useLook));b.setAttribute('aria-label',(t?'Away':'Home')+' kit: my kit');
-      b.onclick=()=>{q.useLook=true;saveSquads();if(!S.running)applyKits();renderKits();};row.appendChild(b);}
-    KITS.forEach((k,i)=>{const b=document.createElement('button');b.className='sw';b.type='button';b.title=k.name;kitSwatch(b,k);
-      b.setAttribute('aria-pressed',String(!q.useLook&&kitSel[t]===i));b.setAttribute('aria-label',(t?'Away':'Home')+' kit '+k.name);b.disabled=!mySquads[1-t].useLook&&kitSel[1-t]===i;
-      b.onclick=()=>{kitSel[t]=i;mySquads[t].kit=i;q.useLook=false;saveSquads();renderKits();if(!S.running){S.kits=kitSel.slice();applyKits();}if(hubTab==='squad')renderSquad();};row.appendChild(b);});}
+  for(let t=0;t<2;t++){const row=$('#kit'+t),q=mySquads[t];
+    const items=(q.look?['my']:[]).concat(KITS.map((k,i)=>i));
+    uiList(row,items,x=>x,x=>{const b=document.createElement('button');b.className=x==='my'?'sw my':'sw';b.type='button';
+      b.onclick=x==='my'?()=>{mySquads[t].useLook=true;saveSquads();if(!S.running)applyKits();renderKits();}
+        :()=>{kitSel[t]=x;mySquads[t].kit=x;mySquads[t].useLook=false;saveSquads();renderKits();if(!S.running){S.kits=kitSel.slice();applyKits();}if(hubTab==='squad')renderSquad();};
+      return b;},(b,x)=>{
+      if(x==='my'){const L=q.look,sig=[L.s,L.p,L.o].join();if(b.dataset.sig!==sig){b.dataset.sig=sig;kitSwatch(b,{shirt:KIT_COLORS[L.s][1],shorts:KIT_COLORS[L.p][1],socks:KIT_COLORS[L.o][1]});}
+        b.title='My kit (My Club > Kit look)';setAttr(b,'aria-pressed',!!q.useLook);setAttr(b,'aria-label',(t?'Away':'Home')+' kit: my kit');return;}
+      const k=KITS[x];if(!b.firstChild)kitSwatch(b,k);b.title=k.name;
+      setAttr(b,'aria-pressed',!q.useLook&&kitSel[t]===x);setAttr(b,'aria-label',(t?'Away':'Home')+' kit '+k.name);b.disabled=!mySquads[1-t].useLook&&kitSel[1-t]===x;});}
 }
 function updateStartBtn(){
   const b=$('#btn-start'),running=S.running&&S.phase!=='end';
@@ -129,7 +147,7 @@ function squadNudge(i,dx,dz){const q=mySquads[sqTeam],F=formOf(q);
   const p=q.cpos[i];p[0]=clamp(p[0]+dx,-57,29);p[1]=clamp(p[1]+dz,-36,36);
   const b=$('#mini').querySelectorAll('.tok')[i];if(b){b.style.left=((p[0]+60)/120*100)+'%';b.style.top=((p[1]+39)/78*100)+'%';const sm=b.querySelector('small');if(sm)sm.textContent=roleLab(p[0],p[1]);}}
 function squadMoveStart(i){sqSlot=i;tokMove=i;renderSquad();const b=$('#mini').querySelectorAll('.tok')[i];if(b){b.classList.add('moving');b.focus({preventScroll:true});}flashSubMenu('Move it with the right stick. Press X to confirm.');}
-function squadMoveEnd(){const i=tokMove;tokMove=-1;const q=mySquads[sqTeam];if(q.cpos)q.cpos=q.cpos.map(([x,z])=>[Math.round(x*2)/2,Math.round(z*2)/2]);saveSquads();renderSquad();const b=$('#mini').querySelectorAll('.tok')[i];if(b)b.focus({preventScroll:true});}
+function squadMoveEnd(){const i=tokMove;tokMove=-1;$('#mini').querySelectorAll('.tok.moving').forEach(t=>t.classList.remove('moving'));const q=mySquads[sqTeam];if(q.cpos)q.cpos=q.cpos.map(([x,z])=>[Math.round(x*2)/2,Math.round(z*2)/2]);saveSquads();renderSquad();const b=$('#mini').querySelectorAll('.tok')[i];if(b)b.focus({preventScroll:true});}
 function flashSubMenu(t){const n=$('#squad-note');if(n){n.textContent=t;n.style.color='var(--cyan)';}}
 function renderSquad(){
   const showTeams=menuMode==='local'||!menuMode;
@@ -140,28 +158,22 @@ function renderSquad(){
   const q=mySquads[sqTeam],F=formOf(q),kit=KITS[kitSel[sqTeam]];
   {const ni=$('#squad-name');if(document.activeElement!==ni)ni.value=q.name||'';ni.placeholder=kit.name;const team=sqTeam;
     ni.oninput=()=>{mySquads[team].name=cleanSquadName(ni.value);saveSquads();if(!S.running)updateHud();if(net.named)net.named.presence({sq:serSquad(mySquads[0])}).catch(()=>{});};}
-  {const row=$('#sq-kit');row.innerHTML='';const team=sqTeam;
-    KITS.forEach((k,i)=>{const b=document.createElement('button');b.className='sw';b.type='button';b.title=k.name;b.style.background=k.ui;
-      const s=document.createElement('i');s.style.background='#'+k.shorts.toString(16).padStart(6,'0');b.appendChild(s);
-      b.setAttribute('aria-pressed',String(kitSel[team]===i));b.setAttribute('aria-label','Preferred color '+k.name);b.disabled=showTeams&&kitSel[1-team]===i;
-      b.onclick=()=>{kitSel[team]=i;mySquads[team].kit=i;if(kitSel[1-team]===i)kitSel[1-team]=(i+1)%KITS.length;saveSquads();renderKits();if(!S.running){S.kits=kitSel.slice();applyKits();}renderSquad();};row.appendChild(b);});}
-  const fr=$('#formations');fr.innerHTML='';
-  Object.keys(FORMATIONS).forEach(f=>{const b=document.createElement('button');b.className='chip';b.textContent=f;b.setAttribute('aria-pressed',String(q.form===f));b.onclick=()=>{q.form=f;saveSquads();renderSquad();};fr.appendChild(b);});
-  {const b=document.createElement('button');b.className='chip';b.textContent='Custom';b.title='Your own layout: drag the shields';b.setAttribute('aria-pressed',String(q.form==='custom'));
-    b.onclick=()=>{if(q.form!=='custom'){if(!q.cpos||q.cpos.length!==10){q.cbase=FORMATIONS[q.form]?q.form:'4-4-2';q.cpos=FORMATIONS[q.cbase].pos.map(p=>p.slice());}q.form='custom';saveSquads();renderSquad();}};fr.appendChild(b);}
-  const mini=$('#mini');mini.querySelectorAll('.tok').forEach(t=>t.remove());
-  for(let i=0;i<10;i++){const [x,z]=F.pos[i],c=q.cards[i],b=document.createElement('button');b.className='tok';
-    b.style.left=((x+60)/120*100)+'%';b.style.top=((z+39)/78*100)+'%';const kp=F.kop.indexOf(i);
-    b.innerHTML=shieldSVG(i===sqSlot?'url(#tokSel)':'url(#tokGold)','#1a0b40')+`<b>${NUMS[i]}</b><small>${F.lab[i]}</small>`+(kp===0?'<i class="kb"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M12 7.2l4 2.9-1.5 4.7h-5L8 10.1z\" fill=\"currentColor\"/><path d=\"M12 7.2V2.6M16 10.1l4.3-1.4M14.5 14.8l2.7 3.7M9.5 14.8l-2.7 3.7M8 10.1L3.7 8.7\" stroke=\"currentColor\" stroke-width=\"1.6\"/></svg></i>':kp===1?'<i class="kb">2</i>':'');b.setAttribute('aria-pressed',String(i===sqSlot));b.setAttribute('aria-label',`${F.lab[i]} ${myNames[sqTeam][i]}`);b.title=myNames[sqTeam][i];
-    b.onclick=e=>{if(b.dataset.drag){delete b.dataset.drag;return;}sqSlot=i;renderSquad();};
-    b.onpointerdown=e=>{if(e.button!==0)return;const r=mini.getBoundingClientRect(),sx=e.clientX,sy=e.clientY;let moved=false;try{b.setPointerCapture(e.pointerId);}catch(_){}
-      b.onpointermove=ev=>{if(!moved&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5)return;
-        if(!moved){moved=true;if(q.form!=='custom'){q.cbase=q.form;q.cpos=F.pos.map(p=>p.slice());q.form='custom';fr.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.textContent==='Custom')));}}
-        const lf=clamp((ev.clientX-r.left)/r.width,0,1),tf=clamp((ev.clientY-r.top)/r.height,0,1);
-        const x=Math.round(clamp(lf*120-60,-57,29)*2)/2,z=Math.round(clamp(tf*78-39,-36,36)*2)/2;q.cpos[i]=[x,z];
-        b.style.left=((x+60)/120*100)+'%';b.style.top=((z+39)/78*100)+'%';const sm=b.querySelector('small');if(sm)sm.textContent=roleLab(x,z);};
-      b.onpointerup=b.onpointercancel=()=>{b.onpointermove=null;b.onpointerup=b.onpointercancel=null;if(moved){b.dataset.drag='1';saveSquads();setTimeout(renderSquad,0);}};};
-    mini.appendChild(b);}
+  uiList($('#sq-kit'),KITS,(k,i)=>i,(k,i)=>{const b=document.createElement('button');b.className='sw';b.type='button';b.appendChild(document.createElement('i'));
+      b.onclick=()=>{const team=sqTeam;kitSel[team]=i;mySquads[team].kit=i;if(kitSel[1-team]===i)kitSel[1-team]=(i+1)%KITS.length;saveSquads();renderKits();if(!S.running){S.kits=kitSel.slice();applyKits();}renderSquad();};return b;},
+    (b,k,i)=>{b.title=k.name;b.style.background=k.ui;b.firstChild.style.background='#'+k.shorts.toString(16).padStart(6,'0');
+      setAttr(b,'aria-pressed',kitSel[sqTeam]===i);setAttr(b,'aria-label','Preferred color '+k.name);b.disabled=showTeams&&kitSel[1-sqTeam]===i;});
+  const fr=$('#formations');
+  uiList(fr,Object.keys(FORMATIONS).concat('custom'),f=>f,f=>{const b=document.createElement('button');b.className='chip';b.textContent=f==='custom'?'Custom':f;
+      if(f==='custom'){b.title='Your own layout: drag the shields';b.onclick=()=>{const q=mySquads[sqTeam];if(q.form!=='custom'){if(!q.cpos||q.cpos.length!==10){q.cbase=FORMATIONS[q.form]?q.form:'4-4-2';q.cpos=FORMATIONS[q.cbase].pos.map(p=>p.slice());}q.form='custom';saveSquads();renderSquad();}};}
+      else b.onclick=()=>{mySquads[sqTeam].form=f;saveSquads();renderSquad();};return b;},
+    (b,f)=>setAttr(b,'aria-pressed',q.form===f));
+  const mini=$('#mini'),toks=[...mini.querySelectorAll('.tok')];
+  for(let i=0;i<10;i++){let b=toks[i];if(!b){b=squadTok(i);mini.appendChild(b);}
+    const [x,z]=F.pos[i],kp=F.kop.indexOf(i);
+    b.style.left=((x+60)/120*100)+'%';b.style.top=((z+39)/78*100)+'%';
+    const html=shieldSVG(i===sqSlot?'url(#tokSel)':'url(#tokGold)','#1a0b40')+`<b>${NUMS[i]}</b><small>${F.lab[i]}</small>`+(kp===0?'<i class="kb"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M12 7.2l4 2.9-1.5 4.7h-5L8 10.1z\" fill=\"currentColor\"/><path d=\"M12 7.2V2.6M16 10.1l4.3-1.4M14.5 14.8l2.7 3.7M9.5 14.8l-2.7 3.7M8 10.1L3.7 8.7\" stroke=\"currentColor\" stroke-width=\"1.6\"/></svg></i>':kp===1?'<i class="kb">2</i>':'');
+    if(b.dataset.h!==html){b.dataset.h=html;b.innerHTML=html;}
+    setAttr(b,'aria-pressed',i===sqSlot);setAttr(b,'aria-label',`${F.lab[i]} ${myNames[sqTeam][i]}`);b.title=myNames[sqTeam][i];}
   {const pair=F.kop,role=kRole(F.pos[sqSlot]),k1=$('#btn-kick'),k2=$('#btn-kick2');
     const tryPair=(slot)=>{const p=pair.slice();const o=1-slot;p[slot]=sqSlot;if(p[o]===sqSlot)p[o]=pair[slot];
       if(!kopOk(p,F.pos)){let fix=null;for(let j=0;j<10&&!fix;j++){if(j===sqSlot)continue;const c=p.slice();c[o]=j;if(kopOk(c,F.pos))fix=c;}return fix;}return p;};
@@ -169,28 +181,39 @@ function renderSquad(){
       btn.setAttribute('aria-pressed',String(on));btn.disabled=!on&&!cand;
       btn.onclick=()=>{if(on||!cand)return;q.kop=cand;saveSquads();renderSquad();};});
     $('#kop-note').textContent=role==='def'?'Defenders cannot take the kick-off.':`Kick-off: ${NUMS[pair[0]]} and ${NUMS[pair[1]]}. One forward needed, one midfielder at most.`;}
-  const cr=$('#corners');cr.innerHTML='';
+  const cr=$('#corners');
   const cfg=CORNER_CFG[cornerSide];
   document.querySelectorAll('#corner-side .chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.side===cornerSide)));
-  [...Object.keys(cfg.presets),'custom'].forEach(k=>{const L=k==='custom'?{name:'Custom',desc:'Your own layout. Drag the dots.'}:cfg.presets[k],b=document.createElement('button');b.className='chip';b.textContent=L.name;b.title=L.desc;b.setAttribute('aria-pressed',String(q[cfg.field]===k));b.onclick=()=>{q[cfg.field]=k;saveSquads();renderSquad();};cr.appendChild(b);});
+  uiList(cr,[...Object.keys(cfg.presets),'custom'],k=>cornerSide+k,k=>{const b=document.createElement('button');b.className='chip';b.onclick=()=>{const q=mySquads[sqTeam];q[CORNER_CFG[cornerSide].field]=k;saveSquads();renderSquad();};return b;},
+    (b,k)=>{const L=k==='custom'?{name:'Custom',desc:'Your own layout. Drag the dots.'}:cfg.presets[k];if(b.textContent!==L.name)b.textContent=L.name;b.title=L.desc;setAttr(b,'aria-pressed',q[cfg.field]===k);});
   $('#corner-note').textContent=cornerSide==='att'?'Your corner, taken from the top right. Drag a dot to make it Custom.':'Their corner, your goal on the right. Drag a dot to make it Custom.';
   drawCornerEditor(q);
   const c=q.cards[sqSlot],sum=c.st.reduce((a,b)=>a+b,0);
-  $('#fut').innerHTML=shieldSVG('url(#cardGold)','#1a0b40')+`<div class="fnum">${NUMS[sqSlot]}</div><div class="fpos">${F.lab[sqSlot]}</div><input class="nm" id="fut-name" maxlength="16" spellcheck="false" autocomplete="off" aria-label="Player name" title="Tap to rename">`;
-  {const ni=$('#fut-name');ni.value=myNames[sqTeam][sqSlot];const slot=sqSlot,team=sqTeam;ni.oninput=()=>{const v=ni.value.trim();myNames[team][slot]=v||NAMES[team][slot];saveNames(team);const tk=$('#mini').querySelectorAll('.tok')[slot];if(tk){tk.title=myNames[team][slot];tk.setAttribute('aria-label',`${F.lab[slot]} ${myNames[team][slot]}`);}};ni.onkeydown=e=>{if(e.key==='Enter')ni.blur();};ni.onblur=()=>{if(!ni.value.trim())ni.value=NAMES[team][slot];};}
+  if(!$('#fut-name'))$('#fut').innerHTML=shieldSVG('url(#cardGold)','#1a0b40')+`<div class="fnum"></div><div class="fpos"></div><input class="nm" id="fut-name" maxlength="16" spellcheck="false" autocomplete="off" aria-label="Player name" title="Tap to rename">`;
+  $('#fut .fnum').textContent=NUMS[sqSlot];$('#fut .fpos').textContent=F.lab[sqSlot];
+  {const ni=$('#fut-name'),slot=sqSlot,team=sqTeam;if(document.activeElement!==ni)ni.value=myNames[team][slot];ni.oninput=()=>{const v=ni.value.trim();myNames[team][slot]=v||NAMES[team][slot];saveNames(team);const tk=$('#mini').querySelectorAll('.tok')[slot];if(tk){tk.title=myNames[team][slot];tk.setAttribute('aria-label',`${F.lab[slot]} ${myNames[team][slot]}`);}};ni.onkeydown=e=>{if(e.key==='Enter')ni.blur();};ni.onblur=()=>{if(!ni.value.trim())ni.value=NAMES[team][slot];};}
   $('#pts-left').textContent=5-sum;
-  const box=$('#stats');box.innerHTML='';
-  STATS.forEach((s,k)=>{
-    const row=document.createElement('div');row.className='stat';
-    row.innerHTML=`<b>${s.name}</b><div class="starbtns"></div>`;row.title=s.desc;
+  uiList($('#stats'),STATS,(st,k)=>k,(st,k)=>{
+    const row=document.createElement('div');row.className='stat';row.innerHTML=`<b>${st.name}</b><div class="starbtns"></div>`;row.title=st.desc;
     const sb=row.querySelector('.starbtns');
-    for(let n=1;n<=3;n++){const btn=document.createElement('button');btn.textContent='★';btn.className=c.st[k]>=n?'on':'';btn.setAttribute('aria-label',`${s.name} ${n} star${n>1?'s':''}`);
-      btn.onclick=()=>{const cur=c.st[k],want=cur===n?n-1:n,left=5-c.st.reduce((a,b)=>a+b,0);if(want-cur>left){squadNote('Out of points. Take a star from another stat first.');return;}c.st[k]=want;saveSquads();renderSquad();};sb.appendChild(btn);}
-    box.appendChild(row);
-  });
+    for(let n=1;n<=3;n++){const btn=document.createElement('button');btn.textContent='★';btn.setAttribute('aria-label',`${st.name} ${n} star${n>1?'s':''}`);
+      btn.onclick=()=>{const c=mySquads[sqTeam].cards[sqSlot],cur=c.st[k],want=cur===n?n-1:n,left=5-c.st.reduce((a,b)=>a+b,0);if(want-cur>left){squadNote('Out of points. Take a star from another stat first.');return;}c.st[k]=want;saveSquads();renderSquad();};sb.appendChild(btn);}
+    return row;},
+    (row,st,k)=>{row.querySelectorAll('.starbtns button').forEach((btn,j)=>{const on=c.st[k]>=j+1;if(btn.classList.contains('on')!==on)btn.className=on?'on':'';});});
   renderTree(q);
   if(net.named)net.named.presence({sq:serSquad(mySquads[0])}).catch(()=>{});
 }
+// one formation shield; made once and then only updated (its handlers read the squad when they run)
+function squadTok(i){const b=document.createElement('button');b.className='tok';b.type='button';const mini=$('#mini');
+  b.onclick=()=>{if(b.dataset.drag){delete b.dataset.drag;return;}sqSlot=i;renderSquad();};
+  b.onpointerdown=e=>{if(e.button!==0)return;const q=mySquads[sqTeam],F=formOf(q),r=mini.getBoundingClientRect(),sx=e.clientX,sy=e.clientY;let moved=false;try{b.setPointerCapture(e.pointerId);}catch(_){}
+    b.onpointermove=ev=>{if(!moved&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5)return;
+      if(!moved){moved=true;if(q.form!=='custom'){q.cbase=q.form;q.cpos=F.pos.map(p=>p.slice());q.form='custom';$('#formations').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.textContent==='Custom')));}}
+      const lf=clamp((ev.clientX-r.left)/r.width,0,1),tf=clamp((ev.clientY-r.top)/r.height,0,1);
+      const x=Math.round(clamp(lf*120-60,-57,29)*2)/2,z=Math.round(clamp(tf*78-39,-36,36)*2)/2;q.cpos[i]=[x,z];
+      b.style.left=((x+60)/120*100)+'%';b.style.top=((z+39)/78*100)+'%';const sm=b.querySelector('small');if(sm)sm.textContent=roleLab(x,z);};
+    b.onpointerup=b.onpointercancel=()=>{b.onpointermove=null;b.onpointerup=b.onpointercancel=null;if(moved){b.dataset.drag='1';saveSquads();setTimeout(renderSquad,0);}};};
+  return b;}
 function shieldSVG(fill,edge,cls){
   // one gold shield with a clean inner line
   return `<svg class="${cls||'shield'}" viewBox="0 0 100 112" aria-hidden="true"><path d="M50 3 L96 19 L91 71 L50 108 L9 71 L4 19 Z" fill="${fill}"/>`+
@@ -203,15 +226,19 @@ function renderTree(q){
   let lines='';
   const ln=(a,b,col,on)=>{lines+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${on?col:'rgba(255,255,255,.18)'}" stroke-width="${on?3:2}" vector-effect="non-scaling-stroke"/>`;};
   PATH_KEYS.forEach(p=>{ln(P.base,P[p],'#ffffff',q.path===p);BAL.unlock[p].forEach(m=>ln(P[p],M[m],PATHS[p].col,q.path===p));});
-  let h=`<svg class="tree-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg>`;
-  h+=`<div class="tnode base" style="left:${P.base[0]}%;top:${P.base[1]}%" title="Always unlocked. No bonus."><b>Base</b></div>`;
-  PATH_KEYS.forEach(p=>{const on=q.path===p;h+=`<button class="tnode path${on?' on':''}" data-path="${p}" style="left:${P[p][0]}%;top:${P[p][1]}%;--pc:${PATHS[p].col}" aria-pressed="${on}" title="${bonusText(p)}"><b>+1</b><span>${PATHS[p].name}</span></button>`;});
+  if(!box.querySelector('.tree-lines')){
+    let h=`<svg class="tree-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>`;
+    h+=`<div class="tnode base" style="left:${P.base[0]}%;top:${P.base[1]}%" title="Always unlocked. No bonus."><b>Base</b></div>`;
+    PATH_KEYS.forEach(p=>{h+=`<button class="tnode path" data-path="${p}" style="left:${P[p][0]}%;top:${P[p][1]}%;--pc:${PATHS[p].col}"><b>+1</b><span>${PATHS[p].name}</span></button>`;});
+    MOMENT_ORDER.forEach(m=>{h+=`<button class="tnode mom" data-m="${m}" style="left:${M[m][0]}%;top:${M[m][1]}%"><b>${SPECIALS[m].name}</b></button>`;});
+    box.innerHTML=h;
+    box.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{const q=mySquads[sqTeam];q.path=b.dataset.path;fitSpecial(q);saveSquads();renderSquad();});
+    box.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const q=mySquads[sqTeam],m=b.dataset.m;if(!(BAL.unlock[q.path]||[]).includes(m)){squadNote('Pick a path that unlocks '+SPECIALS[m].name+' first.');return;}q.special=m;saveSquads();renderSquad();});}
+  box.querySelector('.tree-lines').innerHTML=lines;
+  box.querySelectorAll('[data-path]').forEach(b=>{const p=b.dataset.path,on=q.path===p;b.classList.toggle('on',on);setAttr(b,'aria-pressed',on);b.title=bonusText(p);});
   const open=BAL.unlock[q.path]||[];
-  MOMENT_ORDER.forEach(m=>{const ok=open.includes(m),on=ok&&q.special===m,who=PATH_KEYS.filter(p=>BAL.unlock[p].includes(m)).map(p=>PATHS[p].name).join(' or ')||'no path';
-    h+=`<button class="tnode mom${on?' on':''}${ok?'':' locked'}" data-m="${m}" style="left:${M[m][0]}%;top:${M[m][1]}%" aria-pressed="${on}" ${ok?'':'aria-disabled="true"'} title="${ok?SPECIALS[m].desc:'Unlocked by the '+who+' path'}"><b>${SPECIALS[m].name}</b></button>`;});
-  box.innerHTML=h;
-  box.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{q.path=b.dataset.path;fitSpecial(q);saveSquads();renderSquad();});
-  box.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const m=b.dataset.m;if(!(BAL.unlock[q.path]||[]).includes(m)){squadNote('Pick a path that unlocks '+SPECIALS[m].name+' first.');return;}q.special=m;saveSquads();renderSquad();});
+  box.querySelectorAll('[data-m]').forEach(b=>{const m=b.dataset.m,ok=open.includes(m),on=ok&&q.special===m,who=PATH_KEYS.filter(p=>BAL.unlock[p].includes(m)).map(p=>PATHS[p].name).join(' or ')||'no path';
+    b.classList.toggle('on',on);b.classList.toggle('locked',!ok);setAttr(b,'aria-pressed',on);if(ok)b.removeAttribute('aria-disabled');else b.setAttribute('aria-disabled','true');b.title=ok?SPECIALS[m].desc:'Unlocked by the '+who+' path';});
   const sd=SPECIALS[q.special],pp=PATHS[q.path];$('#spc-desc').innerHTML=`<b style="color:${pp.col}">${pp.name}</b>: ${bonusText(q.path)} for every player.<br>`+(open.length&&sd?`<b>${sd.name}</b>: ${sd.desc}`:'This path has no Moments yet.');
 }
 // corner editor: full pitch, attacking right, corner at top right

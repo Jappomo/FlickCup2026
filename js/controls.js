@@ -156,8 +156,9 @@ function ctlMapRender(){const box=document.querySelector('#hub .ctl-map');if(!bo
     ['Reset camera',k('camera'),g('camera')],['Orbit camera','Hold middle mouse and drag','–'],['Frame the ball','Hold F','–'],
     ['Cancel a pull','Right click, or Esc',g('back')],['Pause',k('menu'),g('menu')],['Next song',k('music'),g('music')],
     ['Move a formation shield','Drag it',g('confirm')+' to pick it, right stick to move, '+g('moment')+' to confirm'],
-    ['Menu tabs','Click',g('prev')+' / '+g('next')],['Sub-menus','Click',g('ltrig')+' / '+g('rtrig')],
-    ['Move in menus','Mouse','D-pad or left stick, '+g('confirm')+' to press, '+g('back')+' to go back'],['Menu pointer','Mouse','Right stick, '+g('confirm')+' to click or drag'],
+    ['Menu tabs','Click, or Q / E',g('prev')+' / '+g('next')],['Sub-menus','Click, or Z / C',g('ltrig')+' / '+g('rtrig')],
+    ['Move in menus','Hover, or the arrow keys (hold to speed up)','D-pad or left stick (hold to speed up)'],['Press and go back','Click, Enter or Space · Esc or Backspace',g('confirm')+' to press, '+g('back')+' to go back'],
+    ['Change a value','Arrow left / right on a slider, toggle or list','Left / right on a slider, toggle or list'],['Menu pointer','Mouse','Right stick, '+g('confirm')+' to click or drag'],
     ['Type a name','Keyboard',g('confirm')+' on the field opens the on-screen keyboard']];
   const fam=PAD_FAMILIES[padFamily()].name,e=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   const html='<div class="cm-h"></div><div class="cm-h">Keyboard and mouse</div><div class="cm-h">Controller ('+e(fam)+')</div>'+rows.map(r=>'<div class="cm-a">'+e(r[0])+'</div><div>'+e(r[1])+'</div><div>'+e(r[2])+'</div>').join('');

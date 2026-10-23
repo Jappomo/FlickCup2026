@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <!-- Flick Cup 2026 · menu backdrop (css/retro.css): diagonal print streaks, faint pitch lines and a worn match ball -->
+  <defs>
+    <filter id="wear" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -3.2 2.75" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in"/>
+    </filter>
+    <filter id="wear2" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" seed="11" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -3.4 2.85" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in"/>
+    </filter>
+    <radialGradient id="vig" cx="40%" cy="45%" r="75%"><stop offset="0" stop-color="#17345c"/><stop offset=".6" stop-color="#11284a"/><stop offset="1" stop-color="#0a1729"/></radialGradient>
+    <clipPath id="ballc"><circle cx="1500" cy="840" r="270"/></clipPath>
+  </defs>
+  <rect width="1600" height="900" fill="url(#vig)"/>
+  <!-- pitch lines, slanted -->
+  <g fill="none" stroke="#2c5a8c" stroke-width="5" opacity=".55" filter="url(#wear2)">
+    <circle cx="975" cy="575" r="138"/>
+    <path d="M1170 220 L 820 900"/>
+    <g transform="rotate(-20 1450 500)"><rect x="1330" y="330" width="320" height="380"/><rect x="1440" y="420" width="210" height="200"/></g>
+  </g>
+  <!-- streaks -->
+  <g filter="url(#wear)">
+    <path d="M0 178 L1230 118 L1600 96 L1600 118 L1180 146 L0 212 Z" fill="#2f5f95" opacity=".9"/>
+    <path d="M1130 150 L1600 98 L1600 138 L1230 210 L1110 238 Z" fill="#f2b632"/>
+    <path d="M560 470 L1600 150 L1600 166 L590 486 Z" fill="#2f5f95" opacity=".55"/>
+    <path d="M90 900 L1360 536 L1376 546 L330 900 Z" fill="#f2b632"/>
+    <path d="M420 900 L1600 545 L1600 610 L640 900 Z" fill="#2f5f95" opacity=".75"/>
+    <path d="M860 900 L1600 690 L1600 712 L940 900 Z" fill="#f2b632" opacity=".95"/>
+  </g>
+  <!-- the ball -->
+  <g filter="url(#wear2)">
+    <circle cx="1500" cy="840" r="270" fill="#ead9b4"/>
+    <g clip-path="url(#ballc)" fill="#13294a" stroke="#13294a" stroke-width="14" stroke-linejoin="round">
+      <polygon points="1522,758 1585,836 1531,920 1434,894 1428,794"/><polygon points="1749,697 1699,774 1610,751 1606,659 1691,626"/><polygon points="1713,1033 1624,1009 1619,917 1705,884 1763,956"/><polygon points="1382,1102 1377,1010 1463,977 1521,1049 1471,1126"/><polygon points="1214,809 1300,776 1358,847 1308,924 1219,901"/><polygon points="1441,559 1499,630 1449,707 1360,684 1356,592"/>
+      <path fill="none" d="M1522 758L1544 675M1585 836L1670 831M1531 920L1561 999M1434 894L1367 947M1428 794L1357 747"/>
+    </g>
+    <circle cx="1500" cy="840" r="270" fill="none" stroke="#0f1f38" stroke-width="8"/>
+  </g>
+</svg>

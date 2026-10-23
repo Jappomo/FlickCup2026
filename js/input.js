@@ -160,46 +160,8 @@ function setCurl(s){curlSign=s;$('#curl-l').setAttribute('aria-pressed',String(s
 
 /* ================= gamepad: Skate-style right stick ================= */
 const padSt=[];
-// spatial focus for controllers: pick the nearest visible control in the pressed direction
-// the layer the controller works in: the full-time screen when it is up, otherwise the menu (pack and keyboard have their own)
-let PAD_ROOT='#hub';
-function padCands(){return [...document.querySelectorAll(PAD_ROOT==='#hub'?'#hub .tabs .tab, #hub [data-panel]:not([hidden]) :is(button,input,select,[tabindex="0"])':PAD_ROOT+' :is(button,input,select,[tabindex="0"])')].filter(el=>{if(el.disabled)return false;const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&el.offsetParent!==null&&getComputedStyle(el).visibility!=='hidden';});}
-function padFocusEl(){const a=document.activeElement;return a&&a!==document.body&&$(PAD_ROOT).contains(a)?a:null;}
-function padZone(el){return !el?'':el.closest('.tabs')?'tabs':el.closest('.subnav')?'sub':'content';}
-function padPick(el){if(!el)return;el.focus({preventScroll:true});el.scrollIntoView({block:'nearest',inline:'nearest'});}
-function padSubBtns(){const pn=document.querySelector('#hub [data-panel]:not([hidden])'),nav=pn&&pn.querySelector('.subnav');return nav&&!nav.hidden&&nav.offsetParent?[...nav.querySelectorAll('button')].filter(b=>!b.disabled&&b.offsetParent):[];}
-function padNav(dir){
-  const z=padZone(padFocusEl());
-  // tabs and sub-menus: left and right switch straight away, up and down move between the rows
-  if(z==='tabs'||z==='sub'){
-    if(ret.on)retShow(false);document.body.classList.add('padnav');
-    const cur=padFocusEl();
-    if(dir==='l'||dir==='r'){
-      if(z==='tabs'){stepTab(dir==='r'?1:-1);padPick(document.querySelector('.tab[aria-selected="true"]'));return;}
-      const bs=padSubBtns();let k=bs.indexOf(cur);k=(k<0?0:k+(dir==='r'?1:-1)+bs.length)%bs.length;bs[k].click();padPick(bs[k]);return;}
-    if(dir==='u'){if(z==='sub')padPick(document.querySelector('.tab[aria-selected="true"]'));return;}
-    if(z==='tabs'){const mem=PAD_MEM[hubTab];if(mem&&mem.isConnected&&mem.offsetParent&&!mem.disabled&&padZone(mem)==='content'){padPick(mem);return;}const bs=padSubBtns();if(bs.length){padPick(bs.find(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-current')==='true')||bs[0]);return;}}
-    const list=padCands().filter(el=>padZone(el)==='content'&&el.getBoundingClientRect().top>(cur?cur.getBoundingClientRect().bottom-2:0));
-    if(list.length){const c=cur.getBoundingClientRect(),cx=c.left+c.width/2;list.sort((a,b)=>{const ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect();return (ra.top-c.bottom)+Math.abs(ra.left+ra.width/2-cx)*0.5-((rb.top-c.bottom)+Math.abs(rb.left+rb.width/2-cx)*0.5);});padPick(list[0]);}
-    return;}
-  return padNavContent(dir);
-}
-function padNavContent(dir){
-  if(ret.on)retShow(false);document.body.classList.add('padnav');
-  const cur=padFocusEl();
-  if(cur&&cur.type==='range'&&(dir==='l'||dir==='r')){const st=+cur.step||1;cur.value=+cur.value+(dir==='r'?st:-st)*Math.max(1,Math.round((+cur.max-+cur.min)/20/st));cur.dispatchEvent(new Event('input',{bubbles:true}));cur.dispatchEvent(new Event('change',{bubbles:true}));return;}
-  const list=padCands().filter(el=>padZone(el)==='content');
-  if(!cur||!list.length){const bs=padSubBtns();const t=bs.find(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-current')==='true')||bs[0];if(!list.length){padPick(t||document.querySelector('.tab[aria-selected="true"]'));return;}}
-  if(!cur){const first=list.find(el=>el.closest('[data-panel]'))||list[0];first.focus({preventScroll:false});first.scrollIntoView({block:'nearest'});return;}
-  if(cur.matches('input[type=text],input:not([type]),input[type=password]'))cur.blur();
-  const c=cur.getBoundingClientRect(),cx=c.left+c.width/2,cy=c.top+c.height/2;let best=null,bs=1e9;
-  for(const el of list){if(el===cur)continue;const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,dx=x-cx,dy=y-cy;
-    const main=dir==='u'?c.top-r.bottom:dir==='d'?r.top-c.bottom:dir==='l'?c.left-r.right:r.left-c.right,side=dir==='u'||dir==='d'?Math.abs(dx):Math.abs(dy);
-    if(main<-6)continue;const sc=main+side*2.2;if(sc<bs){bs=sc;best=el;}}
-  if(best){best.focus({preventScroll:true});best.scrollIntoView({block:'nearest',inline:'nearest'});}
-  else if(dir==='u'){const bs=padSubBtns();padPick(bs.find(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-current')==='true')||bs[0]||document.querySelector('.tab[aria-selected="true"]'));}
-}
-addEventListener('pointerdown',()=>document.body.classList.remove('padnav'),true);
+// menu navigation (focus, groups, held repeat) lives in js/ui.js; padPick is redefined there to move its one focus
+function padPick(el){if(el)el.focus({preventScroll:true});}
 // right stick drives an on-screen pointer in the menus; A clicks (and drags) where it points
 const ret={on:false,x:innerWidth/2,y:innerHeight/2,down:null,hov:null};
 function retShow(on){ret.on=on;$('#reticle').hidden=!on;if(!on&&ret.hov){ret.hov.classList.remove('rhov');ret.hov=null;}}
@@ -208,14 +170,14 @@ function retEv(el,type,x,y){const o={bubbles:true,cancelable:true,clientX:x,clie
 function retPad(gp,st,dt,pressed){
   const rx=gp.axes[2]||0,ry=gp.axes[3]||0,m=Math.hypot(rx,ry);
   const RDZ=clamp((SET.dz||20)/100,0.05,0.5);
-  if(m>RDZ){if(!ret.on){retShow(true);const f=padFocusEl();if(f)f.blur();document.body.classList.remove('padnav');}
+  if(m>RDZ){if(!ret.on)retShow(true);
     const sp=(m-RDZ)/(1-RDZ),v=(250+1300*sp*sp)*dt*clamp((SET.rspeed||100)/100,0.3,3);let nx=ret.x+rx/m*v*Math.min(1,m),ny=ret.y+ry/m*v*Math.min(1,m);
     // past the top or bottom edge: scroll whatever is under the pointer
     if((ny<8&&ry<0)||(ny>innerHeight-8&&ry>0)){const el=document.elementFromPoint(ret.x,ret.y);let sc=el;while(sc&&sc!==document.body&&!(sc.scrollHeight>sc.clientHeight+4&&/auto|scroll/.test(getComputedStyle(sc).overflowY)))sc=sc.parentElement;if(sc&&sc!==document.body)sc.scrollTop+=ry*900*dt;}
     ret.x=clamp(nx,4,innerWidth-4);ret.y=clamp(ny,4,innerHeight-4);
     const R=$('#reticle');R.style.left=ret.x+'px';R.style.top=ret.y+'px';
     if(ret.down)retEv(ret.down.el,'pointermove',ret.x,ret.y);
-    const el=document.elementFromPoint(ret.x,ret.y),h=el&&el.closest('button,input,label,select,.tok,.sw,[tabindex]');if(h!==ret.hov){if(ret.hov)ret.hov.classList.remove('rhov');ret.hov=h;if(h)h.classList.add('rhov');}}
+    const el=document.elementFromPoint(ret.x,ret.y),h=el&&el.closest('button,input,label,select,.tok,.sw,[tabindex]');if(h!==ret.hov){if(ret.hov)ret.hov.classList.remove('rhov');ret.hov=h;if(h)h.classList.add('rhov');const f=typeof uiHoverTarget==='function'&&uiHoverTarget(el);if(f&&f!==UI.cur)uiSet(f,{src:'mouse'});}}
   if(!ret.on)return false;
   const a=pressed(0),was=!!st.btn[0];
   if(a&&!was){const el=document.elementFromPoint(ret.x,ret.y);if(el){ret.down={el,x:ret.x,y:ret.y};$('#reticle').classList.add('down');retEv(el,'pointerdown',ret.x,ret.y);retEv(el,'mousedown',ret.x,ret.y);}}
@@ -225,7 +187,6 @@ function retPad(gp,st,dt,pressed){
 }
 addEventListener('mousemove',e=>{if(ret.on&&(Math.abs(e.movementX)+Math.abs(e.movementY))>2)retShow(false);});
 function rumble(strong,ms){if(!SET.rumble||lastInput!=='pad')return;try{for(const gp of navigator.getGamepads()){if(gp&&gp.vibrationActuator&&gp.vibrationActuator.playEffect)gp.vibrationActuator.playEffect('dual-rumble',{duration:ms,strongMagnitude:strong,weakMagnitude:Math.min(1,strong+0.2)}).catch(()=>{});}}catch(e){}}
-const PAD_MEM={};addEventListener('focusin',e=>{const t=e.target;if(t&&t.closest&&t.closest('#hub [data-panel]')&&typeof hubTab!=='undefined')PAD_MEM[hubTab]=t;});
 function pollPads(dt){
   const pads=padsNow();
   if(lastInput!=='pad'&&pads.some(gp=>gp.axes.some(a=>Math.abs(a)>0.4)||gp.buttons.some(b=>b.pressed)))setInput('pad');
@@ -235,35 +196,25 @@ function pollPads(dt){
     if(TITLE.on){if(gp.buttons.some((b,k)=>b.pressed&&!st.btn[k]))titleGo();st.btn=gp.buttons.map(b=>b.pressed);return;}
     if(oskOpen()){oskPad(gp,st,dt);st.btn=gp.buttons.map(b=>b.pressed);return;}
     if(typeof PACK!=='undefined'&&PACK.open){st.btn=gp.buttons.map(b=>b.pressed);return;}   // the pack screen reads the pad itself
-    const ftOpen=!$('#ft').hidden;PAD_ROOT=ftOpen?'#ft':'#hub';
-    if(ftOpen){const lx=gp.axes[0]||0,ly=gp.axes[1]||0,now=performance.now();
-      const dir=pressed(12)?'u':pressed(13)?'d':pressed(14)?'l':pressed(15)?'r':Math.abs(ly)>0.6&&Math.abs(ly)>=Math.abs(lx)?(ly<0?'u':'d'):Math.abs(lx)>0.6?(lx<0?'l':'r'):'';
-      if(!dir)st.navD='';else if(dir!==st.navD){st.navD=dir;st.navT=now+380;padNavContent(dir);}else if(now>st.navT){st.navT=now+150;padNavContent(dir);}
-      if(edge(0)){const f=padFocusEl();if(f)f.click();else padNavContent('d');}
-      st.btn=gp.buttons.map(b=>b.pressed);return;}
+    const ftOpen=!$('#ft').hidden;
+    // the menus (and the full-time screen) go through the UI system (js/ui.js): one focus, one input layer
+    if(ftOpen){uiPad(gp,st);st.btn=gp.buttons.map(b=>b.pressed);return;}
     const hubOpen=!$('#hub').hidden;
     if(edge(11)&&tokMove<0){ensureAudio();music.next();}
     if(edge(9)){if(hubOpen&&S.running&&S.phase!=='end')closeMenu();else toggleMenu();}
     if(hubOpen){
-      if(hubTab==='kickoff'){if(edge(4))koStep(-1);if(edge(5))koStep(1);}else{if(edge(4))stepTab(-1);if(edge(5))stepTab(1);if(edge(6))subStep(-1);if(edge(7))subStep(1);}
-      if(tokMove<0&&retPad(gp,st,dt,pressed)){st.btn=gp.buttons.map(b=>b.pressed);return;}
-      // D-pad or left stick moves a highlight around the menu, A presses it, B backs out
-      const lx=gp.axes[0]||0,ly=gp.axes[1]||0,now=performance.now();
+      // moving a formation shield: either stick or the D-pad nudges it, X puts it down
       if(tokMove>=0){
         if(hubTab!=='squad'){tokMove=-1;}
-        else{const DZ=clamp((SET.dz||20)/100,0.05,0.5);let mx=Math.abs(lx)>DZ?lx:0,my=Math.abs(ly)>DZ?ly:0;
+        else{const DZ=clamp((SET.dz||20)/100,0.05,0.5),lx=gp.axes[0]||0,ly=gp.axes[1]||0;let mx=Math.abs(lx)>DZ?lx:0,my=Math.abs(ly)>DZ?ly:0;
           const rx2=gp.axes[2]||0,ry2=gp.axes[3]||0;if(Math.abs(rx2)>DZ)mx=rx2;if(Math.abs(ry2)>DZ)my=ry2;
           if(pressed(14))mx=-1;if(pressed(15))mx=1;if(pressed(12))my=-1;if(pressed(13))my=1;
           if(mx||my)squadNudge(tokMove,mx*34*dt,my*34*dt);
-          if(edge(2))squadMoveEnd();
+          if(edge(2)||edge(0)||edge(1))squadMoveEnd();
           st.btn=gp.buttons.map(b=>b.pressed);return;}}
-      // squad tab: the left stick scrolls the page, the D-pad moves the highlight
-      const stickNav=hubTab!=='squad';
-      if(!stickNav&&Math.abs(ly)>0.25){const hm=document.querySelector('#hub .hub-main');if(hm)hm.scrollTop+=Math.sign(ly)*(Math.abs(ly)-0.25)/0.75*1100*dt;}
-      let dir=pressed(12)?'u':pressed(13)?'d':pressed(14)?'l':pressed(15)?'r':!stickNav?'':Math.abs(ly)>0.6&&Math.abs(ly)>=Math.abs(lx)?(ly<0?'u':'d'):Math.abs(lx)>0.6?(lx<0?'l':'r'):'';
-      if(!dir)st.navD='';else if(dir!==st.navD){st.navD=dir;st.navT=now+380;padNav(dir);}else if(now>st.navT){st.navT=now+150;padNav(dir);}
-      if(edge(0)&&!ret.on){const f=padFocusEl();if(f&&f.classList.contains('tok')){squadMoveStart([...$('#mini').querySelectorAll('.tok')].indexOf(f));}else if(f){if(isTextField(f)){oskShow(f);}else f.click();}else if(hubTab==='play')$('#btn-start').click();else if(hubTab==='kickoff')koGo();}
-      if(edge(1)){const f=padFocusEl();if(f&&f.matches('input'))f.blur();else if(hubTab==='kickoff')koBack();else if(!$('#btn-resume').hidden)closeMenu();else if(hubTab==='play'&&menuMode){setMenuMode('');}}
+      // the right stick still drives a pointer (it moves the same focus); A clicks where it points while it shows
+      retPad(gp,st,dt,pressed);
+      if(!ret.on)uiPad(gp,st);
       st.btn=gp.buttons.map(b=>b.pressed);return;}
     let team;if(S.mode==='local')team=pads.length>=2?i:S.active;else if(S.mode==='cpu')team=1-cpuTeam;else team=net.myTeam;
     if(edge(3))cycleCam();
