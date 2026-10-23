@@ -27,7 +27,7 @@ html.ui-menu .np{zoom:var(--mz)}
 #hub [data-panel=balance]:not([hidden]){display:block;overflow-y:auto;padding-right:10px;scrollbar-width:thin;scrollbar-color:var(--mus) rgba(0,0,0,.25)}
 
 /* ===================== backdrop ===================== */
-.hub-bg{background:url(menu-art.svg?v=20261024c) center/cover no-repeat,var(--n1)}
+.hub-bg{background:url(menu-art.svg?v=20261024e) center/cover no-repeat,var(--n1)}
 .hub-bg svg{display:none}
 .hub-bg::after{content:"";position:absolute;inset:0;background:var(--grain);mix-blend-mode:screen;opacity:.9}
 #hub,#ft,#title{font-family:var(--f-display);color:var(--cream)}
@@ -144,8 +144,8 @@ html.ui-menu #hub [data-panel=settings]:not([hidden]){grid-template-rows:minmax(
 .rng output{font-size:21px;color:var(--mus);min-width:56px}
 .rng input[type=range]{width:340px}
 /* the button map is its own section, sized to fit */
-[data-sub=map] .ctl-map{font-size:14px}
-[data-sub=map] .ctl-map>div{padding:5px 12px}
+[data-sub=map] .ctl-map{font-size:13px}
+[data-sub=map] .ctl-map>div{padding:3px 12px}
 
 /* ===================== the other pages ===================== */
 .ko-side{background:var(--grain),rgba(15,34,64,.9);border:1px solid rgba(241,228,198,.13);border-left:4px solid var(--mus);box-shadow:6px 7px 0 rgba(5,12,24,.35)}
@@ -340,3 +340,108 @@ html[data-dev=kbd] :is(.big,.ko-back) .glyph.b::after{content:"Esc";font-size:12
 /* the camera views menu, opened by holding R3: the controller's choice */
 .cam-menu button.pad-on{background:var(--mus);color:var(--ink)}
 .cam-menu button.pad-on :is(small,i){color:var(--ink)}
+
+/* ===================== Online screen (js/online.js, js/tournament.js) ===================== */
+#hub [data-panel=online] .on-head{grid-template-columns:1fr auto 1fr;flex:none}
+#hub [data-panel=online] .on-head .subnav{justify-self:end;margin:0}
+#hub [data-panel=online] :is(.on-match,.on-tour):not([hidden]){flex:1 1 auto;min-height:0}
+/* Friendly: you | the room | the opponent */
+.on-match{display:grid;grid-template-columns:minmax(0,1fr) 400px minmax(0,1fr);gap:20px;align-items:stretch}
+.on-match .ko-side{display:flex;flex-direction:column;gap:14px;min-height:0;overflow:hidden}
+.on-match .ko-look{flex:1 1 auto;align-items:center}
+.on-match .ko-look .ko-form{width:120px;height:auto}
+.on-match .ko-look .ko-shirt{width:110px;height:auto}
+.on-mid{display:flex;flex-direction:column;gap:14px;justify-content:center}
+.on-mid .field{flex-wrap:nowrap}
+.on-mid .field input{min-width:0}
+.on-mid .seats{display:none!important}
+.on-wait{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:20px}
+.on-wait b{font:900 italic 34px var(--f-display);text-transform:uppercase;color:var(--cream)}
+.on-wait span{font:500 16px var(--f-body);color:var(--cream2)}
+.on-wait em{font:900 italic 72px/1 var(--f-display);letter-spacing:.12em;color:var(--mus);text-shadow:4px 4px 0 rgba(5,12,24,.5)}
+.on-kits{margin-top:auto}
+.on-kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:6px}
+.on-k{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px 4px;background:var(--plate);border:0;color:var(--cream);min-width:0}
+.on-k .on-ks{width:34px;height:44px}
+.on-k small{font:700 10px var(--f-display);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.on-k[aria-pressed="true"]{background:var(--sel);color:var(--ink)}
+.on-ok{color:#5fd38a}.on-no{color:#e8604c}
+/* Tournament: code, rules and teams (or your squad) on the left, the bracket on the right */
+.on-tour{display:grid;grid-template-columns:470px minmax(0,1fr);gap:20px}
+.on-tl,.tour-body{display:flex;flex-direction:column;gap:12px;min-height:0}
+.on-tcode .field{flex-wrap:nowrap}
+.on-tcode .status{margin-top:6px;font-size:13px}
+.tset-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px}
+.tset-grid .tset-row{border-top:0;padding:4px 0}
+.tset-grid .tsel{max-width:150px}
+.tteams{grid-template-columns:1fr 1fr;gap:5px 8px}
+.tteam{padding:4px 8px;background:rgba(5,12,24,.3);border:1px solid rgba(241,228,198,.1)}
+.tteam b{font-size:14px}
+.tteam.me{box-shadow:inset 3px 0 0 var(--mus)}
+.tour-mine{display:flex;flex-direction:column;gap:6px}
+.tour-mine .seg{gap:6px}
+.tour-mine .chip{padding:6px 12px;font-size:14px}
+.tm-next{margin:0 0 6px;font:900 italic 26px var(--f-display);text-transform:uppercase;color:var(--cream)}
+.on-tr{display:flex;flex-direction:column;gap:10px;min-height:0}
+#hub .bracket{display:block;position:relative;flex:1 1 auto;min-height:0;margin:0;padding:0;overflow:hidden;background:var(--grain),rgba(15,34,64,.85);border:1px solid rgba(241,228,198,.13)}
+.bgrid{position:relative;z-index:1;display:grid;height:100%;gap:0 16px;padding:14px 16px;box-sizing:border-box}
+.bc{display:flex;flex-direction:column;justify-content:space-around;gap:6px;min-width:0}
+.bfin{justify-content:center;gap:12px}
+.bfin .h{text-align:center;margin:0}
+.bm{display:flex;flex-direction:column;gap:1px;background:var(--n0);border:0;border-left:4px solid var(--mus);padding:2px 0;min-width:0;text-align:left;color:var(--cream)}
+.bt{display:grid;grid-template-columns:6px minmax(0,1fr) auto;gap:6px;align-items:center;padding:2px 8px 2px 6px;font:800 italic 14px var(--f-display);text-transform:uppercase}
+.bt i{width:6px;height:15px}
+.bt b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:800}
+.bt em{font-style:normal;color:var(--mus);font-weight:900}
+.bt.win b{color:var(--mus)}.bt.out{opacity:.45}
+.bm.st-live{border-left-color:#5fd38a}
+.bm.mine{box-shadow:0 0 0 2px var(--mus)}
+.bm.sel{background:var(--n2)}
+.btro{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--mus)}
+.btro svg{width:58px;height:58px;filter:drop-shadow(3px 3px 0 rgba(5,12,24,.5))}
+.btro b{font:900 italic 22px var(--f-display);text-transform:uppercase;color:var(--cream)}
+.btro small{font:800 12px var(--f-display);letter-spacing:.2em;text-transform:uppercase}
+.blines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.blines path{fill:none;stroke:var(--mus);stroke-width:2;opacity:.75}
+.tour-bar{display:flex;align-items:center;gap:12px;padding:8px 14px;background:var(--n0);border-left:4px solid var(--mus);flex:none}
+.tour-bar b{font:900 italic 18px var(--f-display);text-transform:uppercase}
+.tour-bar small{color:var(--cream2);margin-right:auto}
+/* the bottom strip: what is going on, then the buttons */
+#hub .on-strip{display:flex;align-items:center;gap:14px;justify-content:flex-end;flex:none;padding:0}
+.on-note{margin-right:auto!important;font-size:15px!important;color:var(--cream)!important}
+.on-hold{position:relative;overflow:hidden;font-size:15px!important;padding:10px 22px!important;min-height:0!important}
+.on-hold i{position:absolute;inset:0;transform-origin:left;transform:scaleX(var(--hold,0));background:#e8604c;opacity:.85}
+.on-hold span{position:relative}
+.tteams{gap:3px 8px}
+.tteam{padding:2px 8px}
+.tteam b{font-size:13px}
+.tour-teams{flex:1 1 auto;min-height:0}
+
+/* ===================== round 2: settings and the button in the middle (Kick-off and Friendly), Online picked on Play ===================== */
+#hub [data-panel=play] .setup>.cta .on-pick{flex:1 1 0;min-width:0!important;font-size:24px!important}
+#hub.paused-match .on-pick{display:none!important}
+/* Kick-off: you | VS, half length, ball / field / table, Kick off | the opponent */
+#hub [data-panel=kickoff] .ko-main{grid-template-columns:minmax(0,1fr) 360px minmax(0,1.2fr)}
+#hub .ko-vs{justify-content:center;gap:14px}
+#hub .ko-vs>b{font-size:72px;color:var(--cream);background:none;-webkit-text-fill-color:var(--cream);text-shadow:4px 4px 0 rgba(5,12,24,.5)}
+.ko-set{width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:10px}
+.ko-set #ko-half{flex-direction:row;justify-content:center}
+.ko-set .ko-picks{display:flex;flex-direction:column;gap:8px}
+.ko-set .ko-pick{min-width:0;display:grid;grid-template-columns:52px minmax(0,1fr);align-items:center;gap:8px}
+.ko-set .ko-pv{justify-content:space-between;min-height:36px}
+.ko-set .ko-pv b{max-width:none;flex:1;font-size:16px}
+#hub .ko-vs #ko-go{width:100%;justify-content:center;font-size:28px;min-height:62px}
+/* Friendly: VS, the room code, half length and Ready / Start in the middle */
+.on-mid{gap:12px}
+.on-vs{font:900 italic 72px/1 var(--f-display);color:var(--cream);text-align:center;text-shadow:4px 4px 0 rgba(5,12,24,.5)}
+.on-mid .big{width:100%;justify-content:center;font-size:28px;min-height:62px}
+#on-note{display:none}
+/* Tournament: Ready and Concede under the bracket, as wide as it */
+.on-act{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex:none}
+.on-act:not(:has(>:not([hidden]))){display:none}
+.on-act .big{min-height:56px;font-size:24px}
+.on-act .on-hold{min-height:40px!important}
+/* the button sits at the bottom of the middle column, level with the side panels */
+#hub .ko-vs>b,.on-vs{margin-top:auto}
+#hub .ko-vs #ko-go,.on-mid>.big{margin-top:auto}
+.on-mid{justify-content:flex-start}

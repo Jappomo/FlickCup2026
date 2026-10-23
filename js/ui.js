@@ -29,22 +29,23 @@ const UI_OFFPATH=UI_BARS+',#al-detail';
 const UI_GROUPS=[
   ['#hub.paused-match #concede-row','col'],
   ['.modes','col',{follow:1}],['#al-sub','col',{follow:1}],['.al-page','grid',{follow:1}],['#formations','col'],['#mini','map'],['#tree','map'],
-  ['.ko-dots','grid'],['.ko-car','row'],['#ko-picks','row'],['.ko-head','row'],
+  ['.ko-dots','grid'],['.ko-car','row'],['.ko-pv','row'],['.ko-head','row'],
   ['.kitpal,.kp-pats,.ball-grid,.look-row','grid'],['#tracks','col'],
+  ['#tour-bracket','map'],['#on-kv','grid'],['.on-act','row'],
   ['.seg,.kitrow,.field,.cta,.kopbtns,.starbtns,.kitview,.pc-head,.bal-pw','row'],
 ];
 // Links out of a group, by direction. The key is matched with closest(), so it covers everything inside it.
 // A value is a selector (the first visible match that holds a control), a list of them (first that works), or 'none'.
 const UI_LINKS=[
   ['#hub.paused-match #btn-resume',{d:'#concede-row',u:'none'}],['#hub.paused-match #concede-row',{u:'#btn-resume',d:'none'}],
+  ['#on-start,#on-ready',{d:'none'}],['.on-mid',{l:'#on-me',r:'#on-opp'}],['#on-opp',{l:'.on-mid',u:'none',d:'none'}],
+  ['.on-tl',{r:'#tour-bracket'}],['#tour-bracket',{l:'.on-tl',d:'.on-act'}],['.on-act',{u:'#tour-bracket',l:'.on-tl',d:'none'}],
   ['#ko-back',{d:'#ko-me'}],
-  ['#ko-me',{r:'#ko-half',d:'#ko-picks',u:'#ko-back'}],
-  ['#ko-half',{l:'#ko-me',r:'#ko-opp',d:'#ko-picks',u:'#ko-back'}],
-  ['.ko-car',{l:'#ko-half',u:'#ko-back',d:'.ko-dots'}],
-  ['.ko-dots',{l:'#ko-half',u:'.ko-car',d:['#ko-opp .ko-kits','#ko-picks']}],
-  ['#ko-opp',{l:'#ko-half',d:'#ko-picks'}],
-  ['#ko-picks',{r:'#ko-go',u:'#ko-half'}],
-  ['#ko-go',{l:'#ko-picks',u:'#ko-opp'}],
+  ['#ko-me',{r:'.ko-vs',u:'#ko-back',d:'none'}],
+  ['#ko-go',{d:'none'}],['#ko-half',{u:'#ko-back'}],['.ko-vs',{l:'#ko-me',r:'#ko-opp'}],
+  ['.ko-car',{l:'.ko-vs',u:'#ko-back',d:'.ko-dots'}],
+  ['.ko-dots',{l:'.ko-vs',u:'.ko-car',d:['#ko-opp .ko-kits','none']}],
+  ['#ko-opp',{l:'.ko-vs',d:'none'}],
   ['.modes',{r:'#mode-setup',d:'none'}],
   ['#mode-setup',{l:'.modes'}],
   ['#squad-name',{r:'#sq-kit'}],['#sq-kit',{l:'#squad-name',r:'#sq-crest'}],['#sq-crest',{l:'#sq-kit'}],
@@ -53,7 +54,7 @@ const UI_LINKS=[
   ['#al-sub',{r:'#al-page'}],['#al-page',{l:'#al-sub'}],
 ];
 // where focus lands on a page it has no memory of
-const UI_DEFAULT={album:['#al-page [aria-pressed="true"]','#al-sub [aria-pressed="true"]'],play:['#hub.paused-match #btn-resume','.modes [aria-pressed="true"]','.modes .tile'],kickoff:['#ko-go']};
+const UI_DEFAULT={online:['#on-start','#on-ready','#tour-play','#tour-start','#btn-newroom','#tour-create'],album:['#al-page [aria-pressed="true"]','#al-sub [aria-pressed="true"]'],play:['#hub.paused-match #btn-resume','.modes [aria-pressed="true"]','.modes .tile'],kickoff:['#ko-go']};
 // B inside the first selector goes to the selected control of the second (before the section bar and the tabs)
 const UI_BACK=[['#mode-setup','.modes']];
 
@@ -190,7 +191,7 @@ function uiFind(a){if(!a)return null;try{
   const anc=document.querySelector(a.anc);if(!anc)return null;const L=[...anc.querySelectorAll(UI_FOC)];
   return (a.lab&&L.find(x=>x.getAttribute('aria-label')===a.lab&&uiUsable(x)))||(uiUsable(L[a.i])?L[a.i]:null);}catch(e){return null;}}
 function uiPageKey(){if(UI.layer!=='hub')return UI.layer;const pn=uiPanel();if(!pn)return '';
-  const sub=pn.querySelector('.subnav :is([aria-pressed="true"],[aria-current="true"])');return pn.dataset.panel+(sub?'/'+(sub.dataset.club||sub.dataset.sub||sub.dataset.sec||sub.dataset.col||sub.dataset.rsec||sub.textContent):'');}
+  const sub=pn.querySelector('.subnav :is([aria-pressed="true"],[aria-current="true"])');return pn.dataset.panel+(sub?'/'+(sub.dataset.club||sub.dataset.sub||sub.dataset.sec||sub.dataset.col||sub.dataset.rsec||sub.dataset.rt||sub.textContent):'');}
 // where to land: this page's memory, its preferred control, the selected section, or the first control
 function uiDefault(){
   if(UI.layer==='ft'){return $('#btn-rematch')&&uiUsable($('#btn-rematch'))?$('#btn-rematch'):uiCands()[0]||null;}
@@ -215,7 +216,7 @@ function uiConfirm(src){
   if(src==='pad'&&el.classList.contains('tok')&&typeof squadMoveStart==='function'){uiSnd.ok();squadMoveStart([...$('#mini').querySelectorAll('.tok')].indexOf(el));return;}
   uiSnd.ok();
   // a game mode: pick it and go to its setup
-  if(el.closest('.modes')){el.click();const t=el.dataset.mode==='online'?['#online-panel :is(#btn-newroom,#tour-create)','#online-panel button']:['#btn-start'];
+  if(el.closest('.modes')){el.click();const t=['#btn-start','#btn-on-friendly'];
     for(const s of t){const n=[...document.querySelectorAll(s)].find(x=>uiUsable(x)&&!uiDisabled(x));if(n){uiSet(n,{src:'silent',scroll:true});UI.glide=performance.now();break;}}return;}
   el.click();}
 function uiBack(){
@@ -224,6 +225,7 @@ function uiBack(){
   const cur=uiUsable(UI.cur)&&uiInScope(UI.cur)?UI.cur:null;
   if(cur&&uiText(cur)&&document.activeElement===cur){cur.blur();uiSnd.back();return;}
   if(hubTab==='kickoff'){uiSnd.back();koBack();return;}
+  if(hubTab==='online'){uiSnd.back();onlineBack();return;}
   const paused=$('#hub').classList.contains('paused-match');
   if(paused&&hubTab==='play'){uiSnd.back();closeMenu();return;}
   if(cur)for(const [a,b] of UI_BACK)if(cur.closest(a)){const t=uiEnter(document.querySelector(b),'');if(t){uiSnd.back();uiSet(t,{src:'silent',scroll:true});UI.glide=performance.now();return;}}
@@ -233,10 +235,20 @@ function uiBack(){
   uiNo(cur);}
 function uiTab(d){if(UI.layer!=='hub')return;
   if(hubTab==='kickoff'){koStep(d);uiPress($('#ko-opp .ko-card')||$('#ko-opp'));return;}
+  if(hubTab==='online'){uiNo(null);return;}
   stepTab(d);uiSnd.tab();}
 function uiSection(d){if(UI.layer!=='hub')return;const pn=uiPanel(),nav=pn&&pn.querySelector('.subnav');
   if(!uiShown(nav)){uiNo(null);return;}
   subStep(d);uiSnd.tab();}
+
+/* ---------- hold to press ([data-hold], e.g. Concede): keep it pressed for 1.2 s; the element gets a 'hold' event ---------- */
+const UI_HOLD_MS=1200;
+function uiHoldStart(el){if(!el||uiDisabled(el))return;UI.holdEl=el;UI.holdT=performance.now();el.classList.add('holding');uiPress(el);}
+function uiHoldEnd(){const el=UI.holdEl;if(!el)return;UI.holdEl=null;el.classList.remove('holding');el.style.setProperty('--hold','0');}
+function uiHoldTick(){const el=UI.holdEl;if(!el)return;const p=Math.min(1,(performance.now()-UI.holdT)/UI_HOLD_MS);el.style.setProperty('--hold',p.toFixed(3));
+  if(p>=1){uiHoldEnd();uiSnd.back();el.dispatchEvent(new CustomEvent('hold'));}}
+addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.closest('[data-hold]');if(el&&e.button===0)uiHoldStart(el);},true);
+['pointerup','pointercancel'].forEach(t=>addEventListener(t,()=>uiHoldEnd(),true));
 
 /* ---------- page switching: remember focus and scroll, slide the new page in ---------- */
 function uiSwitching(fn,dirOf){return function(...a){
@@ -251,19 +263,20 @@ function uiSwitching(fn,dirOf){return function(...a){
       // the focus goes back to where it was on this page
       const t=uiDefault();if(t){UI.cur=null;uiSet(t,{src:'silent'});}}}
   return r;};}
-const uiTabDir=(a,b)=>{if(a===b)return 0;if(b==='kickoff')return 1;if(a==='kickoff')return -1;return TABS.indexOf(b)>TABS.indexOf(a)?1:-1;};
+const uiTabDir=(a,b)=>{if(a===b)return 0;if(b==='kickoff'||b==='online')return 1;if(a==='kickoff'||a==='online')return -1;return TABS.indexOf(b)>TABS.indexOf(a)?1:-1;};
 setTab=uiSwitching(setTab,uiTabDir);
 setClubSec=uiSwitching(setClubSec);
 setSettingsSub=uiSwitching(setSettingsSub);
 if(typeof setCustSec==='function')setCustSec=uiSwitching(setCustSec);
 if(typeof setRulesSub==='function')setRulesSub=uiSwitching(setRulesSub);
+if(typeof setRoomType==='function')setRoomType=uiSwitching(setRoomType);
 // the old controller helpers now drive the one focus
 padPick=function(el){if(el&&uiUsable(el))uiSet(el,{src:'silent',scroll:true});};
 
 /* ---------- play tab: the briefing card next to the mode list (updated in place) ---------- */
 const UI_MODES={
   cpu:{k:'Solo',t:'Kick-off',d:'Your squad against a club run by the computer. Pick the opponent, the kits and the half length next.',p:['15 clubs, one to three stars','Pick the ball, field and table']},
-  online:{k:'Online',t:'Online Friendly',d:'Make a room and send the code to a friend, or type the code you were sent. Each side brings its own squad.',p:['Match rooms and tournaments','Your squad travels with you']},
+  online:{k:'Online',t:'Online Friendly',d:'Play a friend over the internet. Each side brings its own squad.',p:['Friendly: one room, two players','Tournament: up to 16, CPU fills in']},
   local:{k:'Local',t:'Versus',d:'Two players on one screen: share the mouse, or plug in two controllers.',p:['Two controllers supported','Home and away squads']},
   tutorial:{k:'Learn',t:'Tutorial',d:'A coach walks you through the flick, passing, blocks and set pieces, one step at a time.',p:['One step at a time','Start again any time']},
   practice:{k:'Training',t:'Practice',d:'An empty pitch and a set of drills. Try flicks, curls and shots with no clock and no opponent.',p:['Place your own drills','No clock, no opponent']},
@@ -282,7 +295,13 @@ const UI_ART=(()=>{
   return{
     local:pitch+dots(home,Y,'#0f1f38')+dots(away,C,'#0f1f38')+arrow('M160 100 Q 235 40 310 100',Y)+head(310,100,40,Y)+arrow('M310 150 Q 235 210 160 150',C)+head(160,150,220,C),
     cpu:pitch+dots(home,Y,'#0f1f38')+dots(away,'#2f6aa3',C)+arrow('M205 125 Q 300 60 420 118',Y)+head(420,118,30,Y)+`<g transform="translate(330 196)"><rect x="-30" y="-15" width="60" height="30" fill="#0f1f38" stroke="${C}" stroke-width="2"/><text x="0" y="7" fill="${C}" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="900" font-style="italic" font-size="20" text-anchor="middle">CPU</text></g>`,
-    online:`<g ${S}><circle cx="235" cy="128" r="92"/><ellipse cx="235" cy="128" rx="40" ry="92"/><path d="M143 128H327M155 82H315M155 174H315"/></g>`+arrow('M120 70 Q 235 -20 350 70',Y)+`<g fill="${Y}" stroke="#0f1f38" stroke-width="3"><path d="M120 92 C 100 66 100 44 120 44 C 140 44 140 66 120 92Z"/><path d="M350 92 C 330 66 330 44 350 44 C 370 44 370 66 350 92Z"/></g><circle cx="120" cy="60" r="6" fill="#0f1f38"/><circle cx="350" cy="60" r="6" fill="#0f1f38"/>`,
+    // two screens far apart, each with its side of the table, joined over the internet
+    online:`<g opacity=".9"><rect x="22" y="70" width="190" height="150" fill="rgba(255,255,255,.035)"/><rect x="258" y="70" width="190" height="150" fill="rgba(255,255,255,.035)"/></g>`+
+      `<g ${S}><rect x="22" y="70" width="190" height="150"/><path d="M212 100V190M22 112H52V178H22"/><rect x="258" y="70" width="190" height="150"/><path d="M258 100V190M448 112H418V178H448"/></g>`+
+      dots([[60,145],[110,105],[110,185],[165,125],[165,165]],Y,'#0f1f38')+dots([[410,145],[360,105],[360,185],[305,125],[305,165]],C,'#0f1f38')+
+      arrow('M120 58 Q 235 -6 350 58',Y)+head(350,58,35,Y)+
+      `<g fill="none" stroke="${Y}" stroke-width="4" stroke-linecap="round"><path d="M220 36a22 22 0 0 1 30 0"/><path d="M211 27a34 34 0 0 1 48 0"/></g><circle cx="235" cy="46" r="5" fill="${Y}"/>`+
+      `<g font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="900" font-style="italic" font-size="20" fill="${C}"><text x="117" y="244" text-anchor="middle">YOU</text><text x="353" y="244" text-anchor="middle">FRIEND</text></g>`,
     tutorial:pitch+arrow('M80 190 L 170 130 L 270 160 L 380 90',Y)+[[80,190,'1'],[170,130,'2'],[270,160,'3'],[380,90,'4']].map(([x,y,n])=>`<circle cx="${x}" cy="${y}" r="20" fill="${Y}" stroke="#0f1f38" stroke-width="3"/><text x="${x}" y="${y+8}" fill="#0f1f38" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="900" font-size="24" text-anchor="middle">${n}</text>`).join(''),
     practice:pitch+[[120,70],[170,180],[220,70],[270,180]].map(([x,y])=>`<path d="M${x} ${y-16}L${x+13} ${y+10}H${x-13}Z" fill="${Y}" stroke="#0f1f38" stroke-width="2"/>`).join('')+arrow('M70 125 Q 120 30 170 125 T 270 125 T 400 125',C)+`<g ${S}><circle cx="410" cy="125" r="30"/><circle cx="410" cy="125" r="18"/></g><circle cx="410" cy="125" r="7" fill="${Y}"/>`,
   };})();
@@ -319,7 +338,8 @@ function uiPad(gp,st,o){o=o||{};
   const lx=o.dpadOnly?0:gp.axes[0]||0,ly=o.dpadOnly?0:gp.axes[1]||0,DZ=0.55;
   const dir=pressed(12)?'u':pressed(13)?'d':pressed(14)?'l':pressed(15)?'r':Math.abs(ly)>DZ&&Math.abs(ly)>=Math.abs(lx)?(ly<0?'u':'d'):Math.abs(lx)>DZ?(lx<0?'l':'r'):'';
   uiHold('pad'+gp.index,dir);
-  if(edge(0)&&!o.noConfirm)uiConfirm('pad');
+  if(edge(0)&&!o.noConfirm){if(UI.cur&&UI.cur.matches('[data-hold]'))uiHoldStart(UI.cur);else uiConfirm('pad');}
+  if(UI.holdEl&&!pressed(0))uiHoldEnd();
   if(edge(1))uiBack();
   if(edge(3))uiAction();
   if(UI.layer==='hub'){if(edge(4))uiTab(-1);if(edge(5))uiTab(1);if(edge(6))uiSection(-1);if(edge(7))uiSection(1);}}
@@ -344,13 +364,13 @@ addEventListener('keydown',e=>{
   const d=UI_KDIR[e.key];
   if(d){e.preventDefault();e.stopPropagation();if(!e.repeat){UI.kdir=d;uiHold('kbd',d);}return;}
   if(e.repeat){if(/^( |Enter|Escape|Backspace)$/.test(e.key))e.preventDefault();return;}
-  if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();uiConfirm('kbd');return;}
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();if(UI.cur&&UI.cur.matches('[data-hold]'))uiHoldStart(UI.cur);else uiConfirm('kbd');return;}
   if(e.key==='Escape'||e.key==='Backspace'){e.preventDefault();e.stopPropagation();uiBack();return;}
   if(e.code==='KeyQ'||e.code==='KeyE'){e.preventDefault();e.stopPropagation();uiTab(e.code==='KeyE'?1:-1);return;}
   if(e.code==='KeyZ'||e.code==='KeyC'){e.preventDefault();e.stopPropagation();uiSection(e.code==='KeyC'?1:-1);return;}
   if(e.code==='KeyF'&&uiActionEl()){e.preventDefault();e.stopPropagation();uiAction();return;}
 },true);
-addEventListener('keyup',e=>{const d=UI_KDIR[e.key];if(d&&UI.kdir===d)UI.kdir='';});
+addEventListener('keyup',e=>{const d=UI_KDIR[e.key];if(d&&UI.kdir===d)UI.kdir='';if(e.key==='Enter'||e.key===' ')uiHoldEnd();});
 addEventListener('blur',()=>{UI.kdir='';});
 // the mouse moves the same focus: whatever control (or settings row) is under it
 const uiHoverTarget=t=>{if(!t||!t.closest)return null;let el=t.closest(UI_FOC);
@@ -377,11 +397,11 @@ function uiBarRender(){
   if(!UI.layer)return;
   const pad=UI.dev==='pad',el=uiUsable(UI.cur)?UI.cur:null,ko=UI.layer==='hub'&&hubTab==='kickoff';
   const hasSub=UI.layer==='hub'&&!ko&&(()=>{const pn=uiPanel(),n=pn&&pn.querySelector('.subnav');return uiShown(n);})();
-  let a='Select';if(el){if(el.type==='range')a='';else if(el.tagName==='SELECT')a='Next option';else if(el.type==='checkbox')a='Toggle';else if(uiText(el))a=pad?'Type':'Edit';else if(pad&&el.classList.contains('tok'))a='Move';else if(ko&&el.id==='ko-go')a='Kick off';}
+  let a='Select';if(el){if(el.type==='range')a='';else if(el.tagName==='SELECT')a='Next option';else if(el.type==='checkbox')a='Toggle';else if(uiText(el))a=pad?'Type':'Edit';else if(pad&&el.classList.contains('tok'))a='Move';else if(ko&&el.id==='ko-go')a='Kick off';else if(el.matches('[data-hold]'))a='Hold';}
   const items=[{g:[pad?'✥':'↑↓←→'],t:el&&(el.type==='range'||el.tagName==='SELECT')?'Adjust':'Move'}];
   if(a)items.push({g:['A'],t:a});
   items.push({g:['B'],t:UI.layer==='ft'?'Main menu':'Back'});
-  if(UI.layer==='hub')items.push({g:['LB','RB'],t:ko?'Club':'Tabs'});
+  if(UI.layer==='hub'&&hubTab!=='online')items.push({g:['LB','RB'],t:ko?'Club':'Tabs'});
   if(hasSub)items.push({g:['LT','RT'],t:'Sections'});
   if(uiActionEl())items.push({g:['Y'],t:'Equip'});
   if(pad&&UI.layer==='hub'){if(uiSpinOn())items.push({g:['RS'],t:'Rotate'});items.push({g:['L3'],t:UI.ptrMode?'Focus':'Pointer'});}
@@ -391,7 +411,7 @@ function uiBarRender(){
   const html=items.map(it=>`<span class="ui-k">${it.g.map(cap).join('')}<b>${it.t}</b></span>`).join('');
   const k=uiBar.querySelector('.ui-keys');if(k.dataset.h!==html){k.dataset.h=html;k.innerHTML=html;}
   // the help line: what the selected control does
-  let help='';if(el){const t=el.closest('[title]');help=(t&&t.title)||'';if(!help&&el.closest('.modes')&&UI_MODES[el.dataset.mode])help=UI_MODES[el.dataset.mode].d;}
+  let help='';if(UI.layer==='hub'&&hubTab==='online')help=$('#on-note').textContent;if(!help&&el){const t=el.closest('[title]');help=(t&&t.title)||'';if(!help&&el.closest('.modes')&&UI_MODES[el.dataset.mode])help=UI_MODES[el.dataset.mode].d;}
   const h=uiBar.querySelector('.ui-help');if(h.textContent!==help)h.textContent=help;}
 // the old controller bar is replaced by this one
 padBarRender=function(){uiBarRender();};
@@ -405,7 +425,7 @@ function uiTick(){
     if(layer){const d=uiDefault();UI.cur=null;if(d)uiSet(d,{src:'silent'});}
     uiBarRender();}
   if(!layer){uiRing.classList.remove('on');return;}
-  uiHold('kbd',UI.kdir);
+  uiHold('kbd',UI.kdir);uiHoldTick();
   // the control was rebuilt or hidden: find it again by its address, else this page's default
   if(!uiUsable(UI.cur)||!uiInScope(UI.cur)){const el=uiFind(UI.addr);const t=el&&uiInScope(el)?el:uiDefault();
     if(t){UI.cur=null;uiSet(t,{src:'silent'});}else{uiRing.classList.remove('on');return;}}
