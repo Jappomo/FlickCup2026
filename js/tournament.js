@@ -173,7 +173,7 @@ function renderTour(){
   if(my&&!inMatch){const o=tourOppOf(st,my),op=o.cpu?null:tourMembers().find(p=>p.uid===o.id),oR=!!(op&&op.rdy===my.id);
     $('#tour-play-lbl').textContent=o.cpu?'Play '+o.name:T.rdy===my.id?'Not ready':'Ready';pb.classList.toggle('alt',T.rdy===my.id);pb.classList.toggle('go',T.rdy!==my.id);
     note=o.cpu?`Your match: ${o.name} (CPU). It starts when you press Play.`:T.rdy===my.id?(oR?'Both ready. Opening your match room…':`You are ready. Waiting for ${o.name}.`):`Your match: ${o.name}${oR?' (ready)':''}. Press Ready when you are set.`;}
-  if(tourOn)$('#on-note').textContent=note;
+  if(tourOn)onNote(note);$('#on-back').style.visibility=onlineBackOk()?'':'hidden';
   const c=T.code.toUpperCase();
   if(!inT){}
   else if(!st)tourStatus(`Tournament ${c}: waiting for the organiser.`);
@@ -191,7 +191,9 @@ function tourMineRender(st){
   if(!box.dataset.built){box.dataset.built='1';box.innerHTML='<p class="h">Your squad</p><p class="tm-next" id="tm-next"></p><span class="tset-l">Formation</span><div class="seg" id="tm-form"></div><span class="tset-l">Path</span><div class="seg" id="tm-path"></div><span class="tset-l">Moment</span><div class="seg" id="tm-mom"></div><p class="note" id="tm-desc"></p>';}
   const my=tourMyLiveMatch();$('#tm-next').textContent=my?'Next: '+tourOppOf(st,my).name:'Waiting for your next opponent';
   const done=()=>{fitSpecial(q);saveSquads();tourMineRender(st);};
-  uiList($('#tm-form'),Object.keys(FORMATIONS).concat(q.form==='custom'?['custom']:[]),f=>f,f=>{const b=tEl('button','chip',f==='custom'?'Custom':f);b.type='button';b.onclick=()=>{q.form=f;done();};return b;},(b,f)=>setAttr(b,'aria-pressed',q.form===f));
+  // Custom: your own layout from My Club (made from the current formation if you never made one)
+  uiList($('#tm-form'),Object.keys(FORMATIONS).concat('custom'),f=>f,f=>{const b=tEl('button','chip',f==='custom'?'Custom':f);b.type='button';
+      b.onclick=()=>{if(f==='custom'&&(!q.cpos||q.cpos.length!==10)){q.cbase=FORMATIONS[q.form]?q.form:'4-4-2';q.cpos=FORMATIONS[q.cbase].pos.map(p=>p.slice());}q.form=f;done();};return b;},(b,f)=>setAttr(b,'aria-pressed',q.form===f));
   uiList($('#tm-path'),PATH_KEYS,p=>p,p=>{const b=tEl('button','chip',PATHS[p].name);b.type='button';b.onclick=()=>{q.path=p;done();};return b;},(b,p)=>setAttr(b,'aria-pressed',q.path===p));
   const open=BAL.unlock[q.path]||[];
   uiList($('#tm-mom'),open,m=>m,m=>{const b=tEl('button','chip',SPECIALS[m].name);b.type='button';b.onclick=()=>{q.special=m;done();};return b;},(b,m)=>{setAttr(b,'aria-pressed',q.special===m);b.title=SPECIALS[m].desc;});

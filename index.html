@@ -970,7 +970,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 @keyframes rareglow{from{box-shadow:0 0 0 2px var(--rc),0 8px 18px rgba(0,0,0,.4)}to{box-shadow:0 0 0 2px var(--rc),0 0 22px var(--rc),0 8px 18px rgba(0,0,0,.4)}}
 @media (prefers-reduced-motion:reduce){.acard.r-uncommon::after,.pk.r-uncommon .pk-front::after,.acard.r-rare{animation:none}}
 </style>
-<link rel="stylesheet" href="css/retro.css?v=20261024d">
+<link rel="stylesheet" href="css/retro.css?v=20261024e">
 
 <script>/* UI scale before the first paint (js/uiscale.js keeps it up to date) */(function(){var t=matchMedia('(pointer:coarse)').matches&&!matchMedia('(pointer:fine)').matches,u=t?140:100;try{u=(JSON.parse(localStorage.getItem('baize.settings')||'{}').ui)||u;}catch(e){}var z=Math.min(Math.min(innerWidth/1600,innerHeight/900)*u/100,innerWidth/1480);document.documentElement.style.setProperty('--uiz',Math.max(z,0.5).toFixed(4));document.documentElement.style.setProperty('--mz',Math.min(innerWidth/1600,innerHeight/900).toFixed(4));})();</script>
 <section class="title" id="title" role="button" tabindex="0" aria-label="Flick Cup 2026. Press any button to start">
@@ -1087,6 +1087,8 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
       <div class="cta">
         <span class="seg" id="concede-row" hidden></span><button class="big alt" id="btn-resume" hidden><span class="glyph b">B</span>Resume</button>
         <button class="big go" id="btn-start"><span class="glyph a">A</span><span id="start-lbl">Kick off</span></button>
+        <button class="big go on-pick" id="btn-on-friendly" type="button" hidden><span id="on-friendly-lbl">Friendly</span></button>
+        <button class="big go on-pick" id="btn-on-tour" type="button" hidden><span id="on-tour-lbl">Tournament</span></button>
       </div>
       </div>
     </div>
@@ -1099,23 +1101,21 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
       </div>
       <div class="ko-main">
         <section class="ko-side ko-me" id="ko-me" aria-label="Your club"></section>
-        <div class="ko-vs"><b>VS</b><div><p class="h">Half length</p><div class="seg" id="ko-half"></div></div></div>
+        <div class="ko-vs"><b>VS</b><div class="cardbox ko-set"><p class="h">Half length</p><div class="seg" id="ko-half"></div><div class="ko-picks" id="ko-picks"></div></div>
+          <button class="big go" id="ko-go" type="button"><span class="glyph a">A</span><span id="ko-go-lbl">Kick off</span></button></div>
         <section class="ko-side ko-opp" id="ko-opp" aria-label="Opponent"></section>
-      </div>
-      <div class="ko-strip">
-        <div class="ko-picks" id="ko-picks"></div>
-        <button class="big go" id="ko-go" type="button"><span class="glyph a">A</span><span id="ko-go-lbl">Kick off</span></button>
       </div>
     </div>
     <div class="panel" data-panel="online" hidden>
       <div class="ko-head on-head">
         <button class="ko-back" id="on-back" type="button"><span class="glyph b pg">B</span>‹ Back</button>
         <div class="ko-title"><h2 id="on-title">Online Friendly</h2><p id="on-sub">Play a friend with a room code</p></div>
-        <nav class="subnav on-sub" id="room-type" aria-label="Online"><span class="glyph sg" aria-hidden="true">LT</span><button class="chip" type="button" data-rt="match" aria-pressed="true">Friendly</button><button class="chip" type="button" data-rt="tour" aria-pressed="false">Tournament</button><span class="glyph sg" aria-hidden="true">RT</span></nav>
+        <nav class="subnav on-sub" id="room-type" aria-label="Online" hidden><span class="glyph sg" aria-hidden="true">LT</span><button class="chip" type="button" data-rt="match" aria-pressed="true">Friendly</button><button class="chip" type="button" data-rt="tour" aria-pressed="false">Tournament</button><span class="glyph sg" aria-hidden="true">RT</span></nav>
       </div>
       <div class="on-match" id="rt-match">
         <section class="ko-side on-me" id="on-me" aria-label="Your club"></section>
         <div class="on-mid">
+          <b class="on-vs">VS</b>
           <div class="cardbox on-room">
             <p class="h">Room code</p>
             <div class="field">
@@ -1128,6 +1128,8 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
             <div class="seats" id="seats" hidden><div class="seat"><span>Home</span><b id="seat0">Open</b></div><div class="seat"><span>Away</span><b id="seat1">Open</b></div></div>
           </div>
           <div class="cardbox on-half"><p class="h">Half length</p><div class="seg" id="halflen"><button class="chip" data-min="3" aria-pressed="false">3 min</button><button class="chip" data-min="5" aria-pressed="true">5 min</button><button class="chip" data-min="8" aria-pressed="false">8 min</button></div><p class="note" id="on-half-note"></p></div>
+          <button class="big go" id="on-ready" type="button" hidden><span class="glyph a">A</span><span id="on-ready-lbl">Ready</span></button>
+          <button class="big go" id="on-start" type="button" hidden><span class="glyph a">A</span><span id="on-start-lbl">Start match</span></button>
         </div>
         <section class="ko-side on-opp" id="on-opp" aria-label="Opponent"></section>
       </div>
@@ -1152,16 +1154,14 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
         <div class="on-tr">
           <div class="bracket" id="tour-bracket"></div>
           <div class="tour-bar" id="tour-bar" hidden></div>
+          <div class="on-act">
+            <button class="big alt on-hold" id="tour-concede" type="button" data-hold="" title="Hold to concede this match" hidden><i></i><span>Hold to concede</span></button>
+            <button class="big go" id="tour-start" type="button" hidden><span class="glyph a">A</span><span>Start tournament</span></button>
+            <button class="big go" id="tour-play" type="button" hidden><span class="glyph a">A</span><span id="tour-play-lbl">Ready</span></button>
+          </div>
         </div>
       </div>
-      <div class="ko-strip on-strip">
-        <p class="note on-note" id="on-note"></p>
-        <button class="big alt on-hold" id="tour-concede" type="button" data-hold="" title="Hold to concede this match" hidden><i></i><span>Hold to concede</span></button>
-        <button class="big go" id="on-ready" type="button" hidden><span class="glyph a">A</span><span id="on-ready-lbl">Ready</span></button>
-        <button class="big go" id="on-start" type="button" hidden><span class="glyph a">A</span><span id="on-start-lbl">Start match</span></button>
-        <button class="big go" id="tour-start" type="button" hidden><span class="glyph a">A</span><span>Start tournament</span></button>
-        <button class="big go" id="tour-play" type="button" hidden><span class="glyph a">A</span><span id="tour-play-lbl">Ready</span></button>
-      </div>
+      <p id="on-note" hidden></p>
     </div>
     <div class="panel" data-panel="squad" hidden>
       <nav class="subnav club-sub" id="club-sub" aria-label="My Club sections"><span class="glyph sg" aria-hidden="true">LT</span><button class="chip" data-club="tactics" aria-pressed="true">Tactics</button><button class="chip" data-club="crest" aria-pressed="false">Crest</button><button class="chip" data-club="kit" aria-pressed="false">Kit look</button><button class="chip" data-club="history" aria-pressed="false">History</button><span class="glyph sg" aria-hidden="true">RT</span></nav>
@@ -1431,36 +1431,36 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <!-- game code: classic scripts, loaded in this order (they share one scope) -->
 <!-- ?v= on every local file: bump it with each release, so a browser never mixes cached old files with new ones -->
-<script src="js/core.js?v=20261024d"></script>
-<script src="js/shaders.js?v=20261024d"></script>
-<script src="js/audio.js?v=20261024d"></script>
-<script src="js/physics.js?v=20261024d"></script>
-<script src="js/rules.js?v=20261024d"></script>
-<script src="js/scene.js?v=20261024d"></script>
-<script src="js/models.js?v=20261024d"></script>
-<script src="js/camera.js?v=20261024d"></script>
-<script src="js/input.js?v=20261024d"></script>
-<script src="js/cpu.js?v=20261024d"></script>
-<script src="js/net.js?v=20261024d"></script>
-<script src="js/hud.js?v=20261024d"></script>
-<script src="js/tournament.js?v=20261024d"></script>
-<script src="js/menus.js?v=20261024d"></script>
-<script src="js/customize.js?v=20261024d"></script>
-<script src="js/settings.js?v=20261024d"></script>
-<script src="js/controls.js?v=20261024d"></script>
-<script src="js/loop.js?v=20261024d"></script>
-<script src="js/practice.js?v=20261024d"></script>
-<script src="js/data.js?v=20261024d"></script>
-<script src="js/clubs.js?v=20261024d"></script>
-<script src="js/kickoff.js?v=20261024d"></script>
-<script src="js/online.js?v=20261024d"></script>
-<script src="js/album.js?v=20261024d"></script>
-<script src="js/crest.js?v=20261024d"></script>
-<script src="js/kitpattern.js?v=20261024d"></script>
-<script src="js/vfx.js?v=20261024d"></script>
-<script src="js/club.js?v=20261024d"></script>
-<script src="js/ui.js?v=20261024d"></script>
-<script src="js/uiscale.js?v=20261024d"></script>
-<script src="js/start.js?v=20261024d"></script>
+<script src="js/core.js?v=20261024e"></script>
+<script src="js/shaders.js?v=20261024e"></script>
+<script src="js/audio.js?v=20261024e"></script>
+<script src="js/physics.js?v=20261024e"></script>
+<script src="js/rules.js?v=20261024e"></script>
+<script src="js/scene.js?v=20261024e"></script>
+<script src="js/models.js?v=20261024e"></script>
+<script src="js/camera.js?v=20261024e"></script>
+<script src="js/input.js?v=20261024e"></script>
+<script src="js/cpu.js?v=20261024e"></script>
+<script src="js/net.js?v=20261024e"></script>
+<script src="js/hud.js?v=20261024e"></script>
+<script src="js/tournament.js?v=20261024e"></script>
+<script src="js/menus.js?v=20261024e"></script>
+<script src="js/customize.js?v=20261024e"></script>
+<script src="js/settings.js?v=20261024e"></script>
+<script src="js/controls.js?v=20261024e"></script>
+<script src="js/loop.js?v=20261024e"></script>
+<script src="js/practice.js?v=20261024e"></script>
+<script src="js/data.js?v=20261024e"></script>
+<script src="js/clubs.js?v=20261024e"></script>
+<script src="js/kickoff.js?v=20261024e"></script>
+<script src="js/online.js?v=20261024e"></script>
+<script src="js/album.js?v=20261024e"></script>
+<script src="js/crest.js?v=20261024e"></script>
+<script src="js/kitpattern.js?v=20261024e"></script>
+<script src="js/vfx.js?v=20261024e"></script>
+<script src="js/club.js?v=20261024e"></script>
+<script src="js/ui.js?v=20261024e"></script>
+<script src="js/uiscale.js?v=20261024e"></script>
+<script src="js/start.js?v=20261024e"></script>
 
 </html>

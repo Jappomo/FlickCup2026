@@ -27,7 +27,7 @@ html.ui-menu .np{zoom:var(--mz)}
 #hub [data-panel=balance]:not([hidden]){display:block;overflow-y:auto;padding-right:10px;scrollbar-width:thin;scrollbar-color:var(--mus) rgba(0,0,0,.25)}
 
 /* ===================== backdrop ===================== */
-.hub-bg{background:url(menu-art.svg?v=20261024d) center/cover no-repeat,var(--n1)}
+.hub-bg{background:url(menu-art.svg?v=20261024e) center/cover no-repeat,var(--n1)}
 .hub-bg svg{display:none}
 .hub-bg::after{content:"";position:absolute;inset:0;background:var(--grain);mix-blend-mode:screen;opacity:.9}
 #hub,#ft,#title{font-family:var(--f-display);color:var(--cream)}
@@ -416,3 +416,32 @@ html[data-dev=kbd] :is(.big,.ko-back) .glyph.b::after{content:"Esc";font-size:12
 .tteam{padding:2px 8px}
 .tteam b{font-size:13px}
 .tour-teams{flex:1 1 auto;min-height:0}
+
+/* ===================== round 2: settings and the button in the middle (Kick-off and Friendly), Online picked on Play ===================== */
+#hub [data-panel=play] .setup>.cta .on-pick{flex:1 1 0;min-width:0!important;font-size:24px!important}
+#hub.paused-match .on-pick{display:none!important}
+/* Kick-off: you | VS, half length, ball / field / table, Kick off | the opponent */
+#hub [data-panel=kickoff] .ko-main{grid-template-columns:minmax(0,1fr) 360px minmax(0,1.2fr)}
+#hub .ko-vs{justify-content:center;gap:14px}
+#hub .ko-vs>b{font-size:72px;color:var(--cream);background:none;-webkit-text-fill-color:var(--cream);text-shadow:4px 4px 0 rgba(5,12,24,.5)}
+.ko-set{width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:10px}
+.ko-set #ko-half{flex-direction:row;justify-content:center}
+.ko-set .ko-picks{display:flex;flex-direction:column;gap:8px}
+.ko-set .ko-pick{min-width:0;display:grid;grid-template-columns:52px minmax(0,1fr);align-items:center;gap:8px}
+.ko-set .ko-pv{justify-content:space-between;min-height:36px}
+.ko-set .ko-pv b{max-width:none;flex:1;font-size:16px}
+#hub .ko-vs #ko-go{width:100%;justify-content:center;font-size:28px;min-height:62px}
+/* Friendly: VS, the room code, half length and Ready / Start in the middle */
+.on-mid{gap:12px}
+.on-vs{font:900 italic 72px/1 var(--f-display);color:var(--cream);text-align:center;text-shadow:4px 4px 0 rgba(5,12,24,.5)}
+.on-mid .big{width:100%;justify-content:center;font-size:28px;min-height:62px}
+#on-note{display:none}
+/* Tournament: Ready and Concede under the bracket, as wide as it */
+.on-act{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex:none}
+.on-act:not(:has(>:not([hidden]))){display:none}
+.on-act .big{min-height:56px;font-size:24px}
+.on-act .on-hold{min-height:40px!important}
+/* the button sits at the bottom of the middle column, level with the side panels */
+#hub .ko-vs>b,.on-vs{margin-top:auto}
+#hub .ko-vs #ko-go,.on-mid>.big{margin-top:auto}
+.on-mid{justify-content:flex-start}

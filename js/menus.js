@@ -80,7 +80,10 @@ function updateStartBtn(){
     if(paused&&PAUSE_HIDE.includes(hubTab))setTab('play');}
   $('#btn-resume').hidden=!running||(menuMode==='online')!==(S.mode==='online');
   // Online opens its own screen (js/online.js), like Kick-off
-  if(menuMode==='online'){$('#start-lbl').textContent=net.named||T.lobby?'Back to the room':'Go online';b.disabled=!net.room;}
+  // Online: Friendly or Tournament is picked here, then its screen opens (js/online.js)
+  {const on=menuMode==='online';b.hidden=on;$('#btn-on-friendly').hidden=$('#btn-on-tour').hidden=!on;
+    if(on){$('#btn-on-friendly').disabled=$('#btn-on-tour').disabled=!net.room;$('#on-friendly-lbl').textContent=net.named&&!net.tourMatch?'Back to the room':'Friendly';$('#on-tour-lbl').textContent=T.lobby?'Back to the tournament':'Tournament';}}
+  if(menuMode==='online'){}
   else if(menuMode==='practice'){$('#start-lbl').textContent=S.mode==='practice'&&running?'Restart practice':'Start practice';b.disabled=false;}
   else if(menuMode==='tutorial'){$('#start-lbl').textContent=S.mode==='tutorial'&&running?'Restart tutorial':'Start tutorial';b.disabled=false;}
   else{$('#start-lbl').textContent=running?'New match':menuMode==='local'?'Choose clubs':'Choose opponent';b.disabled=false;}
@@ -107,6 +110,8 @@ $('#btn-start').addEventListener('click',()=>{
   cam.mode=-1;closeMenu();newMatch();
 });
 $('#btn-resume').addEventListener('click',()=>closeMenu());
+$('#btn-on-friendly').addEventListener('click',()=>{ensureAudio();onlineOpen('match');});
+$('#btn-on-tour').addEventListener('click',()=>{ensureAudio();onlineOpen('tour');});
 $('#btn-join').addEventListener('click',()=>{ensureAudio();joinRoom($('#room-code').value);});
 $('#room-code').addEventListener('keydown',e=>{if(e.key==='Enter')joinRoom($('#room-code').value);});
 $('#btn-newroom').addEventListener('click',()=>{const ch='abcdefghjkmnpqrstuvwxyz23456789';let c='';for(let i=0;i<4;i++)c+=ch[Math.floor(Math.random()*ch.length)];joinRoom(c);});

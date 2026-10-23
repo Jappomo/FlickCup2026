@@ -8,7 +8,9 @@
 // Loaded by index.html after kickoff.js, as a classic script: every file shares one scope.
 'use strict';
 function onlineOpen(rt){if(rt)setRoomType(rt);setTab('online');sfx('tock',12);onlineRender();}
-function onlineBack(){setTab('play');sfx('tock',8);const b=$('#btn-start');if(b&&lastInput==='pad')padPick(b);}
+// Back works until your tournament starts; then you leave with Leave (by the code)
+function onlineBackOk(){const st=T.roomType==='tour'&&T.lobby?tourState():null;return !(st&&st.phase==='run'&&myTeamIdx(st)>=0);}
+function onlineBack(){if(!onlineBackOk()){uiNo(null);return;}setTab('play');sfx('tock',8);const b=$('#btn-start');if(b&&lastInput==='pad')padPick(b);}
 const onKitIdx=(q,f)=>q&&q.kit!=null&&KITS[q.kit]?q.kit:f;
 function onOppSquad(){const o=oppPeer();return o?parseSquad(o.presence.sq,1):null;}
 const onRating=q=>Math.round(q.cards.reduce((a,c)=>a+cardOvr(c.st),0)/10);
@@ -17,7 +19,7 @@ const onTags=q=>`<div class="ko-tags">${PATHS[q.path]?`<span class="ko-tag" styl
 function onSet(el,html){if(el&&el.dataset.h!==html){el.dataset.h=html;el.innerHTML=html;}}
 function onlineRender(){
   const pn=document.querySelector('[data-panel="online"]');if(!pn)return;
-  const tour=T.roomType==='tour';
+  const tour=T.roomType==='tour';$('#on-back').style.visibility=onlineBackOk()?'':'hidden';
   $('#on-title').textContent=tour?'Tournament':'Online Friendly';
   $('#on-sub').textContent=tour?'Up to 16 teams. CPU teams fill the empty places.':'Play a friend with a room code';
   const inRoom=!!net.named,opp=inRoom?oppPeer():null,home=net.myTeam===0,away=net.myTeam===1;
@@ -46,8 +48,10 @@ function onlineRender(){
   $('#on-start').hidden=tour||!home;$('#on-ready').hidden=tour||!away;
   if(home){$('#on-start').disabled=!(opp&&opp.presence.ready);$('#on-start-lbl').textContent=running?'Restart match':'Start match';}
   if(away){$('#on-ready-lbl').textContent=net.ready?'Not ready':'Ready';$('#on-ready').classList.toggle('alt',net.ready);$('#on-ready').classList.toggle('go',!net.ready);}
-  if(!tour)$('#on-note').textContent=!inRoom?'':!opp?'':home?(opp.presence.ready?'Your opponent is ready. Start when you are.':'Waiting for your opponent to press Ready.'):away?(net.ready?'You are ready. The home player starts the match.':'Press Ready when you are set.'):'You are watching this room.';
+  if(!tour)onNote(!inRoom?'':!opp?'':home?(opp.presence.ready?'Your opponent is ready. Start when you are.':'Waiting for your opponent to press Ready.'):away?(net.ready?'You are ready. The home player starts the match.':'Press Ready when you are set.'):'You are watching this room.');
 }
+// what is going on, shown in the prompt bar's help line (js/ui.js)
+function onNote(t){const n=$('#on-note');if(n.textContent!==t){n.textContent=t;if(typeof uiBarRender==='function')uiBarRender();}}
 // the home player starts: each side in its own kit (their kit look when it is on)
 function onlineStart(){
   const opp=oppPeer();if(!(net.named&&net.myTeam===0&&opp&&opp.presence.ready))return;
