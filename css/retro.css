@@ -27,7 +27,7 @@ html.ui-menu .np{zoom:var(--mz)}
 #hub [data-panel=balance]:not([hidden]){display:block;overflow-y:auto;padding-right:10px;scrollbar-width:thin;scrollbar-color:var(--mus) rgba(0,0,0,.25)}
 
 /* ===================== backdrop ===================== */
-.hub-bg{background:url(menu-art.svg?v=20261024f) center/cover no-repeat,var(--n1)}
+.hub-bg{background:url(menu-art.svg?v=20261024g) center/cover no-repeat,var(--n1)}
 .hub-bg svg{display:none}
 .hub-bg::after{content:"";position:absolute;inset:0;background:var(--grain);mix-blend-mode:screen;opacity:.9}
 #hub,#ft,#title{font-family:var(--f-display);color:var(--cream)}
@@ -442,7 +442,9 @@ html[data-dev=kbd] :is(.big,.ko-back) .glyph.b::after{content:"Esc";font-size:12
 .on-act .big{min-height:56px;font-size:24px}
 .on-act .on-hold{min-height:40px!important}
 /* the button sits at the bottom of the middle column, level with the side panels */
-#hub .ko-vs>b,.on-vs{margin-top:auto}
+#hub .ko-vs>b{margin-top:auto}
+/* Friendly's middle column stays put: VS, code and half length at the top; Start / Ready appears at the bottom once there is a room */
+.on-vs{margin-top:0}
 #hub .ko-vs #ko-go,.on-mid>.big{margin-top:auto}
 .on-mid{justify-content:flex-start}
 
@@ -471,3 +473,4 @@ html:not([data-dev=pad]) #hub .ko-carousel .ko-arr .pg{display:none}
 .kc-pos{margin:-6px 0 4px;font:800 italic 13px var(--f-display);letter-spacing:.2em;text-transform:uppercase;color:var(--mus)}
 #ko-opp.ko-swap .kc-cur{animation:kcIn .22s cubic-bezier(.2,.8,.2,1)}
 @keyframes kcIn{from{opacity:.2;transform:scale(.85)}to{opacity:1;transform:none}}
+.on-room .status{min-height:2.9em}
