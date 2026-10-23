@@ -31,12 +31,16 @@ const UI_GROUPS=[
   ['.modes','col',{follow:1}],['#al-sub','col',{follow:1}],['.al-page','grid',{follow:1}],['#formations','col'],['#mini','map'],['#tree','map'],
   ['.ko-dots','grid'],['.ko-car','row'],['#ko-picks','row'],['.ko-head','row'],
   ['.kitpal,.kp-pats,.ball-grid,.look-row','grid'],['#tracks','col'],
+  ['#tour-bracket','map'],['#on-kv','grid'],['.on-strip','row'],
   ['.seg,.kitrow,.field,.cta,.kopbtns,.starbtns,.kitview,.pc-head,.bal-pw','row'],
 ];
 // Links out of a group, by direction. The key is matched with closest(), so it covers everything inside it.
 // A value is a selector (the first visible match that holds a control), a list of them (first that works), or 'none'.
 const UI_LINKS=[
   ['#hub.paused-match #btn-resume',{d:'#concede-row',u:'none'}],['#hub.paused-match #concede-row',{u:'#btn-resume',d:'none'}],
+  ['.on-mid',{r:'#on-opp',d:'.on-strip'}],['#on-opp',{l:'.on-mid',d:'.on-strip'}],
+  ['.on-tl',{r:'#tour-bracket',d:'.on-strip'}],['#tour-bracket',{l:'.on-tl',d:'.on-strip'}],
+  ['.on-strip',{u:['#on-opp','.on-mid','#tour-bracket','.on-tl']}],
   ['#ko-back',{d:'#ko-me'}],
   ['#ko-me',{r:'#ko-half',d:'#ko-picks',u:'#ko-back'}],
   ['#ko-half',{l:'#ko-me',r:'#ko-opp',d:'#ko-picks',u:'#ko-back'}],
@@ -53,7 +57,7 @@ const UI_LINKS=[
   ['#al-sub',{r:'#al-page'}],['#al-page',{l:'#al-sub'}],
 ];
 // where focus lands on a page it has no memory of
-const UI_DEFAULT={album:['#al-page [aria-pressed="true"]','#al-sub [aria-pressed="true"]'],play:['#hub.paused-match #btn-resume','.modes [aria-pressed="true"]','.modes .tile'],kickoff:['#ko-go']};
+const UI_DEFAULT={online:['#on-start','#on-ready','#tour-play','#tour-start','#btn-newroom','#tour-create'],album:['#al-page [aria-pressed="true"]','#al-sub [aria-pressed="true"]'],play:['#hub.paused-match #btn-resume','.modes [aria-pressed="true"]','.modes .tile'],kickoff:['#ko-go']};
 // B inside the first selector goes to the selected control of the second (before the section bar and the tabs)
 const UI_BACK=[['#mode-setup','.modes']];
 
@@ -190,7 +194,7 @@ function uiFind(a){if(!a)return null;try{
   const anc=document.querySelector(a.anc);if(!anc)return null;const L=[...anc.querySelectorAll(UI_FOC)];
   return (a.lab&&L.find(x=>x.getAttribute('aria-label')===a.lab&&uiUsable(x)))||(uiUsable(L[a.i])?L[a.i]:null);}catch(e){return null;}}
 function uiPageKey(){if(UI.layer!=='hub')return UI.layer;const pn=uiPanel();if(!pn)return '';
-  const sub=pn.querySelector('.subnav :is([aria-pressed="true"],[aria-current="true"])');return pn.dataset.panel+(sub?'/'+(sub.dataset.club||sub.dataset.sub||sub.dataset.sec||sub.dataset.col||sub.dataset.rsec||sub.textContent):'');}
+  const sub=pn.querySelector('.subnav :is([aria-pressed="true"],[aria-current="true"])');return pn.dataset.panel+(sub?'/'+(sub.dataset.club||sub.dataset.sub||sub.dataset.sec||sub.dataset.col||sub.dataset.rsec||sub.dataset.rt||sub.textContent):'');}
 // where to land: this page's memory, its preferred control, the selected section, or the first control
 function uiDefault(){
   if(UI.layer==='ft'){return $('#btn-rematch')&&uiUsable($('#btn-rematch'))?$('#btn-rematch'):uiCands()[0]||null;}
@@ -215,7 +219,7 @@ function uiConfirm(src){
   if(src==='pad'&&el.classList.contains('tok')&&typeof squadMoveStart==='function'){uiSnd.ok();squadMoveStart([...$('#mini').querySelectorAll('.tok')].indexOf(el));return;}
   uiSnd.ok();
   // a game mode: pick it and go to its setup
-  if(el.closest('.modes')){el.click();const t=el.dataset.mode==='online'?['#online-panel :is(#btn-newroom,#tour-create)','#online-panel button']:['#btn-start'];
+  if(el.closest('.modes')){el.click();const t=['#btn-start'];
     for(const s of t){const n=[...document.querySelectorAll(s)].find(x=>uiUsable(x)&&!uiDisabled(x));if(n){uiSet(n,{src:'silent',scroll:true});UI.glide=performance.now();break;}}return;}
   el.click();}
 function uiBack(){
@@ -224,6 +228,7 @@ function uiBack(){
   const cur=uiUsable(UI.cur)&&uiInScope(UI.cur)?UI.cur:null;
   if(cur&&uiText(cur)&&document.activeElement===cur){cur.blur();uiSnd.back();return;}
   if(hubTab==='kickoff'){uiSnd.back();koBack();return;}
+  if(hubTab==='online'){uiSnd.back();onlineBack();return;}
   const paused=$('#hub').classList.contains('paused-match');
   if(paused&&hubTab==='play'){uiSnd.back();closeMenu();return;}
   if(cur)for(const [a,b] of UI_BACK)if(cur.closest(a)){const t=uiEnter(document.querySelector(b),'');if(t){uiSnd.back();uiSet(t,{src:'silent',scroll:true});UI.glide=performance.now();return;}}
@@ -233,10 +238,20 @@ function uiBack(){
   uiNo(cur);}
 function uiTab(d){if(UI.layer!=='hub')return;
   if(hubTab==='kickoff'){koStep(d);uiPress($('#ko-opp .ko-card')||$('#ko-opp'));return;}
+  if(hubTab==='online'){uiNo(null);return;}
   stepTab(d);uiSnd.tab();}
 function uiSection(d){if(UI.layer!=='hub')return;const pn=uiPanel(),nav=pn&&pn.querySelector('.subnav');
   if(!uiShown(nav)){uiNo(null);return;}
   subStep(d);uiSnd.tab();}
+
+/* ---------- hold to press ([data-hold], e.g. Concede): keep it pressed for 1.2 s; the element gets a 'hold' event ---------- */
+const UI_HOLD_MS=1200;
+function uiHoldStart(el){if(!el||uiDisabled(el))return;UI.holdEl=el;UI.holdT=performance.now();el.classList.add('holding');uiPress(el);}
+function uiHoldEnd(){const el=UI.holdEl;if(!el)return;UI.holdEl=null;el.classList.remove('holding');el.style.setProperty('--hold','0');}
+function uiHoldTick(){const el=UI.holdEl;if(!el)return;const p=Math.min(1,(performance.now()-UI.holdT)/UI_HOLD_MS);el.style.setProperty('--hold',p.toFixed(3));
+  if(p>=1){uiHoldEnd();uiSnd.back();el.dispatchEvent(new CustomEvent('hold'));}}
+addEventListener('pointerdown',e=>{const el=e.target.closest&&e.target.closest('[data-hold]');if(el&&e.button===0)uiHoldStart(el);},true);
+['pointerup','pointercancel'].forEach(t=>addEventListener(t,()=>uiHoldEnd(),true));
 
 /* ---------- page switching: remember focus and scroll, slide the new page in ---------- */
 function uiSwitching(fn,dirOf){return function(...a){
@@ -251,12 +266,13 @@ function uiSwitching(fn,dirOf){return function(...a){
       // the focus goes back to where it was on this page
       const t=uiDefault();if(t){UI.cur=null;uiSet(t,{src:'silent'});}}}
   return r;};}
-const uiTabDir=(a,b)=>{if(a===b)return 0;if(b==='kickoff')return 1;if(a==='kickoff')return -1;return TABS.indexOf(b)>TABS.indexOf(a)?1:-1;};
+const uiTabDir=(a,b)=>{if(a===b)return 0;if(b==='kickoff'||b==='online')return 1;if(a==='kickoff'||a==='online')return -1;return TABS.indexOf(b)>TABS.indexOf(a)?1:-1;};
 setTab=uiSwitching(setTab,uiTabDir);
 setClubSec=uiSwitching(setClubSec);
 setSettingsSub=uiSwitching(setSettingsSub);
 if(typeof setCustSec==='function')setCustSec=uiSwitching(setCustSec);
 if(typeof setRulesSub==='function')setRulesSub=uiSwitching(setRulesSub);
+if(typeof setRoomType==='function')setRoomType=uiSwitching(setRoomType);
 // the old controller helpers now drive the one focus
 padPick=function(el){if(el&&uiUsable(el))uiSet(el,{src:'silent',scroll:true});};
 
@@ -319,7 +335,8 @@ function uiPad(gp,st,o){o=o||{};
   const lx=o.dpadOnly?0:gp.axes[0]||0,ly=o.dpadOnly?0:gp.axes[1]||0,DZ=0.55;
   const dir=pressed(12)?'u':pressed(13)?'d':pressed(14)?'l':pressed(15)?'r':Math.abs(ly)>DZ&&Math.abs(ly)>=Math.abs(lx)?(ly<0?'u':'d'):Math.abs(lx)>DZ?(lx<0?'l':'r'):'';
   uiHold('pad'+gp.index,dir);
-  if(edge(0)&&!o.noConfirm)uiConfirm('pad');
+  if(edge(0)&&!o.noConfirm){if(UI.cur&&UI.cur.matches('[data-hold]'))uiHoldStart(UI.cur);else uiConfirm('pad');}
+  if(UI.holdEl&&!pressed(0))uiHoldEnd();
   if(edge(1))uiBack();
   if(edge(3))uiAction();
   if(UI.layer==='hub'){if(edge(4))uiTab(-1);if(edge(5))uiTab(1);if(edge(6))uiSection(-1);if(edge(7))uiSection(1);}}
@@ -344,13 +361,13 @@ addEventListener('keydown',e=>{
   const d=UI_KDIR[e.key];
   if(d){e.preventDefault();e.stopPropagation();if(!e.repeat){UI.kdir=d;uiHold('kbd',d);}return;}
   if(e.repeat){if(/^( |Enter|Escape|Backspace)$/.test(e.key))e.preventDefault();return;}
-  if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();uiConfirm('kbd');return;}
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();if(UI.cur&&UI.cur.matches('[data-hold]'))uiHoldStart(UI.cur);else uiConfirm('kbd');return;}
   if(e.key==='Escape'||e.key==='Backspace'){e.preventDefault();e.stopPropagation();uiBack();return;}
   if(e.code==='KeyQ'||e.code==='KeyE'){e.preventDefault();e.stopPropagation();uiTab(e.code==='KeyE'?1:-1);return;}
   if(e.code==='KeyZ'||e.code==='KeyC'){e.preventDefault();e.stopPropagation();uiSection(e.code==='KeyC'?1:-1);return;}
   if(e.code==='KeyF'&&uiActionEl()){e.preventDefault();e.stopPropagation();uiAction();return;}
 },true);
-addEventListener('keyup',e=>{const d=UI_KDIR[e.key];if(d&&UI.kdir===d)UI.kdir='';});
+addEventListener('keyup',e=>{const d=UI_KDIR[e.key];if(d&&UI.kdir===d)UI.kdir='';if(e.key==='Enter'||e.key===' ')uiHoldEnd();});
 addEventListener('blur',()=>{UI.kdir='';});
 // the mouse moves the same focus: whatever control (or settings row) is under it
 const uiHoverTarget=t=>{if(!t||!t.closest)return null;let el=t.closest(UI_FOC);
@@ -377,11 +394,11 @@ function uiBarRender(){
   if(!UI.layer)return;
   const pad=UI.dev==='pad',el=uiUsable(UI.cur)?UI.cur:null,ko=UI.layer==='hub'&&hubTab==='kickoff';
   const hasSub=UI.layer==='hub'&&!ko&&(()=>{const pn=uiPanel(),n=pn&&pn.querySelector('.subnav');return uiShown(n);})();
-  let a='Select';if(el){if(el.type==='range')a='';else if(el.tagName==='SELECT')a='Next option';else if(el.type==='checkbox')a='Toggle';else if(uiText(el))a=pad?'Type':'Edit';else if(pad&&el.classList.contains('tok'))a='Move';else if(ko&&el.id==='ko-go')a='Kick off';}
+  let a='Select';if(el){if(el.type==='range')a='';else if(el.tagName==='SELECT')a='Next option';else if(el.type==='checkbox')a='Toggle';else if(uiText(el))a=pad?'Type':'Edit';else if(pad&&el.classList.contains('tok'))a='Move';else if(ko&&el.id==='ko-go')a='Kick off';else if(el.matches('[data-hold]'))a='Hold';}
   const items=[{g:[pad?'✥':'↑↓←→'],t:el&&(el.type==='range'||el.tagName==='SELECT')?'Adjust':'Move'}];
   if(a)items.push({g:['A'],t:a});
   items.push({g:['B'],t:UI.layer==='ft'?'Main menu':'Back'});
-  if(UI.layer==='hub')items.push({g:['LB','RB'],t:ko?'Club':'Tabs'});
+  if(UI.layer==='hub'&&hubTab!=='online')items.push({g:['LB','RB'],t:ko?'Club':'Tabs'});
   if(hasSub)items.push({g:['LT','RT'],t:'Sections'});
   if(uiActionEl())items.push({g:['Y'],t:'Equip'});
   if(pad&&UI.layer==='hub'){if(uiSpinOn())items.push({g:['RS'],t:'Rotate'});items.push({g:['L3'],t:UI.ptrMode?'Focus':'Pointer'});}
@@ -405,7 +422,7 @@ function uiTick(){
     if(layer){const d=uiDefault();UI.cur=null;if(d)uiSet(d,{src:'silent'});}
     uiBarRender();}
   if(!layer){uiRing.classList.remove('on');return;}
-  uiHold('kbd',UI.kdir);
+  uiHold('kbd',UI.kdir);uiHoldTick();
   // the control was rebuilt or hidden: find it again by its address, else this page's default
   if(!uiUsable(UI.cur)||!uiInScope(UI.cur)){const el=uiFind(UI.addr);const t=el&&uiInScope(el)?el:uiDefault();
     if(t){UI.cur=null;uiSet(t,{src:'silent'});}else{uiRing.classList.remove('on');return;}}

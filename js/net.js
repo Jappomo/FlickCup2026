@@ -3,7 +3,9 @@
 // Loaded by index.html as a classic script, in order: every file shares one scope, so names from earlier files work here.
 'use strict';
 /* ================= online room ================= */
-const net={room:null,named:null,code:'',myTeam:null,others:[],joinedAt:0,claimReady:false,claimed:false,unsubs:[],lastAim:0,lastK:0};
+// ready: the away player has pressed Ready (the home player can start then). kitOver: the preset kit you see the
+// opponent in, on your screen only (null: their own kit); see kitOf in core.js and js/online.js.
+const net={room:null,named:null,code:'',myTeam:null,others:[],joinedAt:0,claimReady:false,claimed:false,unsubs:[],lastAim:0,lastK:0,ready:false,kitOver:null};
 function activePeer(){return net.others.find(p=>p.presence.team===S.active)||null;}
 function oppPeer(){return net.others.find(p=>p.presence.team!==net.myTeam)||null;}
 net.sendState=()=>{if(!net.named||net.myTeam==null)return;net.named.emit('state',packState()).catch(()=>{});};
@@ -110,7 +112,7 @@ function refreshPlayers(){
       const taken=new Set(net.others.filter(p=>want==null||beats(p)||p.presence.team!==want).map(p=>p.presence.team));
       want=!taken.has(0)?0:!taken.has(1)?1:null;
     }
-    if(want!==net.myTeam||!net.claimed){net.myTeam=want;net.claimed=true;net.named.presence({seat:want==null?'s':'p',team:want,t0:net.joinedAt,sq:serSquad(mySquads[0])}).catch(()=>{});}
+    if(want!==net.myTeam||!net.claimed){net.myTeam=want;net.claimed=true;net.named.presence({seat:want==null?'s':'p',team:want,t0:net.joinedAt,sq:serSquad(mySquads[0]),half:halfMin}).catch(()=>{});}
   }
   renderOnline();updateHud();if(net.tourMatch)tourAutoStart();
 }
@@ -123,9 +125,9 @@ async function joinRoom(code,o){
   setRoomStatus('Joining room '+code.toUpperCase()+'…');
   let r;
   try{r=await net.room.join('baize-'+code);}catch(e){const c=(e&&e.code)||(e&&e.message)||'error';setRoomStatus(c==='peerjs'?'Online play could not load (lib/peerjs.min.js is missing).':c==='connect'||c==='peer-unavailable'||c==='timeout'?'Could not reach the other player. Check the code, or make a new room.':'Could not join that room ('+c+'). Try again in a moment.');return;}
-  net.named=r;net.code=code;net.joinedAt=Date.now();net.myTeam=null;net.claimReady=false;net.claimed=false;net.others=[];
+  net.named=r;net.code=code;net.joinedAt=Date.now();net.myTeam=null;net.claimReady=false;net.claimed=false;net.others=[];net.ready=false;net.kitOver=null;
   $('#room-code').value=code.toUpperCase();
-  r.presence({seat:'w',t0:net.joinedAt,sq:serSquad(mySquads[0])}).catch(()=>{});
+  r.presence({seat:'w',t0:net.joinedAt,sq:serSquad(mySquads[0]),ready:false}).catch(()=>{});
   net.unsubs.push(r.on('state',m=>{if(m.sameTab)return;onRemoteState(m.data);}));
   net.unsubs.push(r.onPeers(ch=>{
     refreshPlayers();
@@ -137,7 +139,7 @@ async function joinRoom(code,o){
 async function leaveRoom(quiet){
   net.unsubs.forEach(u=>{try{u();}catch(e){}});net.unsubs=[];
   if(net.named){const r=net.named;net.named=null;try{await r.leave();}catch(e){}}
-  net.myTeam=null;net.others=[];net.code='';
+  net.myTeam=null;net.others=[];net.code='';net.ready=false;net.kitOver=null;
   if(S.mode==='online'){S.running=false;S.phase='idle';S.mode='local';S.tg=false;S.noMoments=false;S.golden=false;matchSquads=[mySquads[0],mySquads[1]];applySquadStats();formation(0);updateHud();}
   if(!quiet)setRoomStatus('Left the room.');
   renderOnline();
@@ -156,9 +158,9 @@ function renderOnline(){
     if(!net.claimReady)setRoomStatus(`Room ${c}: finding your seat…`);
     else if(net.myTeam==null)setRoomStatus(`Room ${c} is full. You are watching.`);
     else if(!opp)setRoomStatus(`Room ${c}: send this code to your opponent. Waiting for them to join.`);
-    else if(net.myTeam===0)setRoomStatus(`Room ${c}: opponent is here. You are home, so you pick kits and start.`);
-    else setRoomStatus(`Room ${c}: you are away. Waiting for home to kick off.`);
+    else if(net.myTeam===0)setRoomStatus(`Room ${c}: your opponent is here. You are home: you pick the half length and start.`);
+    else setRoomStatus(`Room ${c}: you are away. Press Ready, then home starts the match.`);
   }
-  updateStartBtn();
+  updateStartBtn();if(typeof onlineRender==='function')onlineRender();
 }
 

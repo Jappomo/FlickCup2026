@@ -39,7 +39,7 @@ const TABS=['play','squad','custom','album','settings','rules','balance'];
 const PAUSE_HIDE=['squad','custom','album'];
 // My Club sections: tactics (formation, cards, path), kit look, history
 let clubSec='tactics';
-function setTab(t){hubTab=t;$('#hub').classList.toggle('ko-on',t==='kickoff');document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==t);if(t==='squad')setClubSec(clubSec);if(t==='custom')setCustSec(custSec);if(t==='album'&&typeof renderAlbum==='function')renderAlbum();if(t==='kickoff')koRender();}
+function setTab(t){hubTab=t;$('#hub').classList.toggle('ko-on',t==='kickoff'||t==='online');document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==t);if(t==='squad')setClubSec(clubSec);if(t==='custom')setCustSec(custSec);if(t==='album'&&typeof renderAlbum==='function')renderAlbum();if(t==='kickoff')koRender();}
 function setClubSec(sec){clubSec=sec;document.querySelectorAll('#club-sub [data-club]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.club===sec)));
   $('#club-tactics').hidden=sec!=='tactics';$('#club-kit').hidden=sec!=='kit';$('#club-history').hidden=sec!=='history';$('#club-crest').hidden=sec!=='crest';
   if(hubTab!=='squad')return;if(sec==='tactics')renderSquad();else if(sec==='kit')renderKitLook();else if(sec==='crest'){if(typeof renderCrest==='function')renderCrest();}else if(typeof renderHistory==='function')renderHistory();}
@@ -58,10 +58,10 @@ function subStep(d){const pn=document.querySelector('#hub [data-panel]:not([hidd
   let k=bs.findIndex(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-current')==='true');k=(k<0?0:k+d+bs.length)%bs.length;bs[k].click();sfx('tock',6);}
 function stepTab(d){const paused=$('#hub').classList.contains('paused-match'),list=TABS.filter(t=>!(paused&&PAUSE_HIDE.includes(t)));let i=list.indexOf(hubTab);if(i<0)i=0;setTab(list[(i+d+list.length)%list.length]);}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
-function setMenuMode(m){menuMode=m;document.querySelectorAll('.tile').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));$('#online-panel').hidden=m!=='online';updateStartBtn();if(hubTab==='squad'&&clubSec==='tactics')renderSquad();}
+function setMenuMode(m){menuMode=m;document.querySelectorAll('.tile').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));updateStartBtn();if(hubTab==='squad'&&clubSec==='tactics')renderSquad();}
 function kitSwatch(b,k){b.style.background='none';b.innerHTML='';[['shirt',50],['shorts',30],['socks',20]].forEach(([p,h])=>{const i=document.createElement('i');i.className='kst';i.style.height=h+'%';i.style.background=typeof k[p]==='number'?hexStr(k[p]):k[p];b.appendChild(i);});}
 function renderKits(){
-  for(let t=0;t<2;t++){const row=$('#kit'+t),q=mySquads[t];
+  for(let t=0;t<2;t++){const row=$('#kit'+t),q=mySquads[t];if(!row)continue;
     const items=(q.look?['my']:[]).concat(KITS.map((k,i)=>i));
     uiList(row,items,x=>x,x=>{const b=document.createElement('button');b.className=x==='my'?'sw my':'sw';b.type='button';
       b.onclick=x==='my'?()=>{mySquads[t].useLook=true;saveSquads();if(!S.running)applyKits();renderKits();}
@@ -75,18 +75,15 @@ function renderKits(){
 function updateStartBtn(){
   const b=$('#btn-start'),running=S.running&&S.phase!=='end';
   $('#mode-setup').hidden=!menuMode;
-  const tourView=menuMode==='online'&&T.roomType==='tour';$('#match-settings').hidden=tourView;$('#btn-start').hidden=tourView;
   renderConcede();
   {const paused=S.running&&S.phase!=='end';$('#hub').classList.toggle('paused-match',paused);
     if(paused&&PAUSE_HIDE.includes(hubTab))setTab('play');}
   $('#btn-resume').hidden=!running||(menuMode==='online')!==(S.mode==='online');
-  $('#match-settings').style.display=(menuMode==='online'&&net.named&&net.myTeam!==0)?'none':'';
-  if(menuMode==='online'){const ready=net.named&&net.myTeam===0&&!!oppPeer();$('#start-lbl').textContent=running&&S.mode==='online'?'Restart match':'Start match';b.disabled=!ready;}
+  // Online opens its own screen (js/online.js), like Kick-off
+  if(menuMode==='online'){$('#start-lbl').textContent=net.named||T.lobby?'Back to the room':'Go online';b.disabled=!net.room;}
   else if(menuMode==='practice'){$('#start-lbl').textContent=S.mode==='practice'&&running?'Restart practice':'Start practice';b.disabled=false;}
   else if(menuMode==='tutorial'){$('#start-lbl').textContent=S.mode==='tutorial'&&running?'Restart tutorial':'Start tutorial';b.disabled=false;}
   else{$('#start-lbl').textContent=running?'New match':menuMode==='local'?'Choose clubs':'Choose opponent';b.disabled=false;}
-  // Solo and Versus pick the kits and half length on the Kick-off screen
-  if(menuMode==='practice'||menuMode==='tutorial'||menuMode==='cpu'||menuMode==='local')$('#match-settings').style.display='none';
 }
 function openMenu(){const was=$('#hub').hidden;$('#hub').hidden=false;if(was)music.menu(true);applyVolumes();if(S.mode!=='online')S.paused=true;setMenuMode(S.mode==='online'&&S.running?'online':menuMode);updateStartBtn();updateHud();}
 function closeMenu(){retShow(false);const was=!$('#hub').hidden;$('#hub').hidden=true;S.paused=false;updateHud();if(was){music.menu(false);applyVolumes();}}
@@ -102,13 +99,9 @@ $('#btn-start').addEventListener('click',()=>{
     if(menuMode==='practice')startPractice();else startTutorial();
     return;
   }
-  if(menuMode==='online'){
-    const opp=oppPeer();if(!(net.named&&net.myTeam===0&&opp))return;
-    S.mode='online';MBAL=BAL;matchSquads=[mySquads[0],parseSquad(opp.presence.sq,1)];
-  }else{
-    if(S.mode==='online'&&net.named)leaveRoom(true);
-    S.mode=menuMode;matchSquads=S.mode==='cpu'?[mySquads[0],defaultSquad(1)]:[mySquads[0],mySquads[1]];
-  }
+  if(menuMode==='online'){onlineOpen();return;}
+  if(S.mode==='online'&&net.named)leaveRoom(true);
+  S.mode=menuMode;matchSquads=S.mode==='cpu'?[mySquads[0],defaultSquad(1)]:[mySquads[0],mySquads[1]];
   S.tour=null;S.tg=false;S.noMoments=false;
   S.kits=kitSel.slice();applyKits();S.halfLen=halfMin*60;
   cam.mode=-1;closeMenu();newMatch();

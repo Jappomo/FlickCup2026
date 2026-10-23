@@ -29,7 +29,9 @@ const KIT_COLORS=[['Red',0xc8322a],['Blue',0x2459c4],['White',0xf2f0ea],['Black'
 const GK_COLORS=[['Black',0x161618],['White',0xf4f4f2],['Green Neon',0x39ff6a],['Pink Neon',0xff3fa8],['Orange Neon',0xff7a1a],['Blue Neon',0x22c8ff],['Yellow Neon',0xe8ff2a]];
 const hexStr=n=>'#'+n.toString(16).padStart(6,'0');
 // what a team actually wears: its kit preset, unless its squad has its own kit look switched on
-function kitOf(t){return kitFrom(KITS[S.kits[t]]||KITS[t]||KITS[0],typeof matchSquads!=='undefined'&&matchSquads&&matchSquads[t]);}
+// online, you can see the opponent in another preset kit on your own screen (js/online.js); it is never sent
+function kitOf(t){if(S.mode==='online'&&typeof net!=='undefined'&&net.kitOver!=null&&net.myTeam!=null&&t!==net.myTeam&&KITS[net.kitOver])return KITS[net.kitOver];
+  return kitFrom(KITS[S.kits[t]]||KITS[t]||KITS[0],typeof matchSquads!=='undefined'&&matchSquads&&matchSquads[t]);}
 // a squad's kit from a preset: an AI club wears its own colours (kitHex), your squads their kit look when it is on
 function kitFrom(base,q){if(q&&q.kitHex)return Object.assign({},base,q.kitHex);const L=q&&q.useLook&&q.look;
   if(!L)return base;const c=i=>KIT_COLORS[i]?KIT_COLORS[i][1]:0xffffff;
