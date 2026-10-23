@@ -27,7 +27,7 @@ html.ui-menu .np{zoom:var(--mz)}
 #hub [data-panel=balance]:not([hidden]){display:block;overflow-y:auto;padding-right:10px;scrollbar-width:thin;scrollbar-color:var(--mus) rgba(0,0,0,.25)}
 
 /* ===================== backdrop ===================== */
-.hub-bg{background:url(menu-art.svg) center/cover no-repeat,var(--n1)}
+.hub-bg{background:url(menu-art.svg?v=20261023c) center/cover no-repeat,var(--n1)}
 .hub-bg svg{display:none}
 .hub-bg::after{content:"";position:absolute;inset:0;background:var(--grain);mix-blend-mode:screen;opacity:.9}
 #hub,#ft,#title{font-family:var(--f-display);color:var(--cream)}

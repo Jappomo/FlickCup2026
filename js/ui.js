@@ -254,7 +254,7 @@ setTab=uiSwitching(setTab,uiTabDir);
 setClubSec=uiSwitching(setClubSec);
 setSettingsSub=uiSwitching(setSettingsSub);
 if(typeof setCustSec==='function')setCustSec=uiSwitching(setCustSec);
-setRulesSub=uiSwitching(setRulesSub);
+if(typeof setRulesSub==='function')setRulesSub=uiSwitching(setRulesSub);
 // the old controller helpers now drive the one focus
 padPick=function(el){if(el&&uiUsable(el))uiSet(el,{src:'silent',scroll:true});};
 
