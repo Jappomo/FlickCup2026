@@ -27,7 +27,7 @@ html.ui-menu .np{zoom:var(--mz)}
 #hub [data-panel=balance]:not([hidden]){display:block;overflow-y:auto;padding-right:10px;scrollbar-width:thin;scrollbar-color:var(--mus) rgba(0,0,0,.25)}
 
 /* ===================== backdrop ===================== */
-.hub-bg{background:url(menu-art.svg) center/cover no-repeat,var(--n1)}
+.hub-bg{background:url(menu-art.svg?v=20261024b) center/cover no-repeat,var(--n1)}
 .hub-bg svg{display:none}
 .hub-bg::after{content:"";position:absolute;inset:0;background:var(--grain);mix-blend-mode:screen;opacity:.9}
 #hub,#ft,#title{font-family:var(--f-display);color:var(--cream)}
@@ -99,19 +99,20 @@ html.ui-menu #hub:not(.paused-match) [data-panel=play]{display:grid;grid-templat
 .modes .tile::before{content:"";display:block;position:absolute;inset:0 40px 0 0;z-index:0;transform:skewX(-14deg);background:var(--grain),var(--plate);border:2px solid rgba(241,228,198,.18);box-shadow:5px 6px 0 rgba(5,12,24,.4)}
 .modes .tile::after{content:"";position:absolute;top:0;bottom:0;right:4px;width:22px;transform:skewX(-14deg);background:var(--mus);opacity:0}
 .modes .tile>*{position:relative;z-index:1}
-.modes .tile svg{position:static!important;grid-row:1/3;grid-column:1;width:60px!important;height:60px!important;align-self:center;color:var(--cream);opacity:1}
+.modes .tile>svg{position:static!important;grid-row:1/3;grid-column:1;width:60px!important;height:60px!important;align-self:center;color:var(--cream);opacity:1}
 .modes .tile .tag{position:static;grid-column:2;color:var(--mus);font:800 italic 15px var(--f-display);letter-spacing:.2em}
 .modes .tile .tn{grid-column:2;font:900 italic 44px/.95 var(--f-display);letter-spacing:.01em;color:var(--cream);text-shadow:3px 3px 0 rgba(5,12,24,.45)}
 .modes .tile .td{display:none}
-.modes .tile .live{position:absolute!important;top:50%;right:84px;left:auto;transform:translateY(-50%)}
+.modes .tile .live{position:absolute!important;top:12px;right:86px;left:auto;transform:none;padding:2px 8px;font-size:12px}
+.modes .tile .live svg{width:13px!important;height:13px!important;grid-row:auto;align-self:center;color:var(--cream)}
 .modes .tile.learn .tag{color:var(--mus)}
 .modes .tile[aria-pressed="true"]::before{background:var(--grain),var(--sel);border-color:transparent}
 .modes .tile[aria-pressed="true"]::after{opacity:1}
-.modes .tile[aria-pressed="true"] :is(.tn,svg){color:var(--ink);text-shadow:none}
+.modes .tile[aria-pressed="true"] :is(.tn,>svg){color:var(--ink);text-shadow:none}
 .modes .tile[aria-pressed="true"] .tag{color:#7a4d00}
 #hub [data-panel=play] .setup{display:flex;flex-direction:column;gap:14px;min-width:0;justify-content:center}
-/* the card in the middle: what the mode is, a picture of it, and the button to go on */
-.mode-brief{position:relative;transform:rotate(-4deg);margin-top:20px;background:var(--grain),linear-gradient(180deg,#132c4f,#0f2442);border:2px solid rgba(241,228,198,.16);box-shadow:10px 12px 0 rgba(5,12,24,.45);padding:26px 30px 0;overflow:hidden}
+/* the card in the middle (straight, the slant is the mode list's): what the mode is, a picture of it, and the button to go on */
+.mode-brief{position:relative;margin-top:0;background:var(--grain),linear-gradient(180deg,#132c4f,#0f2442);border:2px solid rgba(241,228,198,.16);box-shadow:10px 12px 0 rgba(5,12,24,.45);padding:26px 30px 0;overflow:hidden}
 .mode-brief::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--mus)}
 .mb-main{max-width:none}
 .mb-k{margin:0;font:800 italic 17px var(--f-display);letter-spacing:.22em;text-transform:uppercase;color:var(--mus)}
@@ -123,9 +124,8 @@ html.ui-menu #hub:not(.paused-match) [data-panel=play]{display:grid;grid-templat
 .mb-art{position:relative;margin:0 -30px;height:250px;border-top:6px solid var(--mus);background:var(--grain),#1b4a7c;background-size:cover;background-position:center}
 .mb-art svg{width:100%;height:100%;display:block}
 .mb-facts,.mb-club{display:none}
-#hub [data-panel=play] .setup>.cta{justify-content:center;margin-top:6px;transform:rotate(-4deg)}
+#hub [data-panel=play] .setup>.cta{justify-content:center;margin-top:6px}
 #hub [data-panel=play] .setup .big.go{font-size:28px;min-height:64px;min-width:330px;justify-content:center}
-#hub [data-panel=play] #online-panel,#hub [data-panel=play] #match-settings{transform:rotate(-4deg)}
 #hub.paused-match .mode-brief{display:none}
 /* the online panel takes the card's place, so the card stays the same size */
 #hub [data-panel=play]:has(#online-panel:not([hidden])) .mb-art,#hub [data-panel=play]:has(#online-panel:not([hidden])) .mb-p{display:none}
@@ -337,3 +337,6 @@ html[data-dev=kbd] :is(.big,.ko-back) .glyph.b::after{content:"Esc";font-size:12
 #hub [data-panel=play]:has(#online-panel:not([hidden])) .setup{gap:10px}
 #hub [data-panel=play] #online-panel .seats{margin-top:6px}
 #hub.paused-match .logo{visibility:hidden}
+/* the camera views menu, opened by holding R3: the controller's choice */
+.cam-menu button.pad-on{background:var(--mus);color:var(--ink)}
+.cam-menu button.pad-on :is(small,i){color:var(--ink)}
