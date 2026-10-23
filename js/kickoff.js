@@ -68,8 +68,7 @@ function koRender(){
       const u=emblemUrl(x.club.emblem);return `<button class="kc-n${x.club.locked?' lock':''}" data-ki="${at(d)}" title="${koEsc(x.club.name)}" aria-label="${koEsc(x.club.name)}">${u?`<img src="${u}" alt="">`:`<b>${koEsc(x.club.short)}</b>`}</button>`;};
     const cur=op.querySelector('.ko-id>.ko-crest'),car=document.createElement('div');car.className='ko-carousel';
     car.innerHTML=`<button class="ko-arr" data-ko="-1" aria-label="Previous club"><span class="kg">‹</span><span class="glyph pg">LB</span></button>${small(-1)}<div class="kc-cur"></div>${small(1)}<button class="ko-arr" data-ko="1" aria-label="Next club"><span class="kg">›</span><span class="glyph pg">RB</span></button>`;
-    cur.replaceWith(car);car.querySelector('.kc-cur').appendChild(cur);
-    const pos=document.createElement('p');pos.className='kc-pos';pos.textContent=`Club ${KO.idx[KO.mode]+1} / ${L.length}`;car.after(pos);}
+    cur.replaceWith(car);car.querySelector('.kc-cur').appendChild(cur);}
   if(e.guest){const kr2=document.createElement('div');kr2.className='ko-kits';kr2.innerHTML='<p class="h">Guest kit</p>';kr2.appendChild(koKitRow(1));op.querySelector('.ko-card').appendChild(kr2);}
   op.querySelectorAll('[data-ko]').forEach(b=>b.onclick=()=>koStep(+b.dataset.ko));
   op.querySelectorAll('[data-ki]').forEach(b=>b.onclick=()=>{KO.idx[KO.mode]=+b.dataset.ki;sfx('tock',8);koRender();});
