@@ -410,12 +410,13 @@ function uiTick(){
   if(!uiUsable(UI.cur)||!uiInScope(UI.cur)){const el=uiFind(UI.addr);const t=el&&uiInScope(el)?el:uiDefault();
     if(t){UI.cur=null;uiSet(t,{src:'silent'});}else{uiRing.classList.remove('on');return;}}
   if(!UI.cur.classList.contains('ui-on'))UI.cur.classList.add('ui-on');
-  // the ring: glide on a new target, stick to it while the page scrolls
+  // the ring: glide on a new target, stick to it while the page scrolls. It is placed with left/top, not a transform,
+  // so its pulse and press (scale) grow and shrink it around its own centre instead of sliding it toward the corner.
   const v=uiVisual(UI.cur),r=v.getBoundingClientRect(),P=5;
   const x=r.left-P,y=r.top-P,w=r.width+P*2,h=r.height+P*2;
   const k=Math.round(x)+','+Math.round(y)+','+Math.round(w)+','+Math.round(h);
   uiRing.classList.toggle('glide',performance.now()-UI.glide<220);
-  if(k!==UI.box){UI.box=k;uiRing.style.transform=`translate(${x}px,${y}px)`;uiRing.style.width=w+'px';uiRing.style.height=h+'px';
+  if(k!==UI.box){UI.box=k;uiRing.style.left=x+'px';uiRing.style.top=y+'px';uiRing.style.width=w+'px';uiRing.style.height=h+'px';
     const br=getComputedStyle(v).borderRadius;uiRing.style.borderRadius=br==='50%'||parseFloat(br)>=Math.min(r.width,r.height)/2?'50%':'3px';}
   // clipped to the scrolling page, so it never sits on the tab bar
   const sc=uiScroller(UI.cur);let clip='none';

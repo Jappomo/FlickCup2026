@@ -27,7 +27,7 @@ html.ui-menu .np{zoom:var(--mz)}
 #hub [data-panel=balance]:not([hidden]){display:block;overflow-y:auto;padding-right:10px;scrollbar-width:thin;scrollbar-color:var(--mus) rgba(0,0,0,.25)}
 
 /* ===================== backdrop ===================== */
-.hub-bg{background:url(menu-art.svg?v=20261024b) center/cover no-repeat,var(--n1)}
+.hub-bg{background:url(menu-art.svg?v=20261024c) center/cover no-repeat,var(--n1)}
 .hub-bg svg{display:none}
 .hub-bg::after{content:"";position:absolute;inset:0;background:var(--grain);mix-blend-mode:screen;opacity:.9}
 #hub,#ft,#title{font-family:var(--f-display);color:var(--cream)}
@@ -204,13 +204,13 @@ html.ui-menu #hub [data-panel=settings]:not([hidden]){grid-template-rows:minmax(
 /* the focus: a yellow outline that glides to the selected control. Where the control already shows yellow
    (modes, tabs, sections, chosen chips) the outline steps aside and the yellow is the highlight (js/ui.js, .self). */
 #ui-ring{position:fixed;left:0;top:0;z-index:8000;pointer-events:none;opacity:0;box-sizing:border-box;border:3px solid var(--mus);border-radius:3px;
-  box-shadow:0 0 14px rgba(242,182,50,.55),inset 0 0 10px rgba(242,182,50,.2);will-change:transform,width,height;transition:opacity .12s}
+  box-shadow:0 0 14px rgba(242,182,50,.55),inset 0 0 10px rgba(242,182,50,.2);will-change:left,top,width,height;transition:opacity .12s}
 #ui-ring.on{opacity:1;animation:uiPulse 1s ease-in-out infinite}
 #ui-ring.on.self{opacity:0}
 #ui-ring.on.deny,#ui-ring.deny{opacity:1;border-color:#e8604c;box-shadow:0 0 16px rgba(232,96,76,.8);animation:uiShake .32s ease-out}
 @keyframes uiPulse{50%{box-shadow:0 0 24px rgba(242,182,50,.85),inset 0 0 12px rgba(242,182,50,.3)}}
   background:linear-gradient(var(--c),var(--c)) 0 0/26px 5px,linear-gradient(var(--c),var(--c)) 0 0/5px 26px,
-#ui-ring.glide{transition:transform .17s cubic-bezier(.2,.9,.3,1.12),width .17s cubic-bezier(.2,.9,.3,1.12),height .17s cubic-bezier(.2,.9,.3,1.12),border-radius .17s,opacity .12s}
+#ui-ring.glide{transition:left .17s cubic-bezier(.2,.9,.3,1.12),top .17s cubic-bezier(.2,.9,.3,1.12),width .17s cubic-bezier(.2,.9,.3,1.12),height .17s cubic-bezier(.2,.9,.3,1.12),border-radius .17s,opacity .12s}
 #ui-ring.punch{animation:uiPunch .18s ease-out,uiPulse 1s ease-in-out .18s infinite}
 @keyframes uiPunch{40%{scale:.95}}
 @keyframes uiShake{20%,60%{translate:-6px 0}40%,80%{translate:6px 0}}
