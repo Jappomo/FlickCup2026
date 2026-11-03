@@ -12,8 +12,8 @@ function updateHud(){renderLog();
     $('#bar'+t).style.width=(S.bar[t]/BAR_MAX*100)+'%';$('#mb'+t).classList.toggle('full',S.bar[t]>=BAR_MAX);}
   $('#half').textContent=S.golden?'Golden goal':S.timeUp?'Last turn':S.half===1?'1st half':'2nd half';
   const lockTxt=(S.phase==='attack'&&S.lastFigCount>=3)?' · figure resting':'';
-  const tot=SETUP[S.setupKind]||0;
-  $('#flickc').textContent=!S.running||S.phase==='end'?'':S.phase==='take'?'Pick a taker':S.setupKind?`Positional ${tot-S.setupLeft}/${tot}`:`Flick ${S.flicks+1}${lockTxt}`;
+  const tot=SETUP[S.setupKind]||(S.setupKind==='intercept'?1:0);
+  $('#flickc').textContent=!S.running||S.phase==='end'?'':S.phase==='take'?'Pick a taker':S.setupKind==='penalty'?'Penalty':S.setupKind?`Positional ${tot-S.setupLeft}/${tot}`:`Flick ${S.flicks+1}${lockTxt}`;
   const pr=$('#prompt');
   if(!S.running||S.phase==='idle'){pr.hidden=true;}
   else if(!subLock){
@@ -26,12 +26,14 @@ function updateHud(){renderLog();
     else if(S.phase==='attack'&&S.setupKind){t=mine?`Take the ${what.toLowerCase()}`:`${A} taking the ${what.toLowerCase()}`;s=mine?'Only the taker can play now.':'';}
     else if(S.phase==='attack'&&S.koPend){t=mine?'Kick-off':`${A} kicking off`;s=mine?'Pass it: the kicker cannot play the next flick.':'';}
     else if(S.phase==='attack'){t=mine?(S.mode==='local'?`${A} in possession`:'Your flick'):`${A} lining up`;s=mine?'Hit the ball first and keep it off their figures.':'';}
+    else if(S.phase==='defend'&&S.setupKind==='penalty'){t=mine?(S.mode==='local'?`${A}: set the keeper`:'Set your keeper'):`${A} setting the keeper`;s=mine?(S.kOut[S.active]?'Flick your keeper into place, or Skip.':'Slide him with LT / RT or drag him, then Skip.'):'';}
+    else if(S.phase==='attack'&&S.setupKind==='penalty'){t=mine?'Take the penalty':`${A} taking the penalty`;s=mine?'Only the taker can play. The goal counts from the line.':'';}
     else if(S.phase==='defend'){t=mine?(S.mode==='local'?`${A}: block or skip`:'Block or skip'):`${A} may block`;s=mine?'Do not touch the ball. Drag your keeper too.':'';}
     else if(S.phase==='goal')t='Goal';else if(S.phase==='break')t='Half-time';else if(S.phase==='end')t='Full-time';
     if(ptr.on&&ptr.mode==='pull'&&mine)s=lastInput==='touch'?'Tap with a second finger to cancel.':'Right-click or Esc to cancel.';
     $('#ptitle').textContent=t;$('#psub').textContent=s;$('#ptitle').style.borderLeftColor=kitOf(S.active).ui;
   }
-  $('#btn-skip').hidden=!(localTurn()&&S.phase==='defend');
+  $('#btn-skip').hidden=!(localTurn()&&S.phase==='defend');$('#btn-skip .lbl').textContent=S.setupKind==='penalty'&&S.phase==='defend'?'Keeper ready':'Skip block';
   {const gs=localTurn()?gkState(S.active):null;$('#btn-gk').hidden=!gs;if(gs)$('#gk-lbl').textContent=gs.label;}
   const mt=myMomentTeam(),mb=$('#btn-moment');
   if(!S.running||S.phase==='end'||mt==null||S.noMoments){mb.hidden=true;}

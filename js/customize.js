@@ -83,7 +83,7 @@ function renderCustom(rebuild){
   });
   const cur=list.find(v=>v.id===custSel)||list[0];
   $('#bp-no').textContent='Ball '+(cur.id||'001');$('#bp-name').textContent=cur.name;$('#bp-eq').hidden=cur.id!==eqId;
-  const btn=$('#btn-equip'),own=owns('ball',cur.id);btn.disabled=cur.id===eqId;btn.lastChild.textContent=cur.id===eqId?'Equipped':own?'Equip':needCard('ball',cur.id)?'Needs an Album card':`Buy · ${priceOf('ball',cur.id)} Hobby`;
+  const btn=$('#btn-equip'),own=owns('ball',cur.id);btn.disabled=cur.id===eqId;btn.lastChild.textContent=cur.id===eqId?'Equipped':own?'Equip':needCard('ball',cur.id)?(needCard('ball',cur.id).chal?'Needs a challenge':'Needs an Album card'):`Buy · ${priceOf('ball',cur.id)} Hobby`;
   $('#ball-note').textContent=S.mode==='online'&&S.running?'Online, the home player\'s ball is used for both of you.':'Every ball plays the same; only the look changes.';
   if(hubTab==='custom'&&custSec==='ball'&&initPreview()){sizePreview();previewObject(cur.id);}
 }

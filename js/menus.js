@@ -294,15 +294,21 @@ function renderBal(){
   $('#bal-paths').innerHTML=u+'</tbody>';
   $('#bal-eco').innerHTML='<thead><tr><th>Setting</th><th>When</th><th>Hobby</th></tr></thead><tbody>'+ECO_ROWS.map(([k,n,w])=>`<tr><th scope="row">${n}</th><td class="fx">${w}</td><td><input type="number" step="10" min="0" data-e="${k}" value="${D.eco[k]}"></td></tr>`).join('')+'</tbody>';
   $('#bal-eco-on').checked=!!D.eco.on;$('#bal-wallet').value=HOBBY.n||0;
+  {const X=D.exp,row=(id,lab,help,ctl)=>`<div class="srow" title="${help}"><label for="${id}">${lab}</label>${ctl}</div>`,ck=(id,k)=>`<span class="tog"><input type="checkbox" id="${id}" data-x="${k}" ${X[k]?'checked':''}><i></i></span>`;
+    $('#bal-exp').innerHTML=row('bx-int','Positional flick after an interception','The side that wins the ball from an interception may make one positional flick with another figure first.',ck('bx-int','interceptFlick'))+
+      row('bx-pen','Penalty for a foul in your own','A foul (hitting a figure before the ball) inside the fouling side\'s own penalty box or shooting area gives the other side a penalty.',`<div class="seg">${[['off','Off'],['box','Box'],['area','Shooting area']].map(([v,n])=>`<button class="chip" type="button" data-xp="${v}" aria-pressed="${X.penalty===v}">${n}</button>`).join('')}</div>`)+
+      row('bx-rod','Keeper: horizontal (on the rod)','The lying keeper on his rod.',ck('bx-rod','keeperRod'))+row('bx-std','Keeper: standing (Keeper out)','The keeper as a standing figure. With only this one, he starts and stays standing.',ck('bx-std','keeperStanding'));}
   $('#bal-bar').innerHTML='<thead><tr><th>Event</th><th>When</th><th>Points</th></tr></thead><tbody>'+BAR_ROWS.map(([k,n,w])=>`<tr><th scope="row">${n}</th><td class="fx">${w}</td><td><input type="number" step="1" min="0" max="100" data-b="${k}" value="${D.bar[k]}"></td></tr>`).join('')+'</tbody>';
 }
 $('#bal-form').addEventListener('submit',e=>{e.preventDefault();const v=$('#bal-pw').value;$('#bal-pw').value='';
   if(v===BAL_PW){balOpen=true;balDraft=cleanBal(BAL);$('#bal-msg').textContent='';renderBal();}else{$('#bal-msg').textContent='Wrong password.';}});
+$('#bal-edit').addEventListener('click',e=>{const b=e.target.closest('[data-xp]');if(!b||!balDraft)return;balDraft.exp.penalty=b.dataset.xp;balDraft=cleanBal(balDraft);renderBal();});
 $('#bal-edit').addEventListener('input',e=>{const el=e.target;if(!balDraft)return;
   if(el.dataset.s){const v=parseFloat(el.value);if(isFinite(v))balDraft.stats[el.dataset.s][el.dataset.f]=v;}
   else if(el.dataset.p){const v=parseFloat(el.value);if(isFinite(v))balDraft.paths[el.dataset.p][el.dataset.k]=v;}
   else if(el.dataset.e){const v=parseFloat(el.value);if(isFinite(v))balDraft.eco[el.dataset.e]=v;}
   else if(el.id==='bal-eco-on'){balDraft.eco.on=el.checked;}
+  else if(el.dataset.x){balDraft.exp[el.dataset.x]=el.checked;if(!balDraft.exp.keeperRod&&!balDraft.exp.keeperStanding){balDraft.exp[el.dataset.x==='keeperRod'?'keeperStanding':'keeperRod']=true;}setTimeout(renderBal,0);}
   else if(el.dataset.b){const v=parseFloat(el.value);if(isFinite(v))balDraft.bar[el.dataset.b]=v;}
   else if(el.dataset.u){const p=el.dataset.u,set=new Set(balDraft.unlock[p]);el.checked?set.add(el.dataset.m):set.delete(el.dataset.m);balDraft.unlock[p]=MOMENT_ORDER.filter(m=>set.has(m));}
   balDraft=cleanBal(balDraft);

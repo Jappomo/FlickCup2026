@@ -50,6 +50,18 @@
         "retextured": "2026-10-22T00:09:27.950Z",
         "adopted": false
       }
+    },
+    "models/card.glb": {
+      "Card_001": {
+        "snapshot": "variations/models_card.glb/Card_001.glb",
+        "node": "SM_Card_001_Standard",
+        "hash": "00e5331e3bdbe36c",
+        "kind": "retextured",
+        "saved": "2026-10-27T19:12:49.596Z",
+        "name": "Standard",
+        "retextured": "2026-10-27T19:12:26.833Z",
+        "adopted": false
+      }
     }
   },
   "sources": {

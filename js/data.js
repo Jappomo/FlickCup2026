@@ -52,6 +52,8 @@ function loadDataFiles(){
 // any other data file: onDataFile('teams',apply) loads data/teams.json at start and Distal can send live edits to the same function
 const DATA_HOOKS={};
 function onDataFile(name,apply){DATA_HOOKS[name]=apply;fetch('data/'+name+'.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(o=>{if(o&&typeof o==='object')apply(o);}).catch(()=>{});}
+// Interface colours and styles, edited in Distal (data/ui.json): CSS variables on :root and extra CSS rules
+let UI_SET=[];onDataFile('ui',o=>{const s=document.documentElement.style;UI_SET.forEach(k=>s.removeProperty(k));UI_SET=[];Object.entries((o&&o.vars)||{}).forEach(([k,v])=>{if(/^--[\w-]+$/.test(k)){s.setProperty(k,String(v));UI_SET.push(k);}});let st=document.getElementById('ui-css');if(!st){st=document.createElement('style');st.id='ui-css';document.head.appendChild(st);}st.textContent=(o&&o.css)||'';});
 const BAL_CODE=JSON.parse(JSON.stringify(BAL_DEF)); // the values written in this file, before data/balance.json
 loadDataFiles();
 // Distal editor link: only when Distal opens the game (?distal=edit or play). Lets the editor reach the game's scene and settings.

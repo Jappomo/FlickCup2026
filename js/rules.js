@@ -19,8 +19,10 @@ function separate(){
   }
   stopAll();
 }
+// Experimental: the keeper types a side may use. Standing only: the keeper starts as a figure on his goal line and stays one.
+function keeperStand(t){const k=keepers[t],b=GKB(t);S.kOut[t]=1;S.kAt[t]=-1;b.off=false;b.r=RF;b.x=dirOf(t)*-(HX-2.6);b.z=0;b.vx=b.vz=0;b.yaw=t===0?0:Math.PI;k.z=k.target=0;}
 function formation(ko){
-  S.kOut=[0,0];S.kAt=[-1,-1];syncGK();
+  S.kOut=[0,0];S.kAt=[-1,-1];if(!EXP().keeperRod){keeperStand(0);keeperStand(1);}syncGK();
   for(let t=0;t<2;t++){const F=formOf(matchSquads[t]);for(let i=0;i<10;i++){
     const b=bodies[t*10+i];let [x,z]=kickSpot(F.pos[i][0],F.pos[i][1]);if(t===1){x=-x;z=-z;}
     b.x=x;b.z=z;b.yaw=t===0?0:Math.PI;}}
@@ -66,9 +68,10 @@ function placeAtSpot(i,fig){
   let id=fig!=null?fig:sel;if(!(id>=0&&bodies[id]&&bodies[id].team===S.active&&!bodies[id].off)){let bd=1e9;for(let k=0;k<10;k++){const b=bodies[S.active*10+k];if(b.off)continue;const D=Math.hypot(b.x-sp.x,b.z-sp.z);if(D<bd){bd=D;id=b.id;}}}
   const b=bodies[id];b.x=sp.x;b.z=sp.z;b.vx=b.vz=0;faceTo(b,ball.x,ball.z);separate();b.x=sp.x;b.z=sp.z;
   S.taker=id;S.phase='attack';const n=S.setupLeft,what=SP_NAME[S.setupKind]||'Set piece';
+  if(S.setupKind==='penalty'){const def=1-S.active;S.phase='defend';S.active=def;S.msg={t:'Penalty',s:`${N(def)}: set your keeper, then press Skip.`,c:def};selPrefer=id;return commit();}
   S.msg={t:what,s:`${n} positional flick${n===1?'':'s'} if you want them, then take it.`,c:S.active};selPrefer=id;sel=id;commit();
 }
-const SP_NAME={corner:'Corner',free:'Free kick',throw:'Throw-in'};
+const SP_NAME={corner:'Corner',free:'Free kick',throw:'Throw-in',intercept:'Interception',penalty:'Penalty'};
 function setPiece(team,kind,px,pz,title,sub){
   ball.x=px;ball.z=pz;stopAll();
   if(SETUP[kind]){
@@ -106,16 +109,16 @@ function scoreGoal(team,own){
   S.score[team]++;S.phase='goal';if(!own)addBar(team,MBAL.bar.goal);
   S.msg={t:'Goal!',s:own?`Own goal. ${N(team)} take it, ${S.score[0]}-${S.score[1]}.`:`${N(team)} score. ${S.score[0]}-${S.score[1]}.`,g:1,c:team};
   commit();const q=S.seq;
-  setTimeout(()=>{if(S.seq!==q||!S.running)return;if(S.golden||S.clock<=0)endHalf();else kickoff(1-team);},2700);
+  setTimeout(()=>{if(S.seq!==q||!S.running)return;if(S.golden||S.clock<=0)endHalf();else kickoff(1-team);},1400);
 }
 function endHalf(){
   S.armed='';S.timeUp=false;S.taker=-1;S.setupKind='';S.setupLeft=0;
   if(S.half===1){
     S.phase='break';S.msg={t:'Half-time',s:`${N(0)} ${S.score[0]} - ${S.score[1]} ${N(1)}`,w:1};commit();const q=S.seq;
-    setTimeout(()=>{if(S.seq!==q||!S.running)return;S.half=2;S.clock=S.halfLen;kickoff(1-S.ko1);},3000);
+    setTimeout(()=>{if(S.seq!==q||!S.running)return;S.half=2;S.clock=S.halfLen;kickoff(1-S.ko1);},1800);
   }else if(S.tg&&!S.golden&&S.score[0]===S.score[1]){
     S.golden=true;S.phase='break';S.msg={t:'Golden goal',s:`${N(0)} ${S.score[0]} - ${S.score[1]} ${N(1)}. Next goal wins.`,w:1};commit();const q=S.seq;
-    setTimeout(()=>{if(S.seq!==q||!S.running)return;S.clock=5999;kickoff(1-S.ko1);},3000);
+    setTimeout(()=>{if(S.seq!==q||!S.running)return;S.clock=5999;kickoff(1-S.ko1);},1800);
   }else{S.golden=false;S.phase='end';setTimeout(()=>ambience.update(),0);S.msg={t:'Full-time',s:`${N(0)} ${S.score[0]} - ${S.score[1]} ${N(1)}`,w:1};commit();}
 }
 // four zones along the pitch, between the goal lines, shooting lines and halfway: 0..3 from the left end
@@ -136,9 +139,40 @@ function outOfPlay(ctx,fallback){
 }
 // the keeper may only play the ball inside his own box: outside it he goes back on the rod and it's a free kick
 function gkFoul(ctx){const t=ctx.gkFoul.t,o=1-t,k=GKB(t);
-  S.kOut[t]=0;keepers[t].z=keepers[t].target=clamp(k.z,-K_RANGE,K_RANGE);k.off=true;k.x=400;k.z=400+t*8;
+  if(!EXP().keeperRod)keeperStand(t);else{S.kOut[t]=0;keepers[t].z=keepers[t].target=clamp(k.z,-K_RANGE,K_RANGE);k.off=true;k.x=400;k.z=400+t*8;}
   const fx=clamp(ctx.gkFoul.x,-HX+2,HX-2),fz=clamp(ctx.gkFoul.z,-HZ+2,HZ-2);
-  return setPiece(o,'free',fx,fz,'Keeper outside his box',`The ${N(t)} keeper played it outside his box. He goes back on the line, free kick to ${N(o)}.`);}
+  return setPiece(o,'free',fx,fz,'Keeper outside his box',`The ${N(t)} keeper played it outside his box. He goes back ${EXP().keeperRod?'on the line':'to his goal line'}, free kick to ${N(o)}.`);}
+/* ---------- experimental rules (MBAL.exp) ---------- */
+// a foul in the fouling side's own penalty box (or its own shooting area): a penalty instead of a free kick
+function penaltyFoul(att,bx,bz){const m=EXP().penalty;if(m==='box')return inBox({x:bx,z:bz},att,BOX.deep,BOX.half);if(m==='area')return inDefArea(att,bx);return false;}
+// Penalty: the figures inside the shooting area stand on the shooting line, spaced, with the middle clear; the ball sits in
+// the middle of the line.
+// The attackers pick a taker (one of the three spots behind the ball), the defenders set the keeper, then the taker shoots.
+function penaltyKick(team,title,sub){
+  const d=dirOf(team),def=1-team,lx=d*SHOOT,gap=9,sp=2*RF+0.5,zmax=HZ-RF-0.6;
+  stopAll();ball.x=lx;ball.z=0;
+  if(S.kOut[def]&&EXP().keeperRod){const k=GKB(def);S.kOut[def]=0;k.off=true;k.x=400;k.z=400+def*8;}
+  if(!EXP().keeperRod)keeperStand(def);
+  keepers[def].z=keepers[def].target=0;
+  if(S.kOut[team]){const k=GKB(team);if(inAttArea(team,k.x)||Math.abs(k.x-lx)<6){k.x=-d*(HX-2.6);k.z=0;}}
+  // only the figures inside that shooting area go to the line (agreed 27 Oct); the rest stay where they are.
+  // The slots go up, down, up, down the line: pairs alternate their order so both sides of the ball get both teams.
+  const ids=[];for(let i=0;i<10;i++){(i%2?[team,def]:[def,team]).forEach(t=>{const b=bodies[t*10+i];if(!b.off&&inAttArea(team,b.x))ids.push(b.id);});}
+  const slots=[];for(let row=0;slots.length<ids.length&&row<4;row++){const x=lx-d*row*(2*RF+1.2);for(let z=gap+RF;z<=zmax&&slots.length<ids.length+2;z+=sp){slots.push([x,z],[x,-z]);}}
+  slots.sort((a,b)=>Math.abs(a[0]-lx)-Math.abs(b[0]-lx)||Math.abs(a[1])-Math.abs(b[1]));
+  ids.forEach((id,n)=>{const b=bodies[id],[x,z]=slots[n];b.x=x;b.z=z;b.vx=b.vz=0;faceTo(b,b.team===team?d*HX:-d*HX,z*0.3);});
+  // anyone else standing in the middle of the line or behind the ball steps aside, so the taker has room
+  for(let i=0;i<20;i++){const b=bodies[i];if(b.off||ids.includes(b.id))continue;if(Math.abs(b.z)<gap&&Math.abs(b.x-lx)<8){b.z=(Math.sign(b.z)||1)*(gap+RF);clampWall(b);}}
+  separate();ball.x=lx;ball.z=0;
+  resetPossession(team);S.setupKind='penalty';S.setupLeft=0;S.taker=-1;S.phase='take';
+  let best=-1,bd=1e9;for(let i=0;i<10;i++){const b=bodies[team*10+i];if(b.off)continue;const D=Math.abs(b.z);if(D<bd){bd=D;best=b.id;}}
+  sel=best;selPrefer=best;S.msg={t:title||'Penalty',s:(sub?sub+' ':'')+'Pick your taker and a spot.',w:1,c:team};commit();}
+// Interception: the side that won the ball may make one positional flick with another figure first (or just play on)
+function interceptPossession(team,fig,title,sub){
+  resetPossession(team);const b=bodies[fig];
+  if(!(b&&b.team===team&&!b.off&&fig!==20)){S.msg={t:title,s:sub,c:team};return commit();}
+  S.setupKind='intercept';S.setupLeft=1;S.taker=fig;selPrefer=fig;
+  S.msg={t:title,s:sub+' One positional flick with another figure if you want it, or play on.',c:team};commit();}
 // a keeper off his rod who ends up outside his box walks back in
 function gkReturn(){for(let t=0;t<2;t++){if(!S.kOut[t])continue;const k=GKB(t);if(k.off||inBox(k,t,BOX.deep,BOX.half))continue;
   const s=boxSide(t);let u=clamp(HX-s*k.x,k.r+0.3,BOX.deep-k.r-0.3);k.x=s*(HX-u);k.z=clamp(k.z,-BOX.half+k.r+0.3,BOX.half-k.r-0.3);k.vx=k.vz=0;S.boxNote=(S.boxNote?S.boxNote+' ':'')+`The ${N(t)} keeper goes back into his box.`;}}
@@ -149,6 +183,7 @@ function resolveAttack(ctx){
     // positional flick: the ball never moves for it
     if(ctx.bmoved||ctx.hit||ctx.goal||ctx.out){ball.x=ctx.bx;ball.z=ctx.bz;ball.vx=ball.vz=0;separate();}
     S.setupLeft--;S.phase='defend';S.active=def;
+    if(S.setupKind==='intercept'){S.setupKind='';S.setupLeft=0;S.taker=-1;S.msg={t:'Positional flick',s:`${N(att)} play on after the block. ${N(def)} may block.`,c:att};return commit();}
     const what=(SP_NAME[S.setupKind]||'set piece').toLowerCase();
     S.msg={t:'Positional flick',s:S.setupLeft>0?`${S.setupLeft} more allowed before the ${what}. ${N(def)} may block.`:`${N(att)} must take the ${what} next. ${N(def)} may block.`,c:att};
     return commit();
@@ -157,6 +192,7 @@ function resolveAttack(ctx){
   if(ctx.first==='opp'||ctx.first==='mate'){
     // foul: ball and figure go back, the other side picks who takes it
     ball.x=ctx.bx;ball.z=ctx.bz;const f=bodies[ctx.fig];f.x=ctx.fx;f.z=ctx.fz;separate();
+    if(penaltyFoul(att,ctx.bx,ctx.bz))return penaltyKick(def,'Penalty',`${N(att)} hit ${ctx.first==='opp'?'an opponent':'a teammate'} before the ball in their own ${EXP().penalty==='box'?'box':'area'}.`);
     return setPiece(def,'free',ctx.bx,ctx.bz,'Foul',`${N(att)} hit ${ctx.first==='opp'?'an opponent':'a teammate'} before the ball. Free kick to ${N(def)}.`);
   }
   if(!ctx.hit)return turnover(def,'Missed',`No contact with the ball. ${N(def)} take over.`);
@@ -167,7 +203,7 @@ function resolveAttack(ctx){
     return scoreGoal(sc,sc!==att);
   }
   if(ctx.out)return outOfPlay(ctx,att);
-  if(ctx.last===def){addBar(def,MBAL.bar.steal);return ctx.lastK?turnover(def,'Saved',`The ${N(def)} keeper keeps it out.`):turnover(def,'Intercepted',`The ball came off a ${N(def).replace(/s$/,'')} figure.`);}
+  if(ctx.last===def){addBar(def,MBAL.bar.steal);return ctx.lastK?turnover(def,'Saved',`The ${N(def)} keeper keeps it out.`):(EXP().interceptFlick?interceptPossession(def,ctx.lastId,'Intercepted',`The ball came off a ${N(def).replace(/s$/,'')} figure.`):turnover(def,'Intercepted',`The ball came off a ${N(def).replace(/s$/,'')} figure.`));}
   S.flicks++;addBar(att,MBAL.bar.keep+(S.flicks>=3?MBAL.bar.chain:0));
   if(ctx.pass){S.lastFig=-1;S.lastFigCount=0;} // a pass to a teammate resets the count
   else if(S.lastFig===ctx.fig)S.lastFigCount++;else{S.lastFig=ctx.fig;S.lastFigCount=1;}
@@ -201,6 +237,7 @@ function eligible(id){
   if(b.team!==S.active)return false;
   if(S.phase==='take')return true;
   if(S.phase==='attack'&&S.taker>=0&&S.setupLeft<=0&&id!==S.taker)return false;
+  if(S.phase==='defend'&&S.setupKind==='penalty')return id===21+S.active&&!!S.kOut[S.active];
   if(S.phase==='defend'&&S.ban&&S.ban.n===S.defN&&id===S.ban.id)return false;
   if(S.phase==='attack'&&S.lastFig===id&&S.lastFigCount>=3)return false;
   return S.phase==='attack'||S.phase==='defend';
@@ -227,7 +264,8 @@ function controls(team){if(S.mode==='local')return true;if(S.mode==='practice'||
 // He can go back from your next turn on; doing it while you don't have the ball costs your block.
 function gkState(team){
   if(!(S.running&&!S.paused&&!sim.running&&S.active===team&&(S.phase==='attack'||S.phase==='defend')))return null;
-  if(!S.kOut[team]){if(S.phase==='attack'&&S.taker<0&&!S.setupKind&&inBox(ball,team,BOX.deep,BOX.half))return{out:true,label:'Keeper out'};return null;}
+  if(!S.kOut[team]){if(EXP().keeperStanding&&S.phase==='attack'&&S.taker<0&&!S.setupKind&&inBox(ball,team,BOX.deep,BOX.half))return{out:true,label:'Keeper out'};return null;}
+  if(!EXP().keeperRod)return null;
   if(S.possN===S.kAt[team])return null;
   return S.phase==='attack'?{out:false,label:'Keeper back'}:{out:false,cost:true,label:'Keeper back (skip block)'};
 }
@@ -277,7 +315,7 @@ function startFlick(id,dx,dz,power,kind,soft){
   b.vx=ux*v;b.vz=uz*v;b.spin=(Math.random()-0.5)*(4+p*14);rumble(clamp(p*0.6,0.15,0.7),90);
   const special=(S.armed&&S.armedTeam===b.team)?S.armed:'';
   sim.ctx={glide:Math.abs(b.x)<SHOOT?clamp(sv(b,'b2b'),0.3,3):1,kind,team:b.team,fig:id,bx:ball.x,bz:ball.z,fdx:ux,fdz:uz,first:null,hit:false,last:null,defTouch:false,out:null,goal:null,done:false,
-    fromArea:inAttArea(b.team,ball.x),setup:kind==='attack'&&S.taker>=0&&id!==S.taker&&S.setupLeft>0,taking:kind==='attack'&&S.taker===id,fx:b.x,fz:b.z,pass:false,lastId:null,lastX:null,soft:!!soft,special,curl:special==='finesse'&&kind==='attack'?curlSign:0,recv:-1};
+    fromArea:inAttArea(b.team,ball.x)||(kind==='attack'&&S.setupKind==='penalty'&&S.taker===id),setup:kind==='attack'&&S.taker>=0&&id!==S.taker&&S.setupLeft>0,taking:kind==='attack'&&S.taker===id,fx:b.x,fz:b.z,pass:false,lastId:null,lastX:null,soft:!!soft,special,curl:special==='finesse'&&kind==='attack'?curlSign:0,recv:-1};
   if(special)S.armed='';
   sim.running=true;sim.acc=0;sim.t=0;sim.still=0;sim.lastSend=0;
   clearAim();sfx('flick',v);updateHud();
@@ -398,7 +436,7 @@ function onRemoteState(d){
   S.seq=int(d.seq,0,1e9,S.seq);S.running=!!d.running;S.score=[int(d.score&&d.score[0],0,99,0),int(d.score&&d.score[1],0,99,0)];
   S.half=int(d.half,1,2,1);S.halfLen=int(d.halfLen,60,900,300);S.clock=clamp(+d.clock||0,0,900);S.phase=d.phase;
   S.poss=int(d.poss,0,1,0);S.active=int(d.active,0,1,0);S.flicks=int(d.flicks,0,999,0);S.lastFig=int(d.lastFig,-1,22,-1);S.lastFigCount=int(d.lastFigCount,0,9,0);S.ko1=int(d.ko1,0,1,0);
-  S.setupLeft=int(d.setupLeft,0,3,0);S.setupKind=SETUP[d.setupKind]?d.setupKind:'';
+  S.setupLeft=int(d.setupLeft,0,3,0);S.setupKind=SETUP[d.setupKind]||d.setupKind==='intercept'||d.setupKind==='penalty'?d.setupKind:'';
   S.bar=[int(d.bar&&d.bar[0],0,BAR_MAX,0),int(d.bar&&d.bar[1],0,BAR_MAX,0)];
   S.ballV=typeof d.ballV==='string'?d.ballV.replace(/[^0-9]/g,'').slice(0,6):'';showBall();
   S.lookV=typeof d.lookV==='string'?lookStr(parseLookStr(d.lookV.slice(0,40))):'';showLook();

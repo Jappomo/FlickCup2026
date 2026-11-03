@@ -36,6 +36,7 @@ function cpuAttack(team){
   return{fig:best.id,dx:best.ax*c-best.az*s,dz:best.ax*s+best.az*c,p};
 }
 function cpuDefend(team){
+  if(S.setupKind==='penalty')return{fig:null,kz:clamp((Math.random()*2-1)*K_RANGE*0.7,-K_RANGE,K_RANGE)};
   const P=cpuStyle(team),gx=-dirOf(team)*HX;let ux=gx-ball.x,uz=-ball.z;const L=Math.hypot(ux,uz)||1;ux/=L;uz/=L;
   const tx=ball.x+ux*P.press,tz=ball.z+uz*P.press,kz=clamp(ball.z*0.35,-K_RANGE,K_RANGE);
   // sit back: some playstyles let the ball run while it is in their attacking half

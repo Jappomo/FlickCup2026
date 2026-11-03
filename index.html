@@ -85,7 +85,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #net-banner{position:fixed;z-index:5;top:calc(env(safe-area-inset-top,0px) + 12px);right:max(16px,env(safe-area-inset-right,0px));background:var(--warn);color:#1a0904;font-weight:700;padding:6px 14px;font-size:13px;clip-path:polygon(4% 0,100% 0,96% 100%,0 100%)}
 
 /* ---------- action strip ---------- */
-.ctx{position:fixed;z-index:5;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 74px);pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:2px;max-width:calc(100% - 32px)}
+.ctx{position:fixed;z-index:5;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 12px);pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:2px;max-width:calc(100% - 32px)}
 .ctx-t{font-family:var(--f-display);font-style:italic;font-weight:900;font-size:22px;letter-spacing:.04em;text-transform:uppercase;background:var(--glass);border-left:4px solid var(--accent);padding:3px 18px 3px 12px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;clip-path:polygon(0 0,100% 0,97% 100%,0 100%)}
 .ctx-s{font-size:13px;color:var(--text);background:rgba(4,10,24,.72);padding:3px 12px;text-align:center;max-width:100%}
 .ctx-s:empty{display:none}
@@ -129,14 +129,15 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .curl button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 
 /* ---------- banner toast ---------- */
-#toast{position:fixed;z-index:6;left:0;right:0;top:36%;pointer-events:none;display:flex;justify-content:center;opacity:0}
-#toast .band{--tc:var(--accent2);width:min(760px,calc(96*var(--vw)));background:linear-gradient(90deg,transparent,var(--tc) 14%,var(--tc) 86%,transparent);transform:skewX(-14deg);padding:10px 40px 12px;text-align:center}
+/* match banners sit at the top, under the turn prompt, so the pitch stays clear and play can go on while they show */
+#toast{position:fixed;z-index:6;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 74px);pointer-events:none;display:flex;justify-content:center;opacity:0}
+#toast .band{--tc:var(--accent2);width:min(620px,calc(70*var(--vw)));background:linear-gradient(90deg,transparent,var(--tc) 14%,var(--tc) 86%,transparent);transform:skewX(-14deg);padding:5px 34px 7px;text-align:center}
 #toast .band > *{transform:skewX(14deg)}
-#toast .tt{font-family:var(--f-display);font-style:italic;font-weight:900;font-size:clamp(40px,calc(9*var(--vw)),84px);line-height:.9;text-transform:uppercase;letter-spacing:.02em;text-shadow:0 3px 0 rgba(0,0,0,.35)}
-#toast .ts{margin-top:6px;font-weight:600;font-size:15px}
+#toast .tt{font-family:var(--f-display);font-style:italic;font-weight:900;font-size:40px;line-height:.95;text-transform:uppercase;letter-spacing:.02em;text-shadow:0 3px 0 rgba(0,0,0,.35)}
+#toast .ts{margin-top:3px;font-weight:600;font-size:14px}
 #toast.on{animation:sweep 1.9s cubic-bezier(.2,.8,.2,1) forwards}
 #toast.long.on{animation-duration:2.5s}
-@keyframes sweep{0%{opacity:0;transform:translateX(-12%)}12%{opacity:1;transform:translateX(0)}82%{opacity:1;transform:translateX(0)}100%{opacity:0;transform:translateX(10%)}}
+@keyframes sweep{0%{opacity:0;transform:translateY(-14px)}10%{opacity:1;transform:translateY(0)}84%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-8px)}}
 
 /* ---------- hub ---------- */
 .hub{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;background:
@@ -295,6 +296,13 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #prac .dbtn{align-items:center;text-align:center;justify-content:center;gap:3px;padding:7px 2px 6px;min-height:54px}
 #prac .dbtn svg{width:22px;height:22px}
 #prac .dbtn b{font-size:11px;letter-spacing:.06em;line-height:1;white-space:nowrap}
+#prac .tgrid{grid-template-columns:repeat(5,minmax(0,1fr))}
+#prac .tgrid .dbtn{min-height:42px;padding:6px 1px 5px}
+#prac .tgrid .dbtn b{font-size:10px;letter-spacing:.02em}
+#prac .tgrid .dbtn small{font-size:10px;font-weight:700;font-variant-numeric:tabular-nums}
+.tlab{display:flex;justify-content:space-between;align-items:baseline;margin-top:4px;font-family:var(--f-display);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:12px}
+.tlab small{font-family:inherit;font-weight:600;font-size:10px;color:var(--muted);letter-spacing:.04em}
+.tinfo{margin:0;font-size:11.5px;line-height:1.35;color:var(--muted)}
 .dtools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;align-items:stretch}
 .dtools .tbtn{justify-content:center}
 .dtools select{grid-column:1/-1;order:5;min-height:32px}
@@ -870,6 +878,21 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 .hs-op img,.hs-noem{width:24px;height:24px;object-fit:contain;display:inline-block}
 .hs-noem{border:1px dashed var(--line)}
 .hs-sc{font-family:var(--f-display);font-weight:900;font-size:17px}.hs-sc.w{color:var(--accent2)}.hs-sc.l{color:var(--warn)}
+/* challenges (My Club > Challenges, js/challenges.js) */
+.ch-sum{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin:12px 0}
+.ch-sum b{font-family:var(--f-display);font-weight:900;font-size:30px;line-height:1}.ch-sum span{color:var(--muted)}
+.ch-bar{height:6px;background:rgba(255,255,255,.1);overflow:hidden}.ch-bar.tot{height:10px}
+.ch-bar i{display:block;height:100%;background:var(--gold)}
+.ch-groups{margin-bottom:10px;flex-wrap:wrap}.ch-groups small{opacity:.7;margin-left:4px}
+.ch-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ch-row{display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:start;background:var(--glass);border:1px solid var(--line);padding:10px 12px}
+.ch-ic{width:40px;height:40px;display:grid;place-items:center;font-style:normal;background:rgba(0,0,0,.25);color:var(--accent2)}
+.ch-ic svg{width:26px;height:26px}.ch-row:not(.done) .ch-ic svg{filter:grayscale(.7);opacity:.75}
+.ch-t{display:flex;flex-direction:column;gap:4px;min-width:0}.ch-t>span{font-size:13px;color:var(--muted)}
+.ch-t small{font-size:12px}.ch-n{color:var(--muted)}.ch-when{color:var(--accent2)}.ch-rw{color:var(--gold)}
+.ch-new{font-style:normal;font-size:11px;background:var(--orange);color:#200;padding:1px 6px;margin-left:6px;vertical-align:middle}
+.ch-row.done{border-color:rgba(79,209,165,.45)}
+.price.chaltag svg{width:14px;height:14px}
 /* album */
 .al-sub .chip{display:inline-flex;align-items:center;gap:6px;position:relative;font-size:14px;padding:7px 12px}
 .al-sub small{opacity:.7;font-size:12px}
@@ -1024,6 +1047,9 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
   <div class="sh"><div class="pt"><small>Practice</small><b id="prac-name">3v3</b></div><span class="dstat" id="prac-stat"></span><button class="x ib" id="prac-min" aria-expanded="true" aria-label="Hide drills" title="Hide drills"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
   <div class="body">
     <div class="dgrid" id="drills"><button class="dbtn" data-drill="3v3" title="Small-sided game vs CPU" aria-label="3v3: Small-sided game vs CPU"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="7" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="19" cy="7" r="2"/><circle cx="19" cy="17" r="2"/><circle cx="15" cy="12" r="2"/></svg><b>3v3</b></button><button class="dbtn" data-drill="kickoff" title="Keep it from the kick-off" aria-label="Kick-off: Keep it from the kick-off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M12 4v16"/></svg><b>Kick-off</b></button><button class="dbtn" data-drill="free" title="Click where the foul was" aria-label="Foul kick: Click where the foul was"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="4.5" height="10" rx="2"/><rect x="9.75" y="9" width="4.5" height="10" rx="2"/><rect x="16.5" y="9" width="4.5" height="10" rx="2"/><circle cx="12" cy="4" r="1.6" fill="currentColor"/></svg><b>Foul kick</b></button><button class="dbtn" data-drill="corner" title="Click a corner flag" aria-label="Corner: Click a corner flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21V3l9 3-9 4"/><path d="M3 21h18"/></svg><b>Corner</b></button><button class="dbtn" data-drill="throw" title="Click a touchline" aria-label="Throw-in: Click a touchline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M12 18V5"/><path d="M7.5 9.5L12 5l4.5 4.5"/></svg><b>Throw-in</b></button><button class="dbtn" data-drill="rondo" title="Click the ball spot, 5 v 2" aria-label="Rondo: Click the ball spot, 5 v 2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke-dasharray="2.5 3.2"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg><b>Rondo</b></button><button class="dbtn" data-drill="shoot" title="Place the ball, one shot vs a defender and the keeper" aria-label="Shooting: Place the ball, one shot vs a defender and the keeper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18V7h18v11"/><path d="M3 11h18M9 7v11M15 7v11" stroke-width="1" opacity=".6"/><circle cx="12" cy="20" r="1.8" fill="currentColor"/></svg><b>Shooting</b></button></div>
+    <div class="tlab"><span>Training</span><small>10 tries · best score</small></div>
+    <div class="dgrid tgrid" id="tdrills"></div>
+    <p class="tinfo" id="prac-info" hidden></p>
     <div class="dtools">
       <button class="tbtn" id="prac-reset" title="Reset the drill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg><b>Reset</b></button>
       <button class="tbtn" id="prac-spot" title="Pick a new spot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.2"/></svg><b>Spot</b></button>
@@ -1164,7 +1190,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
       <p id="on-note" hidden></p>
     </div>
     <div class="panel" data-panel="squad" hidden>
-      <nav class="subnav club-sub" id="club-sub" aria-label="My Club sections"><span class="glyph sg" aria-hidden="true">LT</span><button class="chip" data-club="tactics" aria-pressed="true">Tactics</button><button class="chip" data-club="crest" aria-pressed="false">Crest</button><button class="chip" data-club="kit" aria-pressed="false">Kit look</button><button class="chip" data-club="history" aria-pressed="false">History</button><span class="glyph sg" aria-hidden="true">RT</span></nav>
+      <nav class="subnav club-sub" id="club-sub" aria-label="My Club sections"><span class="glyph sg" aria-hidden="true">LT</span><button class="chip" data-club="tactics" aria-pressed="true">Tactics</button><button class="chip" data-club="crest" aria-pressed="false">Crest</button><button class="chip" data-club="kit" aria-pressed="false">Kit look</button><button class="chip" data-club="history" aria-pressed="false">History</button><button class="chip" data-club="chal" aria-pressed="false">Challenges</button><span class="glyph sg" aria-hidden="true">RT</span></nav>
       <div id="club-tactics" class="tac">
       <div class="tac-l">
       <div class="cta sq-head" style="flex-direction:column;align-items:center;gap:6px">
@@ -1238,6 +1264,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
       </div>
       <div class="club-crest" id="club-crest" hidden></div>
       <div class="club-hist" id="club-history" hidden></div>
+      <div class="club-hist" id="club-chal" hidden></div>
     </div>
 
     <div class="panel" data-panel="custom" hidden>
@@ -1349,6 +1376,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
         <div class="cardbox" id="bal-pastebox" hidden style="margin-bottom:12px"><p class="h">Paste JSON</p><textarea id="bal-json" rows="6" spellcheck="false" style="width:100%;box-sizing:border-box;background:rgba(0,0,0,.35);color:inherit;border:1px solid rgba(255,255,255,.25);font:12px/1.4 ui-monospace,monospace;padding:8px"></textarea><div class="seg" style="margin-top:8px"><button class="chip" id="bal-apply">Apply</button><button class="chip" id="bal-cancel">Cancel</button></div></div>
         <div class="cardbox"><p class="h">Player stats</p><div class="bal-scroll"><table class="bal" id="bal-stats"></table></div></div>
         <div class="cardbox" style="margin-top:12px"><p class="h">Squad paths</p><div class="bal-scroll"><table class="bal" id="bal-paths"></table></div></div>
+        <div class="cardbox" style="margin-top:12px"><p class="h">Experimental rules</p><p class="note" style="margin:0 0 6px">Off by default. Also in Distal &gt; Balancing &gt; Experimental.</p><div id="bal-exp"></div></div>
         <div class="cardbox" style="margin-top:12px"><div class="cta" style="justify-content:space-between;margin-bottom:8px"><p class="h" style="margin:0">Economy (Hobby)</p><label class="srow" style="border:0;padding:0;gap:10px"><span class="sl">On</span><span class="tog"><input type="checkbox" id="bal-eco-on"><i></i></span></label></div><div class="bal-scroll"><table class="bal" id="bal-eco"></table></div><div class="cta" style="margin-top:8px;gap:8px;align-items:center"><span class="note">Your wallet</span><input type="number" id="bal-wallet" min="0" step="10" style="width:110px"><button class="chip" id="bal-wallet-set" type="button">Set</button><button class="chip" id="bal-owned-reset" type="button">Lock items again</button></div></div>
         <div class="cardbox" style="margin-top:12px"><p class="h">Player of the Match Moment bar</p><div class="bal-scroll"><table class="bal" id="bal-bar"></table></div><p class="note" style="margin-top:8px">Points added to the bar for each event. The bar is full at 100. Example: with Kept the ball at 6, about 17 kept flicks fill it.</p></div>
       </div>
@@ -1431,25 +1459,26 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <!-- game code: classic scripts, loaded in this order (they share one scope) -->
 <!-- ?v= on every local file: bump it with each release, so a browser never mixes cached old files with new ones -->
-<script src="js/core.js?v=20261024h"></script>
+<script src="js/core.js?v=20261027a"></script>
 <script src="js/shaders.js?v=20261024h"></script>
 <script src="js/audio.js?v=20261024h"></script>
 <script src="js/physics.js?v=20261024h"></script>
-<script src="js/rules.js?v=20261024h"></script>
+<script src="js/rules.js?v=20261027a"></script>
 <script src="js/scene.js?v=20261024h"></script>
 <script src="js/models.js?v=20261024h"></script>
 <script src="js/camera.js?v=20261024h"></script>
 <script src="js/input.js?v=20261024h"></script>
-<script src="js/cpu.js?v=20261024h"></script>
+<script src="js/cpu.js?v=20261027a"></script>
 <script src="js/net.js?v=20261024h"></script>
-<script src="js/hud.js?v=20261024h"></script>
+<script src="js/hud.js?v=20261027a"></script>
 <script src="js/tournament.js?v=20261024h"></script>
-<script src="js/menus.js?v=20261024h"></script>
-<script src="js/customize.js?v=20261024h"></script>
+<script src="js/menus.js?v=20261027a"></script>
+<script src="js/customize.js?v=20261028b"></script>
 <script src="js/settings.js?v=20261024h"></script>
 <script src="js/controls.js?v=20261024h"></script>
 <script src="js/loop.js?v=20261024h"></script>
 <script src="js/practice.js?v=20261024h"></script>
+<script src="js/training.js?v=20261028a"></script>
 <script src="js/data.js?v=20261024h"></script>
 <script src="js/clubs.js?v=20261024h"></script>
 <script src="js/kickoff.js?v=20261024h"></script>
@@ -1459,6 +1488,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="js/kitpattern.js?v=20261024h"></script>
 <script src="js/vfx.js?v=20261024h"></script>
 <script src="js/club.js?v=20261024h"></script>
+<script src="js/challenges.js?v=20261028b"></script>
 <script src="js/ui.js?v=20261024h"></script>
 <script src="js/uiscale.js?v=20261024h"></script>
 <script src="js/start.js?v=20261024h"></script>

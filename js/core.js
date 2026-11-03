@@ -122,8 +122,11 @@ const BAL_DEF={
   paths:{att:{sht:1,pin:0,mae:0,b2b:0,trk:0},mid:{sht:0,pin:0,mae:0.5,b2b:0.5,trk:0},def:{sht:0,pin:1,mae:0,b2b:0,trk:0}},
   unlock:{att:['finesse','bicycle'],mid:['bicycle','maradona','thread'],def:['thread','moon']},
   bar:{keep:6,chain:4,area:10,steal:10,goal:20,moon:8},
-  eco:{on:true,start:100,tutorial:400,lose:40,draw:60,win:100,field:100,table:250,trinket:50,banner:50,ball:200}
+  eco:{on:true,start:100,tutorial:400,lose:40,draw:60,win:100,field:100,table:250,trinket:50,banner:50,ball:200},
+  // experimental rules (Distal > Balancing > Experimental, or the game's Balancing sheet), all off by default
+  exp:{interceptFlick:false,penalty:'off',keeperRod:true,keeperStanding:true}
 };
+const EXP_PENALTY=['off','box','area']; // penalty for a foul: off, inside the fouling side's own penalty box, or its own shooting area
 const ECO_ROWS=[['start','Starting Hobby','New players begin with'],['tutorial','Tutorial reward','Once, for finishing the tutorial'],['lose','Solo: loss','Kick-off against the CPU'],['draw','Solo: draw','Kick-off against the CPU'],['win','Solo: win','Kick-off against the CPU'],['field','Field price','Each field'],['table','Table price','Each table'],['trinket','Trinket price','Each corner trinket'],['banner','Banner price','Each border banner'],['ball','Ball price','Each ball']];
 // Moment bar: points added on each event (the bar is full at 100)
 const BAR_ROWS=[['keep','Kept the ball','Each flick that keeps possession'],['chain','Third flick bonus','Extra on the 3rd and later flicks of a turn'],['area','Shot from the area','A flick from your shooting area that hits the ball'],['steal','Won the ball','Ball comes off your figure or keeper'],['goal','Goal','Scoring (not own goals)'],['moon','To the Moon clear','A To the Moon! clearance']];
@@ -134,11 +137,13 @@ function cleanBal(o){
   PATH_KEYS.forEach(p=>{const x=o.paths&&o.paths[p];if(x)STAT_KEYS.forEach(k=>{d.paths[p][k]=num(x[k],-3,3,d.paths[p][k]);});
     const u=o.unlock&&o.unlock[p];if(Array.isArray(u))d.unlock[p]=MOMENT_ORDER.filter(m=>u.includes(m));});
   BAR_ROWS.forEach(([k])=>{if(o.bar&&o.bar[k]!=null)d.bar[k]=num(o.bar[k],0,100,d.bar[k]);});
+  if(o.exp&&typeof o.exp==='object'){['interceptFlick','keeperRod','keeperStanding'].forEach(k=>{if(typeof o.exp[k]==='boolean')d.exp[k]=o.exp[k];});if(EXP_PENALTY.includes(o.exp.penalty))d.exp.penalty=o.exp.penalty;if(!d.exp.keeperRod&&!d.exp.keeperStanding)d.exp.keeperRod=true;}
   if(o.eco){if(typeof o.eco.on==='boolean')d.eco.on=o.eco.on;ECO_ROWS.forEach(([k])=>{if(o.eco[k]!=null)d.eco[k]=Math.round(num(o.eco[k],0,100000,d.eco[k]));});}
   return d;
 }
 let BAL=cleanBal((()=>{try{return JSON.parse(store.get('baize.balance')||'null');}catch(e){return null;}})());
 let MBAL=BAL; // the values a running match uses (online: the host's)
+const EXP=()=>(MBAL&&MBAL.exp)||BAL_DEF.exp; // experimental rules of the running match
 const statVal=(k,stars,bal)=>{const x=(bal||MBAL).stats[k];return x.base+x.step*stars;};
 function pathBonus(team,k){const q=matchSquads[team],p=q&&MBAL.paths[q.path];return p?p[k]||0:0;}
 function sv(b,k){return statVal(k,b.st[STAT_KEYS.indexOf(k)]+pathBonus(b.team,k));}
