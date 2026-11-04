@@ -1,0 +1,152 @@
+{
+  "vars": {},
+  "css": "",
+  "layout": [
+    {
+      "sel": "#hub",
+      "w": 0,
+      "h": 0,
+      "minw": 0
+    },
+    {
+      "sel": "#ball-grid",
+      "w": 359
+    }
+  ],
+  "layoutCss": "#ball-grid{width:359px!important}",
+  "nav": {
+    "groups": [
+      {
+        "sel": "#bal-bar > tbody > tr > td:nth-of-type(2)",
+        "type": "col"
+      },
+      {
+        "sel": "#bal-eco > tbody > tr > td:nth-of-type(2)",
+        "type": "col"
+      },
+      {
+        "sel": "#bal-exp > div.srow > span.tog:nth-of-type(1)",
+        "type": "col"
+      },
+      {
+        "sel": "#bal-paths > tbody > tr > td.ck:nth-of-type(10)",
+        "type": "col"
+      },
+      {
+        "sel": "#bal-paths > tbody > tr > td.ck:nth-of-type(9)",
+        "type": "col"
+      },
+      {
+        "sel": "#bal-paths > tbody > tr > td.ck:nth-of-type(8)",
+        "type": "col"
+      },
+      {
+        "sel": "#bal-paths > tbody > tr > td.ck:nth-of-type(7)",
+        "type": "col"
+      },
+      {
+        "sel": "#bal-paths > tbody > tr > td.ck:nth-of-type(6)",
+        "type": "col"
+      },
+      {
+        "sel": "#bal-paths > tbody > tr > td:nth-of-type(5)",
+        "type": "col"
+      },
+      {
+        "sel": "#bal-paths > tbody > tr > td:nth-of-type(4)",
+        "type": "grid"
+      },
+      {
+        "sel": "#bal-paths > tbody > tr > td:nth-of-type(3)",
+        "type": "grid"
+      },
+      {
+        "sel": "#bal-paths > tbody > tr > td:nth-of-type(2)",
+        "type": "grid"
+      },
+      {
+        "sel": "#bal-paths > tbody > tr > td:nth-of-type(1)",
+        "type": "grid"
+      },
+      {
+        "sel": ".seg,.kitrow,.field,.cta,.kopbtns,.starbtns,.kitview,.pc-head,.bal-pw",
+        "type": "row"
+      },
+      {
+        "sel": "#bal-stats > tbody > tr > td:nth-of-type(3)",
+        "type": "grid"
+      },
+      {
+        "sel": "#bal-stats > tbody > tr > td:nth-of-type(2)",
+        "type": "grid"
+      },
+      {
+        "sel": "#tracks",
+        "type": "map"
+      },
+      {
+        "sel": ".kitpal,.kp-pats,.ball-grid,.look-row",
+        "type": "grid"
+      },
+      {
+        "sel": ".al-page",
+        "type": "map",
+        "follow": 1
+      },
+      {
+        "sel": "#hub > main.hub-main > div[data-panel=\"settings\"] > div.set-grid.sub-one > div.col > div[data-sub=\"ctl\"] > div.srow > span.tog:nth-of-type(1)",
+        "type": "col"
+      },
+      {
+        "sel": "#hub > main.hub-main > div[data-panel=\"settings\"] > div.set-grid.sub-one > div.col > div[data-sub=\"ctl\"] > div.srow > div.rng:nth-of-type(1)",
+        "type": "col"
+      },
+      {
+        "sel": "#hub > main.hub-main > div[data-panel=\"settings\"] > div.set-grid.sub-one > div.col > div[data-sub=\"gfx\"] > div.srow > span.tog:nth-of-type(1)",
+        "type": "col"
+      },
+      {
+        "sel": "#hub > main.hub-main > div[data-panel=\"settings\"] > div.set-grid.sub-one > div.col > div[data-sub=\"gfx\"] > div.srow > div.rng:nth-of-type(1)",
+        "type": "col"
+      },
+      {
+        "sel": "#hub > main.hub-main > div[data-panel=\"settings\"] > div.set-grid.sub-one > div.col > div[data-sub=\"audio\"] > div.srow > span.tog:nth-of-type(1)",
+        "type": "col"
+      },
+      {
+        "sel": "#hub > main.hub-main > div[data-panel=\"settings\"] > div.set-grid.sub-one > div.col > div[data-sub=\"audio\"] > div.srow > div.rng:nth-of-type(1)",
+        "type": "col"
+      },
+      {
+        "sel": "div.cr-pal",
+        "type": "row",
+        "wrap": 1
+      },
+      {
+        "sel": "#club-crest > div.cr-wrap > div.cr-right > div.mc-sec > div.cr-row:nth-of-type(1)",
+        "type": "row"
+      }
+    ],
+    "links": [
+      {
+        "sel": "#club-home > button.mc-card.mc-big:nth-of-type(2)",
+        "l": "#club-home > button.mc-card.mc-big:nth-of-type(3)"
+      },
+      {
+        "sel": "#cr-kitc > button.sw:nth-of-type(1)",
+        "u": "none",
+        "d": "#club-crest > div.cr-wrap > div.cr-right > div.mc-sec > div.cr-row:nth-of-type(1)"
+      },
+      {
+        "sel": "#cr-rand",
+        "u": "#club-crest > div.cr-wrap > div.cr-right > div.mc-sec > div.cr-row:nth-of-type(1)",
+        "d": "#club-crest > div.cr-wrap > div.cr-right > div.mc-sec > div.cr-row:nth-of-type(1)"
+      }
+    ],
+    "def": {
+      "squad": [
+        "#cr-name"
+      ]
+    }
+  }
+}

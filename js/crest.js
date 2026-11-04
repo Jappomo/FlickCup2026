@@ -92,23 +92,27 @@ function renderCrest(){
   const row=(g,k,none)=>(none?tile(g,k,0,'None'):'')+CREST_PARTS[g].map(e=>tile(g,k,e.n,e.name)).join('');
   const nc=CREST.colors.length,codes=[...Array(CREST_N()).keys()];
   el.innerHTML=`<div class="cr-wrap">
-    <div class="cr-left"><div class="cr-big"><img src="${crestUrl(c,320)}" alt="Your crest"></div>
-      <h3>${esc(q.name||KITS[kitSel[crestTeam]].name)}</h3>
-      <div class="seg" id="cr-team"><button class="chip" type="button" data-team="0" aria-pressed="${crestTeam===0}">Home squad</button><button class="chip" type="button" data-team="1" aria-pressed="${crestTeam===1}">Away squad</button></div>
-      <div class="seg"><button class="chip" type="button" id="cr-rand">Surprise me</button><button class="chip" type="button" id="cr-kit">Kit colours</button></div>
-      <p class="note">Your crest shows on the Kick-off screen and in your club history, and online your opponent sees it too.</p></div>
+    <input class="mc-name cr-name" id="cr-name" maxlength="16" autocomplete="off" spellcheck="false" aria-label="Club name" placeholder="${esc(KITS[kitSel[crestTeam]].name)}" value="${esc(q.name||'')}">
+    <div class="cr-left">
+      <div class="cr-big"><img src="${crestUrl(c,320)}" alt="Your crest"></div>
+      <div class="cr-col"><p class="h">Preferred color</p><div class="kitrow" id="cr-kitc" role="group" aria-label="Preferred color">${KITS.map((k,i)=>`<button class="sw" type="button" data-kit="${i}" title="${esc(k.name)}" aria-label="Preferred color ${esc(k.name)}" aria-pressed="${kitSel[crestTeam]===i}"${crestKitOff(i)?' disabled':''} style="background:${k.ui}"><i style="background:#${k.shorts.toString(16).padStart(6,'0')}"></i></button>`).join('')}</div></div>
+      <div class="seg cr-acts"><button class="chip" type="button" id="cr-rand">Surprise me</button><button class="chip" type="button" id="cr-kit">Kit colours</button></div></div>
     <div class="cr-right">
-      <div class="cardbox"><p class="h">Shield</p><div class="cr-row">${row('Shield','s',false)}</div></div>
-      <div class="cardbox"><p class="h">Pattern</p><div class="cr-row">${row('Pattern','p',true)}</div></div>
-      <div class="cardbox"><p class="h">Charge</p><div class="cr-row">${row('Charge','c',true)}</div></div>
-      <div class="cardbox"><div class="cr-slots seg">${CREST_SLOTS.map(([k,l])=>`<button class="chip" type="button" data-slot="${k}" aria-pressed="${crestSlot===k}"><i style="background:${crestSwatch(c[k])}"></i>${l}</button>`).join('')}</div>
-        <div class="cr-pal">${codes.map(i=>`<button class="cr-sw${c[crestSlot]===i?' on':''}${i>=nc?' grad':''}" type="button" data-col="${i}" title="${esc(crestCodeName(i))}" aria-label="${esc(crestCodeName(i))}" aria-pressed="${c[crestSlot]===i}" style="background:${crestSwatch(i)}"></button>`).join('')}</div></div>
+      <div class="mc-sec"><p class="h">Shield</p><div class="cr-row">${row('Shield','s',false)}</div></div>
+      <div class="mc-sec"><p class="h">Pattern</p><div class="cr-row">${row('Pattern','p',true)}</div></div>
+      <div class="mc-sec"><p class="h">Charge</p><div class="cr-row">${row('Charge','c',true)}</div></div>
+      <div class="mc-sec"><p class="h">Colours</p><div class="cr-cols"><div class="cr-slots seg">${CREST_SLOTS.map(([k,l])=>`<button class="chip" type="button" data-slot="${k}" aria-pressed="${crestSlot===k}"><i style="background:${crestSwatch(c[k])}"></i>${l}</button>`).join('')}</div>
+        <div class="cr-pal">${codes.map(i=>`<button class="cr-sw${c[crestSlot]===i?' on':''}${i>=nc?' grad':''}" type="button" data-col="${i}" title="${esc(crestCodeName(i))}" aria-label="${esc(crestCodeName(i))}" aria-pressed="${c[crestSlot]===i}" style="background:${crestSwatch(i)}"></button>`).join('')}</div></div></div>
     </div></div>`;
   el.querySelectorAll('.cr-t').forEach(b=>b.onclick=()=>{const card=crestLocked(b.dataset.g,+b.dataset.v);
     if(card){const C=colOf(card.collection);hobbyToast(`Needs the Album card "${card.title}" (${C.name} #${card.no}).`);sfx('clack',10);return;}crestSet(b.dataset.k,+b.dataset.v);});
   el.querySelectorAll('[data-slot]').forEach(b=>b.onclick=()=>{crestSlot=b.dataset.slot;renderCrest();});
   el.querySelectorAll('[data-col]').forEach(b=>b.onclick=()=>crestSet(crestSlot,+b.dataset.col));
   el.querySelectorAll('#cr-team [data-team]').forEach(b=>b.onclick=()=>{crestTeam=+b.dataset.team;renderCrest();});
+  // the club's name and preferred colour (moved here from Tactics, 3 Nov 2026)
+  {const ni=$('#cr-name'),team=crestTeam;ni.oninput=()=>{mySquads[team].name=cleanSquadName(ni.value);saveSquads();if(!S.running)updateHud();if(net.named)net.named.presence({sq:serSquad(mySquads[0])}).catch(()=>{});};}
+  el.querySelectorAll('#cr-kitc [data-kit]').forEach(b=>b.onclick=()=>{const team=crestTeam,i=+b.dataset.kit;kitSel[team]=i;mySquads[team].kit=i;if(kitSel[1-team]===i)kitSel[1-team]=(i+1)%KITS.length;
+    saveSquads();renderKits();if(!S.running){S.kits=kitSel.slice();applyKits();}renderCrest();sfx('tock',14);});
   $('#cr-rand').onclick=()=>{const pick=(g,none)=>{const L=CREST_PARTS[g].filter(e=>!crestLocked(g,e.n)).map(e=>e.n);if(none)L.push(0);return L[Math.floor(Math.random()*L.length)]||0;};
     const cols=[...Array(CREST.colors.length).keys()],r=()=>cols[Math.floor(Math.random()*cols.length)];let f=r(),pc=r(),b=r(),cc=r();while(pc===f)pc=r();while(cc===f)cc=r();
     mySquads[crestTeam].crest=crestClean({s:pick('Shield')||1,p:pick('Pattern',true),c:pick('Charge',true),f,pc,b,cc});saveSquads();renderCrest();syncCrestBtn();sfx('tock',20);};
@@ -117,7 +121,8 @@ function renderCrest(){
 }
 // the crest button in Tactics (squad name row) opens the editor
 function syncCrestBtn(){const b=$('#sq-crest');if(!b)return;const u=crestUrl(myCrest(typeof sqTeam!=='undefined'?sqTeam:0),96);b.innerHTML=u?`<img src="${u}" alt="">`:'';}
-$('#sq-crest').addEventListener('click',()=>{crestTeam=typeof sqTeam!=='undefined'?sqTeam:0;setClubSec('crest');sfx('tock',10);});
+// Versus: the two squads cannot pick the same colour
+function crestKitOff(i){return (menuMode==='local'||!menuMode)&&kitSel[1-crestTeam]===i;}
 {const baseRS=renderSquad;renderSquad=function(){const r=baseRS.apply(this,arguments);try{syncCrestBtn();}catch(e){}return r;};}
 // everything that shows a crest, once the shapes or the palette change
 function crestRefresh(){crestCache.clear();try{syncCrestBtn();renderCrest();if(typeof koRender==='function'&&hubTab==='kickoff')koRender();if(typeof renderHistory==='function')renderHistory();if(hubTab==='album')renderAlbum();}catch(e){console.error('[crest]',e);}}

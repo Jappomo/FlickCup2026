@@ -69,18 +69,15 @@ function renderCustom(rebuild){
   if(hubTab!=='custom'&&!rebuild)return;
   if(!Object.keys(thumbs).length&&hubTab==='custom')makeThumbs();
   const eqId=(ballVariant(BALL.mine)||list[0]).id;
-  grid.innerHTML='';
-  list.forEach(v=>{
-    const b=document.createElement('button');b.className='bcard';b.setAttribute('aria-pressed',String(v.id===custSel));
-    const img=document.createElement('img');img.alt='';if(thumbs[v.id])img.src=thumbs[v.id];
-    const nm=document.createElement('b');nm.textContent=v.name;
-    b.append(img,nm);
-    if(v.id===eqId){const e=document.createElement('span');e.className='eqp';e.textContent='Equipped';b.appendChild(e);}
-    else if(!owns('ball',v.id)){b.classList.add('locked');const t=document.createElement('span');t.className='lock';t.innerHTML=lockTag('ball',v.id);b.appendChild(t);}
-    b.onclick=()=>{custSel=v.id;renderCustom();};
-    b.ondblclick=()=>{custSel=v.id;equipBall();};
-    grid.appendChild(b);
-  });
+  // a carousel of the balls (4 Nov 2026): the middle one is in use; one to buy shows its price,
+  // pick it once to see it ("Buy"), again to buy and use it; Album card / challenge locks are skipped
+  const items=list.map(v=>{const locked=!owns('ball',v.id),card=locked&&needCard('ball',v.id),pend=locked&&v.id===custSel;
+    return{name:v.name+(locked?(card?' · Album card':pend?' · Buy '+priceOf('ball',v.id):' · '+priceOf('ball',v.id)+' Hobby'):''),img:thumbs[v.id]||'',bg:'rgba(5,12,24,.35)',lock:!!card,buy:locked&&!card};});
+  const ci=list.findIndex(v=>v.id===custSel);
+  kitCar(grid,items,ci>=0?ci:Math.max(0,list.findIndex(v=>v.id===eqId)),i=>{const v=list[i];
+    if(!owns('ball',v.id)){if(needCard('ball',v.id)){custSel=v.id;renderCustom();const c=needCard('ball',v.id);hobbyToast(c.chal?'Needs a challenge.':`Needs the Album card "${c.title}".`);sfx('clack',10);return;}
+      if(custSel!==v.id){custSel=v.id;renderCustom();sfx('tock',10);return;}}
+    custSel=v.id;equipBall();});
   const cur=list.find(v=>v.id===custSel)||list[0];
   $('#bp-no').textContent='Ball '+(cur.id||'001');$('#bp-name').textContent=cur.name;$('#bp-eq').hidden=cur.id!==eqId;
   const btn=$('#btn-equip'),own=owns('ball',cur.id);btn.disabled=cur.id===eqId;btn.lastChild.textContent=cur.id===eqId?'Equipped':own?'Equip':needCard('ball',cur.id)?(needCard('ball',cur.id).chal?'Needs a challenge':'Needs an Album card'):`Buy · ${priceOf('ball',cur.id)} Hobby`;
@@ -115,13 +112,29 @@ function kitTick(){if($('#hub').hidden||hubTab!=='squad'||clubSec!=='kit'||!kR)r
   if(!kSpin.drag){kSpin.v*=0.94;kSpin.a+=0.0022+kSpin.v*0.002;}if(kObj)kObj.rotation.y=kSpin.a;kGround=groundUnder(kScene,kGround,170,0);GROUND_U.uTime.value=performance.now()/1000; // TEST-GRASS
   
   previewCam('kits',kCam);previewDraw(kR,$('#kit-prev'),kScene,kCam,1);}
+/* Kit look choices as carousels (3 Nov 2026): the pick in the middle, two neighbours each side, its name under it.
+   Left / right (arrows, D-pad, a click on a neighbour) steps; locked items show, but stepping skips them.
+   items: [{name, bg | img, lock}], pick(i) applies a choice. The middle button stays the same element, so focus stays. */
+function kitCar(el,items,sel,pick,off){if(!el)return;const n=items.length;sel=Math.max(0,Math.min(n-1,sel|0));
+  if(!el.__car){el.classList.add('kcar');el.innerHTML='<i class="kcar-arr l" aria-hidden="true"></i><div class="kcar-strip"></div><i class="kcar-arr r" aria-hidden="true"></i><b class="kcar-name"></b>';
+    const strip=el.querySelector('.kcar-strip');
+    for(let k=-2;k<=2;k++){const s=document.createElement(k?'span':'button');s.className='kcar-it'+(k?'':' kcar-cur');s.dataset.k=k;if(!k)s.type='button';strip.appendChild(s);
+      s.onclick=()=>{const C=el.__car;if(k)kitCarStep(el,k);else if(C.items[C.sel].lock||C.items[C.sel].buy)C.pick(C.sel);};}
+    el.querySelector('.kcar-arr.l').onclick=()=>kitCarStep(el,-1);el.querySelector('.kcar-arr.r').onclick=()=>kitCarStep(el,1);}
+  const old=el.__car;el.__car={items,sel,pick};
+  el.querySelectorAll('.kcar-it').forEach(s=>{const k=+s.dataset.k,it=items[((sel+k)%n+n)%n],show=n>=5||Math.abs(k)<=Math.floor((n-1)/2);
+    s.style.visibility=show?'':'hidden';s.style.background=it.img?'':it.bg;s.innerHTML=it.img?`<img src="${it.img}" alt="">`:'';s.classList.toggle('img',!!it.img);s.classList.toggle('lock',!!it.lock);s.classList.toggle('buy',!!it.buy);s.title=it.name;});
+  const cur=el.querySelector('.kcar-cur');cur.setAttribute('aria-label',items[sel].name);cur.disabled=!!off;el.classList.toggle('off',!!off);el.querySelector('.kcar-name').textContent=items[sel].name;
+  if(old&&old.sel!==sel&&old.items.length===n){const d=((sel-old.sel)%n+n)%n<=n/2?1:-1,st=el.querySelector('.kcar-strip');st.classList.remove('go-l','go-r');void st.offsetWidth;st.classList.add(d>0?'go-r':'go-l');}}
+function kitCarStep(el,d){const C=el&&el.__car;if(!C||el.classList.contains('off'))return;const n=C.items.length;let i=C.sel;
+  for(let t=0;t<n;t++){i=((i+d)%n+n)%n;if(!C.items[i].lock||Math.abs(d)>1)break;}
+  if(Math.abs(d)>1&&C.items[i].lock){C.pick(i);return;}if(i!==C.sel)C.pick(i);}
 function renderKitLook(){
   if(hubTab!=='squad'||clubSec!=='kit')return;
   const q=mySquads[kitTeam],L=lookOf(q,kitTeam);
   document.querySelectorAll('#kit-team .chip').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.team===kitTeam)));
   $('#kit-use').checked=!!q.useLook;$('#kit-team-l').textContent=kitTeam?'Away squad':'Home squad';$('#kit-name').textContent=q.name||KITS[kitSel[kitTeam]].name;
-  const row=(id,pal,key)=>{const el=$(id);el.innerHTML='';pal.forEach(([n,c],i)=>{const b=document.createElement('button');b.type='button';b.className='kc';b.title=n;b.setAttribute('aria-label',n);b.style.background=hexStr(c);b.setAttribute('aria-pressed',String(L[key]===i));
-    b.onclick=()=>{q.look=Object.assign({},lookOf(q,kitTeam),{[key]:i});q.useLook=true;saveSquads();if(!S.running){applyKits();}renderKits();renderKitLook();sfx('tock',20);};el.appendChild(b);});};
+  const row=(id,pal,key)=>kitCar($(id),pal.map(([n,c])=>({name:n,bg:hexStr(c)})),L[key],i=>{q.look=Object.assign({},lookOf(q,kitTeam),{[key]:i});q.useLook=true;saveSquads();if(!S.running){applyKits();}renderKits();renderKitLook();sfx('tock',20);});
   row('#kp-s',KIT_COLORS,'s');row('#kp-p',KIT_COLORS,'p');row('#kp-o',KIT_COLORS,'o');row('#kp-g',GK_COLORS,'g');
   const lc=(m,c)=>m.color.copy(new THREE.Color(c).convertSRGBToLinear());lc(KIT_PM.shirt,KIT_COLORS[L.s][1]);lc(KIT_PM.insert,KIT_COLORS[L.s][1]);lc(KIT_PM.shorts,KIT_COLORS[L.p][1]);lc(KIT_PM.socks,KIT_COLORS[L.o][1]);lc(KIT_PM.gk,GK_COLORS[L.g][1]);
   if(initKitPreview()){const cv=$('#kit-prev'),w=cv.clientWidth||400,h=cv.clientHeight||400;kR.setSize(w,h,false);kCam.aspect=w/h;kCam.updateProjectionMatrix();
@@ -218,13 +231,23 @@ function renderLook(rebuild){
   if(hubTab!=='custom'||custSec!=='table')return;
   makeLookThumbs();
   const t=lookPick('table',LOOKSEL.table),banners=!!(t&&hasLoc(t.node,'Banner'));
+  // a carousel per part (4 Nov 2026, like Kit look): the pick in the middle is what the table uses.
+  // An item to buy is shown with its price; pick it once to see "Buy", again to buy it. Album / challenge locks are skipped.
   LOOK_PARTS.forEach(p=>{
-    const row=$('#look-'+p);row.innerHTML='';const optional=p==='trinket'||p==='banner',cur=lookPick(p,LOOKSEL[p],optional);
-    if(!LOOK[p].length){row.innerHTML='<p class="note">No '+p+' models loaded.</p>';return;}
-    if(optional)row.appendChild(lookCard(p,null,!cur,p==='banner'&&!banners));
-    LOOK[p].forEach(v=>row.appendChild(lookCard(p,v,!!cur&&cur.id===v.id,p==='banner'&&!banners)));
+    const el=$('#look-'+p);if(!el)return;const optional=p==='trinket'||p==='banner',cur=lookPick(p,LOOKSEL[p],optional),off=p==='banner'&&!banners;
+    if(!LOOK[p].length){el.__car=null;el.innerHTML='<p class="note">No '+p+' models loaded.</p>';return;}
+    if(!el.__car&&el.firstChild)el.innerHTML='';
+    const L=(optional?[null]:[]).concat(LOOK[p]);
+    const items=L.map(v=>{if(!v)return{name:'None',bg:'rgba(5,12,24,.35)'};const locked=!owns(p,v.id),card=locked&&needCard(p,v.id),pend=locked&&lookPend&&lookPend.part===p&&lookPend.id===v.id;
+      return{name:v.name+(locked?(card?' · Album card':pend?' · Buy '+priceOf(p,v.id):' · '+priceOf(p,v.id)+' Hobby'):''),img:tThumbs[p+v.id]||'',bg:'rgba(5,12,24,.35)',lock:!!card,buy:locked&&!card};});
+    const pi=lookPend&&lookPend.part===p?L.findIndex(v=>v&&v.id===lookPend.id):-1;
+    const sel=pi>=0?pi:Math.max(0,L.findIndex(v=>cur?v&&v.id===cur.id:!v));
+    kitCar(el,items,sel,i=>{const v=L[i];
+      if(v&&!owns(p,v.id)){if(needCard(p,v.id)){buy(p,v.id);return;}
+        if(!(lookPend&&lookPend.part===p&&lookPend.id===v.id)){lookPend={part:p,id:v.id};renderLook();sfx('tock',10);return;}
+        lookPend=null;if(!buy(p,v.id)){renderLook();return;}}
+      lookPend=null;LOOKSEL[p]=v?v.id:'';saveLook();showLook();renderLook();sfx('tock',30);},off);
   });
-  $('#banner-note').hidden=banners;
   $('#tp-name').textContent=t?t.name:'Classic';
   if(initTablePreview()){
     const cv=$('#table-prev'),w=cv.clientWidth||400,h=cv.clientHeight||400;tR.setSize(w,h,false);tCam.aspect=w/h;tCam.updateProjectionMatrix();
@@ -234,7 +257,7 @@ function renderLook(rebuild){
 // table preview frame (called by the central loop while the table page is open)
 function tableTick(){
   if($('#hub').hidden||hubTab!=='custom'||custSec!=='table'||!tR)return;
-  if(!tSpin.drag){tSpin.v*=0.94;tSpin.a+=0.003+tSpin.v*0.002;}
+  if(!tSpin.drag){tSpin.v*=0.94;tSpin.a+=0.001+tSpin.v*0.002;} // 1/3 of the old turn speed (4 Nov 2026)
   if(tObj)tObj.rotation.y=tSpin.a;
   previewCam('tables',tCam);previewDraw(tR,$('#table-prev'),tScene,tCam,1.05);
 }

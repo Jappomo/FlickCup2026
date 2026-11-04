@@ -42,22 +42,20 @@ function kitPatThumbs(L){ // small renders of the figure in each pattern, with t
     kObj.rotation.y=ry;if(kGround)kGround.visible=true;kR.setSize(keep.x,keep.y,false);kCam.aspect=asp;kCam.fov=fov;kCam.position.copy(cp);kCam.updateProjectionMatrix();previewCam('kits',kCam);}catch(e){console.error('[kit pattern thumbs]',e);}
   return kpThumbs=out;}
 function renderKitPattern(){
-  const box=$('#kp-pat'),two=$('#kp-two');if(!box||hubTab!=='squad'||clubSec!=='kit')return;
+  const box=$('#kp-pat');if(!box||hubTab!=='squad'||clubSec!=='kit')return;
   const q=mySquads[kitTeam],L=kitLookFull(q,kitTeam),k={pattern:L.pt,shirt2:KIT_COLORS[L.s2][1],shorts2:KIT_COLORS[L.p2][1],socks2:KIT_COLORS[L.o2][1]};
-  if(!KITPAT.list.length){box.innerHTML='<p class="note">No kit patterns loaded (models/kitpattern.glb).</p>';two.innerHTML='';setPattern(KIT_PM,null);return;}
+  if(!KITPAT.list.length){box.__car=null;box.innerHTML='<p class="note">No kit patterns loaded (models/kitpattern.glb).</p>';setPattern(KIT_PM,null);return;}
   const th=kitPatThumbs(L);setPattern(KIT_PM,k);
   const set=o=>{q.look=Object.assign({},kitLookFull(q,kitTeam),o);q.useLook=true;saveSquads();if(!S.running)applyKits();renderKits();renderKitLook();sfx('tock',20);};
-  box.innerHTML='';
-  [{id:'',name:'Plain'},...KITPAT.list].forEach(v=>{const b=document.createElement('button');b.type='button';b.className='kpat';b.setAttribute('aria-pressed',String(L.pt===v.id));b.title=v.name;
-    const card=patLocked(v.id);b.innerHTML=(th[v.id]?`<img src="${th[v.id]}" alt="">`:'<span class="kpat-ph"></span>')+`<small>${v.name}</small>`+(card?'<span class="lock"><span class="price cardtag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2.2" fill="#f6c443" stroke="#6b4a08" stroke-width="1.5"/></svg>Card</span></span>':'');
-    if(card)b.classList.add('locked');
-    b.onclick=()=>{if(card){const C=colOf(card.collection);hobbyToast(`Needs the Album card "${card.title}" (${C.name} #${card.no}).`);sfx('clack',10);return;}
-      const o={pt:v.id};if(v.id&&!L.pt){o.s2=L.s===2?3:2;o.p2=L.p===2?3:2;o.o2=L.o===2?3:2;}set(o);};box.appendChild(b);});
-  const v=L.pt&&KITPAT.byId[L.pt];two.innerHTML='';
-  if(v)[['s2','Shirt, second colour',0],['p2','Shorts, second colour',1],['o2','Socks, second colour',2]].forEach(([key,label,part])=>{if(!v.parts[part])return;
-    const r=document.createElement('div');r.className='kp-two';r.innerHTML=`<p class="h">${label}</p>`;const pal=document.createElement('div');pal.className='kitpal';
-    KIT_COLORS.forEach(([n,c],i)=>{const b=document.createElement('button');b.type='button';b.className='kc';b.title=n;b.setAttribute('aria-label',n);b.style.background=hexStr(c);b.setAttribute('aria-pressed',String(L[key]===i));b.onclick=()=>set({[key]:i});pal.appendChild(b);});
-    r.appendChild(pal);two.appendChild(r);});
+  // a carousel of the patterns, then one carousel per second colour (rows kept, so the focus stays)
+  const pats=[{id:'',name:'Plain'},...KITPAT.list];
+  kitCar(box,pats.map(v=>({name:v.name,img:th[v.id]||'',bg:'rgba(5,12,24,.35)',lock:!!patLocked(v.id)})),Math.max(0,pats.findIndex(v=>v.id===L.pt)),i=>{const v=pats[i],card=patLocked(v.id);
+    if(card){const C=colOf(card.collection);hobbyToast(`Needs the Album card "${card.title}" (${C.name} #${card.no}).`);sfx('clack',10);return;}
+    const o={pt:v.id};if(v.id&&!L.pt){o.s2=L.s===2?3:2;o.p2=L.p===2?3:2;o.o2=L.o===2?3:2;}set(o);});
+  const v=L.pt&&KITPAT.byId[L.pt];
+  // the second colours sit next to shirt, shorts and socks, always there; greyed out when the pattern does not use that part
+  [['s2',0,'#kp-s2'],['p2',1,'#kp-p2'],['o2',2,'#kp-o2']].forEach(([key,part,id])=>{const r=$(id);if(!r)return;const on=!!(v&&v.parts[part]);
+    kitCar(r.querySelector('.kitpal'),KIT_COLORS.map(([n,c])=>({name:n,bg:hexStr(c)})),L[key],i=>set({[key]:i}),!on);r.classList.toggle('off',!on);});
 }
 {const baseKL=renderKitLook;renderKitLook=function(){const r=baseKL.apply(this,arguments);try{renderKitPattern();}catch(e){console.error('[kit pattern]',e);}return r;};}
 function kitPatternItems(){return KITPAT.list.map(v=>({id:v.id,name:v.name}));}

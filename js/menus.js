@@ -152,14 +152,9 @@ function renderSquad(){
   $('#squad-team').hidden=!showTeams;if(!showTeams)sqTeam=0;
   document.querySelectorAll('#squad-team .chip').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.team===sqTeam)));
   $('#squad-note').style.color='';
-  $('#squad-note').textContent=(menuMode==='online'?'Your squad travels with you online. ':menuMode==='cpu'?'Your side against the CPU. ':'')+'Changes apply from the next kick-off.';
+  $('#squad-note').textContent='';
   const q=mySquads[sqTeam],F=formOf(q),kit=KITS[kitSel[sqTeam]];
-  {const ni=$('#squad-name');if(document.activeElement!==ni)ni.value=q.name||'';ni.placeholder=kit.name;const team=sqTeam;
-    ni.oninput=()=>{mySquads[team].name=cleanSquadName(ni.value);saveSquads();if(!S.running)updateHud();if(net.named)net.named.presence({sq:serSquad(mySquads[0])}).catch(()=>{});};}
-  uiList($('#sq-kit'),KITS,(k,i)=>i,(k,i)=>{const b=document.createElement('button');b.className='sw';b.type='button';b.appendChild(document.createElement('i'));
-      b.onclick=()=>{const team=sqTeam;kitSel[team]=i;mySquads[team].kit=i;if(kitSel[1-team]===i)kitSel[1-team]=(i+1)%KITS.length;saveSquads();renderKits();if(!S.running){S.kits=kitSel.slice();applyKits();}renderSquad();};return b;},
-    (b,k,i)=>{b.title=k.name;b.style.background=k.ui;b.firstChild.style.background='#'+k.shorts.toString(16).padStart(6,'0');
-      setAttr(b,'aria-pressed',kitSel[sqTeam]===i);setAttr(b,'aria-label','Preferred color '+k.name);b.disabled=showTeams&&kitSel[1-sqTeam]===i;});
+  // the club's name and preferred colour are edited on the Crest page (js/myclub.js, 3 Nov 2026)
   const fr=$('#formations');
   uiList(fr,Object.keys(FORMATIONS).concat('custom'),f=>f,f=>{const b=document.createElement('button');b.className='chip';b.textContent=f==='custom'?'Custom':f;
       if(f==='custom'){b.title='Your own layout: drag the shields';b.onclick=()=>{const q=mySquads[sqTeam];if(q.form!=='custom'){if(!q.cpos||q.cpos.length!==10){q.cbase=FORMATIONS[q.form]?q.form:'4-4-2';q.cpos=FORMATIONS[q.cbase].pos.map(p=>p.slice());}q.form='custom';saveSquads();renderSquad();}};}
@@ -178,7 +173,7 @@ function renderSquad(){
     [[k1,0],[k2,1]].forEach(([btn,slot])=>{const on=pair[slot]===sqSlot,cand=role==='def'?null:tryPair(slot);
       btn.setAttribute('aria-pressed',String(on));btn.disabled=!on&&!cand;
       btn.onclick=()=>{if(on||!cand)return;q.kop=cand;saveSquads();renderSquad();};});
-    $('#kop-note').textContent=role==='def'?'Defenders cannot take the kick-off.':`Kick-off: ${NUMS[pair[0]]} and ${NUMS[pair[1]]}. One forward needed, one midfielder at most.`;}
+    $('#kop-note').textContent=role==='def'?'Defenders cannot take the kick-off.':'';}
   const cr=$('#corners');
   const cfg=CORNER_CFG[cornerSide];
   document.querySelectorAll('#corner-side .chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.side===cornerSide)));

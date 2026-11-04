@@ -29,7 +29,7 @@ const UI_OFFPATH=UI_BARS+',#al-detail';
 const UI_GROUPS=[
   ['#hub.paused-match #concede-row','col'],
   ['.modes','col',{follow:1}],['#al-sub','col',{follow:1}],['.al-page','grid',{follow:1}],['#formations','col'],['#mini','map'],['#tree','map'],
-  ['.ko-carousel','row'],['.ko-pv','row'],['.ko-head','row'],
+  ['.ko-carousel','row'],['#club-home,#ground-home','map'],['.ko-pv','row'],['.ko-head','row'],
   ['.kitpal,.kp-pats,.ball-grid,.look-row','grid'],['#tracks','col'],
   ['#tour-bracket','map'],['#on-kv','grid'],['.on-act','row'],
   ['.seg,.kitrow,.field,.cta,.kopbtns,.starbtns,.kitview,.pc-head,.bal-pw','row'],
@@ -53,7 +53,7 @@ const UI_LINKS=[
   ['#al-sub',{r:'#al-page'}],['#al-page',{l:'#al-sub'}],
 ];
 // where focus lands on a page it has no memory of
-const UI_DEFAULT={online:['#on-start','#on-ready','#tour-play','#tour-start','#btn-newroom','#tour-create'],album:['#al-page [aria-pressed="true"]','#al-sub [aria-pressed="true"]'],play:['#hub.paused-match #btn-resume','.modes [aria-pressed="true"]','.modes .tile'],kickoff:['#ko-go']};
+const UI_DEFAULT={online:['#on-start','#on-ready','#tour-play','#tour-start','#btn-newroom','#tour-create'],album:['#al-page [aria-pressed="true"]','#al-sub [aria-pressed="true"]'],play:['#hub.paused-match #btn-resume','.modes [aria-pressed="true"]','.modes .tile'],kickoff:['#ko-go'],custom:['#ground-home .mc-card','#look-table .kcar-cur','#ball-grid .kcar-cur'],squad:['#club-home .mc-card','#club-crest .cr-t.on','#formations [aria-pressed="true"]','#kp-pat .kcar-cur']};
 // B inside the first selector goes to the selected control of the second (before the section bar and the tabs)
 const UI_BACK=[['#mode-setup','.modes']];
 
@@ -85,6 +85,8 @@ function uiUsable(el){
   if(!el||!el.isConnected||el.closest('[hidden]')||el.closest(UI_OFFPATH))return false;
   const r=el.getClientRects();if(!r.length||(r[0].width<1&&r[0].height<1))return false;
   if(el.closest('.glyph'))return false;
+  // a greyed-out carousel (Kit look: a second colour the pattern does not use) is skipped
+  if(el.closest('.kcar.off'))return false;
   return getComputedStyle(el).visibility!=='hidden';}
 const uiShown=el=>!!el&&el.isConnected&&!el.closest('[hidden]')&&el.getClientRects().length>0;
 function uiInScope(el){return !!el&&uiScopes().some(s=>s.contains(el));}
@@ -104,7 +106,10 @@ function uiGroupOf(el){
     for(const g of UI_GROUPS)if(a.matches(g[0]))return {el:a,type:g[1],o:g[2]||{},sel:g[0]};
     if(a===lim)break;}
   return {el,type:'one',o:{},sel:''};}
-function uiMembers(g,cands){return g.type==='one'?[g.el]:(cands||uiCands()).filter(x=>g.el.contains(x)&&uiGroupOf(x).el===g.el);}
+function uiMembers(g,cands){if(g.type==='one')return [g.el];const M=(cands||uiCands()).filter(x=>g.el.contains(x)&&uiGroupOf(x).el===g.el);
+  // children reordered with CSS order (Distal > Interface > Layout): the pad follows the order on screen
+  const ord=x=>{let c=x;while(c.parentElement&&c.parentElement!==g.el)c=c.parentElement;return +getComputedStyle(c).order||0;};
+  return M.some(x=>ord(x))?M.map((x,i)=>[x,i,ord(x)]).sort((a,b)=>a[2]-b[2]||a[1]-b[1]).map(x=>x[0]):M;}
 // the groups of the page in order, each once
 function uiGroups(cands){const seen=new Set(),out=[];cands.forEach(c=>{const g=uiGroupOf(c);if(!seen.has(g.el)){seen.add(g.el);out.push(g);}});return out;}
 function uiCols(M){if(M.length<2)return 1;const t=M[0].getBoundingClientRect().top;let n=0;for(const m of M){if(Math.abs(m.getBoundingClientRect().top-t)<6)n++;else break;}return Math.max(1,n);}
@@ -134,7 +139,8 @@ function uiMove(dir,src,rep){
   if(!UI.layer)return false;
   const cur=uiUsable(UI.cur)&&uiInScope(UI.cur)?UI.cur:null;
   if(!cur){const d=uiDefault();if(d)uiSet(d,{src,scroll:true});return true;}
-  // values first: a slider moves, a toggle switches
+  // values first: a slider moves, a toggle switches, a carousel (Kit look) steps
+  if((dir==='l'||dir==='r')&&cur.closest('.kcar')&&typeof kitCarStep==='function'){kitCarStep(cur.closest('.kcar'),dir==='r'?1:-1);return true;}
   if(dir==='l'||dir==='r'){
     if(cur.type==='range'){const st=+cur.step||1,old=+cur.value;cur.value=old+(dir==='r'?st:-st)*Math.max(1,Math.round((+cur.max-+cur.min)/20/st));
       if(+cur.value===old){if(!rep)uiNo(cur);return false;}cur.dispatchEvent(new Event('input',{bubbles:true}));cur.dispatchEvent(new Event('change',{bubbles:true}));uiSnd.tick();uiPress(cur);return true;}
@@ -228,6 +234,8 @@ function uiBack(){
   const paused=$('#hub').classList.contains('paused-match');
   if(paused&&hubTab==='play'){uiSnd.back();closeMenu();return;}
   if(cur)for(const [a,b] of UI_BACK)if(cur.closest(a)){const t=uiEnter(document.querySelector(b),'');if(t){uiSnd.back();uiSet(t,{src:'silent',scroll:true});UI.glide=performance.now();return;}}
+  // My Club: from a page back to the cards (js/myclub.js)
+  if(typeof hubBack==='function'&&hubBack()){uiSnd.back();return;}
   // from any other tab, B goes back to Play
   if(hubTab!=='play'){uiSnd.back();setTab('play');return;}
   if(!$('#btn-resume').hidden){uiSnd.back();closeMenu();return;}
@@ -316,7 +324,7 @@ function uiBrief(){const b=$('#mode-brief');if(!b)return;const M=UI_MODES[menuMo
   const set=(s,v)=>{const e=b.querySelector(s);if(e.textContent!==v)e.textContent=v;};
   set('.mb-k',M.k);set('.mb-t',M.t);set('.mb-d',M.d);
   const ul=b.querySelector('.mb-p');while(ul.children.length<M.p.length)ul.appendChild(document.createElement('li'));while(ul.children.length>M.p.length)ul.lastChild.remove();
-  M.p.forEach((t,i)=>{if(ul.children[i].textContent!==t)ul.children[i].textContent=t;});
+  M.p.forEach((t,i)=>{if(ul.children[i].textContent!==t)ul.children[i].textContent=t;ul.children[i].dataset.ui='brief-point-'+(i+1);});
   // the picture only changes with the mode
   if(b.dataset.mode!==menuMode){b.dataset.mode=menuMode;const art=b.querySelector('.mb-art'),img=UI_MODE_IMG[menuMode];
     art.style.backgroundImage=img?`url("${img}")`:'';art.innerHTML=img?'':`<svg viewBox="0 0 470 250" preserveAspectRatio="xMidYMid meet">${UI_ART[menuMode]||''}</svg>`;}}
@@ -445,3 +453,34 @@ function uiTick(){
   // the control is already yellow (picked mode, open tab or section, chosen chip): that is the highlight
   uiRing.classList.toggle('self',UI.cur.matches('.modes .tile')||uiSelected(UI.cur));}
 requestAnimationFrame(uiTick);
+
+/* ---------- controller navigation edited in Distal (Interface > Controller, data/ui.json "nav") ---------- */
+// Extra groups, links and first focus per page, tried before the ones written above:
+// {groups:[{sel,type:'row'|'col'|'grid'|'map',follow,wrap,order:[selectors]}], links:[{sel,u,d,l,r}], def:{panel:[selectors]}}
+/* ---------- texts changed in Distal > Interface > Layout (data/ui.json "text": [{sel, from, to}]) ----------
+   A rule changes an element's own words only while it shows the game's words (from), so a box whose text changes
+   with the screen (the Play card) only changes the line that was edited. Kept up when the game redraws (observer). */
+let UI_TEXT=[],UI_TEXT_SRC={},uiTextObs=null,uiTextQ=0;
+const uiTextOwn=el=>[...el.childNodes].filter(n=>n.nodeType===3).map(n=>n.nodeValue).join('').trim();
+function uiTextSet(el,t){const ns=[...el.childNodes].filter(n=>n.nodeType===3&&n.nodeValue.trim());if(!ns.length){el.appendChild(document.createTextNode(t));return;}
+  const v=ns[0].nodeValue;ns[0].nodeValue=v.replace(v.trim(),t);for(let i=1;i<ns.length;i++)ns[i].nodeValue='';}
+function uiTextRun(){uiTextQ=0;for(const r of UI_TEXT){let L;try{L=document.querySelectorAll(r.sel);}catch(e){continue;}L.forEach(el=>{if(uiTextOwn(el)===r.from&&r.from!==r.to)uiTextSet(el,r.to);});}}
+// key: where the list comes from ('file' = data/text.json, 'ui' = older data/ui.json "text", or Distal's preview)
+function uiTextApply(list,key){
+  UI_TEXT.forEach(r=>{try{document.querySelectorAll(r.sel).forEach(el=>{if(uiTextOwn(el)===r.to&&r.from!==r.to)uiTextSet(el,r.from);});}catch(e){}});
+  UI_TEXT_SRC[key||'ui']=(Array.isArray(list)?list:[]).filter(r=>r&&typeof r.sel==='string'&&typeof r.from==='string'&&typeof r.to==='string');
+  UI_TEXT=[].concat(UI_TEXT_SRC.ui||[],UI_TEXT_SRC.file||[]);
+  if(UI_TEXT.length&&!uiTextObs){uiTextObs=new MutationObserver(()=>{if(UI_TEXT.length&&!uiTextQ)uiTextQ=requestAnimationFrame(uiTextRun);});uiTextObs.observe(document.body,{childList:true,subtree:true,characterData:true});}
+  uiTextRun();}
+const UI_NAV_BASE={groups:UI_GROUPS.slice(),links:UI_LINKS.slice(),def:JSON.parse(JSON.stringify(UI_DEFAULT))};
+function uiNavApply(o){o=o&&typeof o==='object'?o:{};
+  UI_GROUPS.length=0;(Array.isArray(o.groups)?o.groups:[]).forEach(g=>{if(g&&typeof g.sel==='string'&&g.sel&&/^(row|col|grid|map)$/.test(g.type))UI_GROUPS.push([g.sel,g.type,{follow:g.follow?1:0,wrap:g.wrap?1:0,order:Array.isArray(g.order)&&g.order.length?g.order.slice():null}]);});
+  UI_GROUPS.push(...UI_NAV_BASE.groups);
+  UI_LINKS.length=0;(Array.isArray(o.links)?o.links:[]).forEach(l=>{if(!l||typeof l.sel!=='string'||!l.sel)return;const L={};['u','d','l','r'].forEach(k=>{if(l[k])L[k]=l[k];});if(Object.keys(L).length)UI_LINKS.push([l.sel,L]);});
+  UI_LINKS.push(...UI_NAV_BASE.links);
+  Object.keys(UI_DEFAULT).forEach(k=>delete UI_DEFAULT[k]);Object.assign(UI_DEFAULT,JSON.parse(JSON.stringify(UI_NAV_BASE.def)));
+  Object.entries(o.def&&typeof o.def==='object'?o.def:{}).forEach(([k,v])=>{if(Array.isArray(v)&&v.length)UI_DEFAULT[k]=[...v,...(UI_DEFAULT[k]||[])];});}
+// a group's own order (selectors, first match first) instead of the order in the page
+{const base=uiMembers;uiMembers=function(g,cands){const M=base(g,cands),O=g.o&&g.o.order;if(!O||M.length<2)return M;
+  const rank=el=>{const i=O.findIndex(s=>{try{return el.matches(s);}catch(e){return false;}});return i<0?O.length:i;};
+  return M.map((el,i)=>[el,i]).sort((a,b)=>rank(a[0])-rank(b[0])||a[1]-b[1]).map(x=>x[0]);};}

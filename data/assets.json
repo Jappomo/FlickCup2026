@@ -17,6 +17,42 @@
           }
         },
         "ref": "Ball_001"
+      },
+      "Ball_017": {
+        "snapshot": "variations/models_ball.glb/Ball_017.glb",
+        "node": "SM_Ball_017_Retro_Leather",
+        "hash": "74412d116d027a5c",
+        "kind": "retextured",
+        "saved": "2026-11-03T22:04:09.561Z",
+        "name": "Retro Leather",
+        "retextured": "2026-11-03T22:04:09.561Z",
+        "adopted": false,
+        "reshaped": "2026-11-03T22:04:09.561Z",
+        "shapeFrom": "models/ball.glb Ball_001"
+      },
+      "Ball_019": {
+        "snapshot": "variations/models_ball.glb/Ball_019.glb",
+        "node": "SM_Ball_019_Indoor_Felt",
+        "hash": "1bc581e1d9cdd948",
+        "kind": "retextured",
+        "saved": "2026-11-03T22:07:33.912Z",
+        "name": "Indoor Felt",
+        "retextured": "2026-11-03T22:07:33.912Z",
+        "reshaped": "2026-11-03T22:07:33.912Z",
+        "shapeFrom": "models/ball.glb Ball_001",
+        "adopted": false
+      },
+      "Ball_008": {
+        "snapshot": "variations/models_ball.glb/Ball_008.glb",
+        "node": "SM_Ball_008_Tennis",
+        "hash": "01086fb457928e5e",
+        "kind": "retextured",
+        "saved": "2026-11-03T22:46:34.824Z",
+        "name": "Tennis",
+        "retextured": "2026-11-03T22:46:34.824Z",
+        "reshaped": "2026-11-03T22:46:34.824Z",
+        "shapeFrom": "models/ball.glb Ball_001",
+        "adopted": false
       }
     },
     "models/kitpattern.glb": {

@@ -72,5 +72,6 @@
   },
   "materials": {},
   "camera": {},
-  "scenes": {}
+  "scenes": {},
+  "add": []
 }
