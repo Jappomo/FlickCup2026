@@ -53,7 +53,7 @@ function frame(now){
   const showSel=S.running&&(S.phase==='attack'||S.phase==='defend'||S.phase==='take')&&sel>=0&&!sim.running;
   selRing.visible=showSel;if(showSel){const b=bodies[sel];selRing.position.set(b.x,0.05,b.z);selRing.scale.setScalar((RF/1.6)*(1+0.06*Math.sin(now/180)));}
   const banned=S.phase==='defend'&&S.ban&&S.ban.n===S.defN?S.ban.id:-1;
-  const lockId=banned>=0?banned:S.phase==='attack'&&S.lastFigCount>=3&&S.lastFig>=0?S.lastFig:-1;
+  const lockId=banned>=0?banned:S.phase==='attack'&&S.lastFigCount>=MAXF&&S.lastFig>=0?S.lastFig:-1;
   lockRing.visible=S.running&&lockId>=0&&!sim.running;
   if(lockRing.visible){const b=bodies[lockId];lockRing.position.set(b.x,0.04,b.z);}
   drawAim(sim.running?null:aimShow);

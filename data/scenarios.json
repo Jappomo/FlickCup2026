@@ -1,0 +1,906 @@
+{
+  "version": 1,
+  "scenarios": {
+    "t_pass1": {
+      "name": "Passing 1",
+      "short": "Pass 1",
+      "on": true,
+      "info": "Pass from the shooting line to the figure on the centre spot. The ball must stop in the far half of the centre circle.",
+      "hint": [
+        "Pass",
+        "Stop the ball in the gold half of the circle."
+      ],
+      "setup": {
+        "pieces": [
+          {
+            "id": 0,
+            "x": -34,
+            "z": -32
+          },
+          {
+            "id": 1,
+            "x": -34,
+            "z": -23.75
+          },
+          {
+            "id": 2,
+            "x": -34,
+            "z": -16
+          },
+          {
+            "id": 3,
+            "x": -34,
+            "z": -8
+          },
+          {
+            "id": 4,
+            "x": -34,
+            "z": 0
+          },
+          {
+            "id": 5,
+            "x": -34,
+            "z": 8
+          },
+          {
+            "id": 6,
+            "x": -34,
+            "z": 16
+          },
+          {
+            "id": 7,
+            "x": -34,
+            "z": 24
+          },
+          {
+            "id": 8,
+            "x": -34,
+            "z": 32
+          },
+          {
+            "id": 9,
+            "x": 0,
+            "z": 0,
+            "face": [
+              -60,
+              0
+            ]
+          }
+        ],
+        "ball": null,
+        "zones": [
+          {
+            "type": "arc",
+            "name": "Far half of the circle",
+            "x": 0,
+            "z": 0,
+            "r": 9,
+            "a0": -90,
+            "len": 180
+          },
+          {
+            "type": "arc",
+            "name": "Near half of the circle",
+            "x": 0,
+            "z": 0,
+            "r": 9,
+            "a0": 90,
+            "len": 180,
+            "hidden": true
+          }
+        ],
+        "turns": {
+          "order": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            4
+          ],
+          "ball": [
+            5,
+            0
+          ],
+          "face": [
+            0,
+            0
+          ]
+        }
+      },
+      "graph": {
+        "nodes": {
+          "f1": {
+            "type": "flick",
+            "x": 40,
+            "y": 60
+          },
+          "b1": {
+            "type": "branch",
+            "x": 300,
+            "y": 120
+          },
+          "c1": {
+            "type": "hitBall",
+            "x": 32,
+            "y": 248
+          },
+          "m1": {
+            "type": "miss",
+            "title": "Missed the ball",
+            "sub": "",
+            "x": 560,
+            "y": 330
+          },
+          "b2": {
+            "type": "branch",
+            "x": 560,
+            "y": 100
+          },
+          "c2": {
+            "type": "ballZone",
+            "zone": 0,
+            "x": 320,
+            "y": 300
+          },
+          "p1": {
+            "type": "point",
+            "title": "Perfect pass",
+            "sub": "+1",
+            "x": 840,
+            "y": 40
+          },
+          "b3": {
+            "type": "branch",
+            "x": 840,
+            "y": 220
+          },
+          "c3": {
+            "type": "ballZone",
+            "zone": 1,
+            "x": 600,
+            "y": 460
+          },
+          "m2": {
+            "type": "miss",
+            "title": "Wrong half of the circle",
+            "sub": "",
+            "x": 1110,
+            "y": 170
+          },
+          "m3": {
+            "type": "miss",
+            "title": "Not in the circle",
+            "sub": "",
+            "x": 1110,
+            "y": 360
+          }
+        },
+        "edges": [
+          [
+            "f1",
+            "out",
+            "b1",
+            "in"
+          ],
+          [
+            "c1",
+            "out",
+            "b1",
+            "cond"
+          ],
+          [
+            "b1",
+            "true",
+            "b2",
+            "in"
+          ],
+          [
+            "b1",
+            "false",
+            "m1",
+            "in"
+          ],
+          [
+            "c2",
+            "out",
+            "b2",
+            "cond"
+          ],
+          [
+            "b2",
+            "true",
+            "p1",
+            "in"
+          ],
+          [
+            "b2",
+            "false",
+            "b3",
+            "in"
+          ],
+          [
+            "c3",
+            "out",
+            "b3",
+            "cond"
+          ],
+          [
+            "b3",
+            "true",
+            "m2",
+            "in"
+          ],
+          [
+            "b3",
+            "false",
+            "m3",
+            "in"
+          ]
+        ]
+      }
+    },
+    "t_move1": {
+      "name": "Movement 1",
+      "short": "Move 1",
+      "on": true,
+      "info": "Two flicks per figure, no ball. First into the shooting area, then into the penalty area.",
+      "hint": [
+        "Flick",
+        ""
+      ],
+      "setup": {
+        "pieces": [
+          {
+            "id": 8,
+            "x": -10,
+            "z": 0
+          }
+        ],
+        "ball": {
+          "x": -6.75,
+          "z": 0
+        },
+        "zones": [
+          {
+            "type": "rect",
+            "name": "Target",
+            "x0": 20,
+            "z0": -10,
+            "x1": 30,
+            "z1": 10
+          }
+        ],
+        "turns": null
+      },
+      "graph": {
+        "nodes": {
+          "f1": {
+            "type": "flick",
+            "x": 40,
+            "y": 80
+          },
+          "b1": {
+            "type": "branch",
+            "x": 300,
+            "y": 80
+          },
+          "c1": {
+            "type": "ballZone",
+            "zone": 0,
+            "x": 60,
+            "y": 240
+          },
+          "p1": {
+            "type": "point",
+            "title": "In the zone",
+            "sub": "+1",
+            "x": 560,
+            "y": 30
+          },
+          "m1": {
+            "type": "miss",
+            "title": "Missed",
+            "sub": "",
+            "x": 560,
+            "y": 190
+          }
+        },
+        "edges": [
+          [
+            "f1",
+            "out",
+            "b1",
+            "in"
+          ],
+          [
+            "c1",
+            "out",
+            "b1",
+            "cond"
+          ],
+          [
+            "b1",
+            "true",
+            "p1",
+            "in"
+          ],
+          [
+            "b1",
+            "false",
+            "m1",
+            "in"
+          ]
+        ]
+      }
+    },
+    "t_mark1": {
+      "name": "Marking 1",
+      "short": "Mark 1",
+      "on": true,
+      "info": "Flick from the halfway line across the shooting line and stop in front of a Blue. Do not touch them.",
+      "hint": [
+        "Flick",
+        ""
+      ],
+      "setup": {
+        "pieces": [
+          {
+            "id": 8,
+            "x": -10,
+            "z": 0
+          }
+        ],
+        "ball": {
+          "x": -6.75,
+          "z": 0
+        },
+        "zones": [
+          {
+            "type": "rect",
+            "name": "Target",
+            "x0": 20,
+            "z0": -10,
+            "x1": 30,
+            "z1": 10
+          }
+        ],
+        "turns": null
+      },
+      "graph": {
+        "nodes": {
+          "f1": {
+            "type": "flick",
+            "x": 40,
+            "y": 80
+          },
+          "b1": {
+            "type": "branch",
+            "x": 300,
+            "y": 80
+          },
+          "c1": {
+            "type": "ballZone",
+            "zone": 0,
+            "x": 60,
+            "y": 240
+          },
+          "p1": {
+            "type": "point",
+            "title": "In the zone",
+            "sub": "+1",
+            "x": 560,
+            "y": 30
+          },
+          "m1": {
+            "type": "miss",
+            "title": "Missed",
+            "sub": "",
+            "x": 560,
+            "y": 190
+          }
+        },
+        "edges": [
+          [
+            "f1",
+            "out",
+            "b1",
+            "in"
+          ],
+          [
+            "c1",
+            "out",
+            "b1",
+            "cond"
+          ],
+          [
+            "b1",
+            "true",
+            "p1",
+            "in"
+          ],
+          [
+            "b1",
+            "false",
+            "m1",
+            "in"
+          ]
+        ]
+      }
+    },
+    "t_shoot1": {
+      "name": "Shooting 1",
+      "short": "Shoot 1",
+      "on": true,
+      "info": "Two blocks guard the goal line. Five shots from outside the box, five from the shooting line.",
+      "hint": [
+        "Flick",
+        ""
+      ],
+      "setup": {
+        "pieces": [
+          {
+            "id": 8,
+            "x": -10,
+            "z": 0
+          }
+        ],
+        "ball": {
+          "x": -6.75,
+          "z": 0
+        },
+        "zones": [
+          {
+            "type": "rect",
+            "name": "Target",
+            "x0": 20,
+            "z0": -10,
+            "x1": 30,
+            "z1": 10
+          }
+        ],
+        "turns": null
+      },
+      "graph": {
+        "nodes": {
+          "f1": {
+            "type": "flick",
+            "x": 40,
+            "y": 80
+          },
+          "b1": {
+            "type": "branch",
+            "x": 300,
+            "y": 80
+          },
+          "c1": {
+            "type": "ballZone",
+            "zone": 0,
+            "x": 60,
+            "y": 240
+          },
+          "p1": {
+            "type": "point",
+            "title": "In the zone",
+            "sub": "+1",
+            "x": 560,
+            "y": 30
+          },
+          "m1": {
+            "type": "miss",
+            "title": "Missed",
+            "sub": "",
+            "x": 560,
+            "y": 190
+          }
+        },
+        "edges": [
+          [
+            "f1",
+            "out",
+            "b1",
+            "in"
+          ],
+          [
+            "c1",
+            "out",
+            "b1",
+            "cond"
+          ],
+          [
+            "b1",
+            "true",
+            "p1",
+            "in"
+          ],
+          [
+            "b1",
+            "false",
+            "m1",
+            "in"
+          ]
+        ]
+      }
+    },
+    "t_att1": {
+      "name": "Attacking 1",
+      "short": "Attack 1",
+      "on": true,
+      "info": "Ball on the halfway line. Score in three flicks or fewer. Every flick must hit the ball, shots only from the shooting area.",
+      "hint": [
+        "Flick",
+        ""
+      ],
+      "setup": {
+        "pieces": [
+          {
+            "id": 8,
+            "x": -10,
+            "z": 0
+          }
+        ],
+        "ball": {
+          "x": -6.75,
+          "z": 0
+        },
+        "zones": [
+          {
+            "type": "rect",
+            "name": "Target",
+            "x0": 20,
+            "z0": -10,
+            "x1": 30,
+            "z1": 10
+          }
+        ],
+        "turns": null
+      },
+      "graph": {
+        "nodes": {
+          "f1": {
+            "type": "flick",
+            "x": 40,
+            "y": 80
+          },
+          "b1": {
+            "type": "branch",
+            "x": 300,
+            "y": 80
+          },
+          "c1": {
+            "type": "ballZone",
+            "zone": 0,
+            "x": 60,
+            "y": 240
+          },
+          "p1": {
+            "type": "point",
+            "title": "In the zone",
+            "sub": "+1",
+            "x": 560,
+            "y": 30
+          },
+          "m1": {
+            "type": "miss",
+            "title": "Missed",
+            "sub": "",
+            "x": 560,
+            "y": 190
+          }
+        },
+        "edges": [
+          [
+            "f1",
+            "out",
+            "b1",
+            "in"
+          ],
+          [
+            "c1",
+            "out",
+            "b1",
+            "cond"
+          ],
+          [
+            "b1",
+            "true",
+            "p1",
+            "in"
+          ],
+          [
+            "b1",
+            "false",
+            "m1",
+            "in"
+          ]
+        ]
+      }
+    },
+    "t_move2": {
+      "name": "Movement 2",
+      "short": "Move 2",
+      "on": true,
+      "info": "One flick from the touchline, straight down the halfway line, through the gap into the far half. Do not touch a Blue.",
+      "hint": [
+        "Flick",
+        ""
+      ],
+      "setup": {
+        "pieces": [
+          {
+            "id": 8,
+            "x": -10,
+            "z": 0
+          }
+        ],
+        "ball": {
+          "x": -6.75,
+          "z": 0
+        },
+        "zones": [
+          {
+            "type": "rect",
+            "name": "Target",
+            "x0": 20,
+            "z0": -10,
+            "x1": 30,
+            "z1": 10
+          }
+        ],
+        "turns": null
+      },
+      "graph": {
+        "nodes": {
+          "f1": {
+            "type": "flick",
+            "x": 40,
+            "y": 80
+          },
+          "b1": {
+            "type": "branch",
+            "x": 300,
+            "y": 80
+          },
+          "c1": {
+            "type": "ballZone",
+            "zone": 0,
+            "x": 60,
+            "y": 240
+          },
+          "p1": {
+            "type": "point",
+            "title": "In the zone",
+            "sub": "+1",
+            "x": 560,
+            "y": 30
+          },
+          "m1": {
+            "type": "miss",
+            "title": "Missed",
+            "sub": "",
+            "x": 560,
+            "y": 190
+          }
+        },
+        "edges": [
+          [
+            "f1",
+            "out",
+            "b1",
+            "in"
+          ],
+          [
+            "c1",
+            "out",
+            "b1",
+            "cond"
+          ],
+          [
+            "b1",
+            "true",
+            "p1",
+            "in"
+          ],
+          [
+            "b1",
+            "false",
+            "m1",
+            "in"
+          ]
+        ]
+      }
+    },
+    "t_pass2": {
+      "name": "Passing 2",
+      "short": "Pass 2",
+      "on": true,
+      "info": "One passer, a new spot on the shooting line each try. The ball must stop in the far half of the centre circle.",
+      "hint": [
+        "Flick",
+        ""
+      ],
+      "setup": {
+        "pieces": [
+          {
+            "id": 8,
+            "x": -10,
+            "z": 0
+          }
+        ],
+        "ball": {
+          "x": -6.75,
+          "z": 0
+        },
+        "zones": [
+          {
+            "type": "rect",
+            "name": "Target",
+            "x0": 20,
+            "z0": -10,
+            "x1": 30,
+            "z1": 10
+          }
+        ],
+        "turns": null
+      },
+      "graph": {
+        "nodes": {
+          "f1": {
+            "type": "flick",
+            "x": 40,
+            "y": 80
+          },
+          "b1": {
+            "type": "branch",
+            "x": 300,
+            "y": 80
+          },
+          "c1": {
+            "type": "ballZone",
+            "zone": 0,
+            "x": 60,
+            "y": 240
+          },
+          "p1": {
+            "type": "point",
+            "title": "In the zone",
+            "sub": "+1",
+            "x": 560,
+            "y": 30
+          },
+          "m1": {
+            "type": "miss",
+            "title": "Missed",
+            "sub": "",
+            "x": 560,
+            "y": 190
+          }
+        },
+        "edges": [
+          [
+            "f1",
+            "out",
+            "b1",
+            "in"
+          ],
+          [
+            "c1",
+            "out",
+            "b1",
+            "cond"
+          ],
+          [
+            "b1",
+            "true",
+            "p1",
+            "in"
+          ],
+          [
+            "b1",
+            "false",
+            "m1",
+            "in"
+          ]
+        ]
+      }
+    },
+    "t_def2": {
+      "name": "Defending 2",
+      "short": "Defend 2",
+      "on": true,
+      "info": "One flick from the touchline into the centre circle. Stop between the Blue and the ball without touching either.",
+      "hint": [
+        "Flick",
+        ""
+      ],
+      "setup": {
+        "pieces": [
+          {
+            "id": 8,
+            "x": -10,
+            "z": 0
+          }
+        ],
+        "ball": {
+          "x": -6.75,
+          "z": 0
+        },
+        "zones": [
+          {
+            "type": "rect",
+            "name": "Target",
+            "x0": 20,
+            "z0": -10,
+            "x1": 30,
+            "z1": 10
+          }
+        ],
+        "turns": null
+      },
+      "graph": {
+        "nodes": {
+          "f1": {
+            "type": "flick",
+            "x": 40,
+            "y": 80
+          },
+          "b1": {
+            "type": "branch",
+            "x": 300,
+            "y": 80
+          },
+          "c1": {
+            "type": "ballZone",
+            "zone": 0,
+            "x": 60,
+            "y": 240
+          },
+          "p1": {
+            "type": "point",
+            "title": "In the zone",
+            "sub": "+1",
+            "x": 560,
+            "y": 30
+          },
+          "m1": {
+            "type": "miss",
+            "title": "Missed",
+            "sub": "",
+            "x": 560,
+            "y": 190
+          }
+        },
+        "edges": [
+          [
+            "f1",
+            "out",
+            "b1",
+            "in"
+          ],
+          [
+            "c1",
+            "out",
+            "b1",
+            "cond"
+          ],
+          [
+            "b1",
+            "true",
+            "p1",
+            "in"
+          ],
+          [
+            "b1",
+            "false",
+            "m1",
+            "in"
+          ]
+        ]
+      }
+    }
+  }
+}

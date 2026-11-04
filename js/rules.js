@@ -207,7 +207,7 @@ function resolveAttack(ctx){
   S.flicks++;addBar(att,MBAL.bar.keep+(S.flicks>=3?MBAL.bar.chain:0));
   if(ctx.pass){S.lastFig=-1;S.lastFigCount=0;} // a pass to a teammate resets the count
   else if(S.lastFig===ctx.fig)S.lastFigCount++;else{S.lastFig=ctx.fig;S.lastFigCount=1;}
-  if(S.koPend){S.lastFig=ctx.fig;S.lastFigCount=3;S.koPend=false;} // the kick-off figure cannot play the next flick
+  if(S.koPend){S.lastFig=ctx.fig;S.lastFigCount=MAXF;S.koPend=false;} // the kick-off figure cannot play the next flick
   if(ctx.recv>=0){S.lastFig=-1;S.lastFigCount=0;selPrefer=ctx.recv;}
   S.phase='defend';S.active=def;S.msg=ctx.trick?{t:'Trickster',s:'The figure follows the ball.',c:att}:null;commit();
 }
@@ -239,7 +239,7 @@ function eligible(id){
   if(S.phase==='attack'&&S.taker>=0&&S.setupLeft<=0&&id!==S.taker)return false;
   if(S.phase==='defend'&&S.setupKind==='penalty')return id===21+S.active&&!!S.kOut[S.active];
   if(S.phase==='defend'&&S.ban&&S.ban.n===S.defN&&id===S.ban.id)return false;
-  if(S.phase==='attack'&&S.lastFig===id&&S.lastFigCount>=3)return false;
+  if(S.phase==='attack'&&S.lastFig===id&&S.lastFigCount>=MAXF)return false;
   return S.phase==='attack'||S.phase==='defend';
 }
 function autoSelect(){

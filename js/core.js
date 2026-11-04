@@ -10,11 +10,12 @@ const store={get(k){try{return localStorage.getItem(k);}catch(e){return null;}},
 /* ================= table constants (units roughly cm) ================= */
 // gameplay sizes (cm). Models can override them through their CoP_ collider objects.
 let HX=60,HZ=39,GOAL=8,GDEPTH=6,SHOOT=30,RF=1.6,RB=1.15,WALLX=71,WALLZ=47;
-const FIG_DEC=58,FIG_DRAG=0.8,BALL_DEC=20,BALL_DRAG=0.42;
-const VMIN=6,VMAX=78,M_FIG=1,M_BALL=0.38,E_BALL=0.88,E_FIG=0.5;
-let K_HALF=2.3,K_R=1.25,K_X=HX-2.3;const K_RANGE=8.6,K_SPEED=13,K_REACT=0.2;
+let FIG_DEC=58,FIG_DRAG=0.8,BALL_DEC=20,BALL_DRAG=0.42; // let: data/rules.json (Distal > Data > Rules) can change these
+let VMIN=6,VMAX=78,E_BALL=0.88,E_FIG=0.5;const M_FIG=1,M_BALL=0.38;
+let K_HALF=2.3,K_R=1.25,K_X=HX-2.3;let K_RANGE=8.6,K_SPEED=13,K_REACT=0.2;
 const DEFAULT_SIZES={HX,HZ,GOAL,GDEPTH,SHOOT,RF,RB,WALLX,WALLZ,K_HALF,K_R};
-const SOFT=0.75,CURL_K=0.62,BAR_MAX=100;
+let SOFT=0.75,CURL_K=0.62,BAR_MAX=100;
+let MAXF=3; // flicks in a row with one figure (data/rules.json rules.maxFlicks)
 const SETUP={corner:3,free:1,throw:1}; // optional positional flicks before the set piece is taken
 const KITS=[
   {name:'Reds',ab:'RED',shirt:0xc8322a,shorts:0xf3f1ea,socks:0xc8322a,insert:0xc8322a,gk:0x2e8b57,ui:'#e0483b'},

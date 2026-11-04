@@ -11,7 +11,7 @@ function updateHud(){renderLog();
   for(let t=0;t<2;t++){$('#ab'+t).textContent=AB(t);$('#k'+t).style.background=kitOf(t).ui;$('#s'+t).textContent=S.score[t];$('#sbt'+t).classList.toggle('poss',S.running&&S.poss===t);
     $('#bar'+t).style.width=(S.bar[t]/BAR_MAX*100)+'%';$('#mb'+t).classList.toggle('full',S.bar[t]>=BAR_MAX);}
   $('#half').textContent=S.golden?'Golden goal':S.timeUp?'Last turn':S.half===1?'1st half':'2nd half';
-  const lockTxt=(S.phase==='attack'&&S.lastFigCount>=3)?' · figure resting':'';
+  const lockTxt=(S.phase==='attack'&&S.lastFigCount>=MAXF)?' · figure resting':'';
   const tot=SETUP[S.setupKind]||(S.setupKind==='intercept'?1:0);
   $('#flickc').textContent=!S.running||S.phase==='end'?'':S.phase==='take'?'Pick a taker':S.setupKind==='penalty'?'Penalty':S.setupKind?`Positional ${tot-S.setupLeft}/${tot}`:`Flick ${S.flicks+1}${lockTxt}`;
   const pr=$('#prompt');
