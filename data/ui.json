@@ -17,68 +17,8 @@
   "nav": {
     "groups": [
       {
-        "sel": "#bal-bar > tbody > tr > td:nth-of-type(2)",
-        "type": "col"
-      },
-      {
-        "sel": "#bal-eco > tbody > tr > td:nth-of-type(2)",
-        "type": "col"
-      },
-      {
-        "sel": "#bal-exp > div.srow > span.tog:nth-of-type(1)",
-        "type": "col"
-      },
-      {
-        "sel": "#bal-paths > tbody > tr > td.ck:nth-of-type(10)",
-        "type": "col"
-      },
-      {
-        "sel": "#bal-paths > tbody > tr > td.ck:nth-of-type(9)",
-        "type": "col"
-      },
-      {
-        "sel": "#bal-paths > tbody > tr > td.ck:nth-of-type(8)",
-        "type": "col"
-      },
-      {
-        "sel": "#bal-paths > tbody > tr > td.ck:nth-of-type(7)",
-        "type": "col"
-      },
-      {
-        "sel": "#bal-paths > tbody > tr > td.ck:nth-of-type(6)",
-        "type": "col"
-      },
-      {
-        "sel": "#bal-paths > tbody > tr > td:nth-of-type(5)",
-        "type": "col"
-      },
-      {
-        "sel": "#bal-paths > tbody > tr > td:nth-of-type(4)",
-        "type": "grid"
-      },
-      {
-        "sel": "#bal-paths > tbody > tr > td:nth-of-type(3)",
-        "type": "grid"
-      },
-      {
-        "sel": "#bal-paths > tbody > tr > td:nth-of-type(2)",
-        "type": "grid"
-      },
-      {
-        "sel": "#bal-paths > tbody > tr > td:nth-of-type(1)",
-        "type": "grid"
-      },
-      {
         "sel": ".seg,.kitrow,.field,.cta,.kopbtns,.starbtns,.kitview,.pc-head,.bal-pw",
         "type": "row"
-      },
-      {
-        "sel": "#bal-stats > tbody > tr > td:nth-of-type(3)",
-        "type": "grid"
-      },
-      {
-        "sel": "#bal-stats > tbody > tr > td:nth-of-type(2)",
-        "type": "grid"
       },
       {
         "sel": "#tracks",

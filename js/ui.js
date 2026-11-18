@@ -32,6 +32,8 @@ const UI_GROUPS=[
   ['.ko-carousel','row'],['#club-home,#ground-home','map'],['.ko-pv','row'],['.ko-head','row'],
   ['.kitpal,.kp-pats,.ball-grid,.look-row','grid'],['#tracks','col'],
   ['#tour-bracket','map'],['#on-kv','grid'],['.on-act','row'],
+  // Balancing tables: each row is one row (left / right along it, up / down keeps the column)
+  ['table.bal tr','row'],
   ['.seg,.kitrow,.field,.cta,.kopbtns,.starbtns,.kitview,.pc-head,.bal-pw','row'],
 ];
 // Links out of a group, by direction. The key is matched with closest(), so it covers everything inside it.
@@ -101,6 +103,8 @@ function uiVisual(el){
 
 /* ---------- groups ---------- */
 function uiGroupOf(el){
+  // Balancing tables: a row is always one pad row, whatever groups are saved for its cells (5 Nov 2026)
+  {const tr=el.closest&&el.closest('table.bal tr');if(tr)return {el:tr,type:'row',o:{},sel:'table.bal tr'};}
   const lim=uiScopes().find(s=>s.contains(el));
   for(let a=el.parentElement;a&&a!==document.body;a=a.parentElement){
     for(const g of UI_GROUPS)if(a.matches(g[0]))return {el:a,type:g[1],o:g[2]||{},sel:g[0]};
