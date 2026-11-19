@@ -19,7 +19,7 @@ function titleCam(now){
 function titleShow(){TITLE.on=true;TITLE.t0=performance.now();TITLE.a0=Math.PI*0.62;
   $('#hub').hidden=true;$('#title').hidden=false;document.documentElement.classList.add('titleon');titleMsg();
   try{$('#title').focus({preventScroll:true});}catch(e){}}
-function titleGo(){if(!TITLE.on)return;TITLE.on=false;TITLE.leaving=performance.now();
+function titleGo(){if(TITLE.splash){splashSkip();return;}if(!TITLE.on)return;TITLE.on=false;TITLE.leaving=performance.now();
   const el=$('#title');el.classList.add('go');document.documentElement.classList.remove('titleon');
   openMenu();ensureAudio();tone(520,1040,0.18,0.12,'triangle');setTimeout(()=>tone(780,1560,0.22,0.1,'triangle'),90);
   const hub=$('#hub');hub.classList.remove('hub-in');void hub.offsetWidth;hub.classList.add('hub-in');
@@ -28,7 +28,8 @@ $('#title').addEventListener('pointerdown',e=>{setInput(e.pointerType==='touch'?
 $('#title').addEventListener('click',()=>titleGo());
 window.addEventListener('gamepadconnected',()=>{if(TITLE.on)titleMsg();});
 window.addEventListener('gamepaddisconnected',()=>{if(TITLE.on)titleMsg();});
-if(!/[?&]distal=/.test(location.search))titleShow();
+// a build first shows the splash screens (js/credits.js), 19 Nov 2026
+if(!/[?&]distal=/.test(location.search)){if(typeof splashWanted==='function'&&splashWanted())splashRun(titleShow);else titleShow();}
 requestAnimationFrame(frame);
 initRoom();
 window.addEventListener('gamepadconnected',()=>setInput('pad'));

@@ -80,7 +80,7 @@ canvas.addEventListener('pointerdown',e=>{
   if(sel<0)return;
   Object.assign(ptr,{on:true,mode:'pull',id:e.pointerId,sx:e.clientX,sy:e.clientY,px:e.clientX,py:e.clientY,ax:0,ay:0,s:0,peak:0,hist:[{s:0,t:e.timeStamp}],dx:0,dz:0});
   let locking=false;ptr.lockReq=0;
-  if(e.pointerType==='mouse'&&SET.lock&&canvas.requestPointerLock){try{ptr.lockReq=performance.now();const r=canvas.requestPointerLock();locking=true;if(r&&r.catch)r.catch(()=>{try{canvas.setPointerCapture(e.pointerId);}catch(_){}});}catch(_){locking=false;}}
+  if(e.pointerType==='mouse'&&SET.lock&&!(typeof TOUCH!=='undefined'&&TOUCH.on)&&canvas.requestPointerLock){try{ptr.lockReq=performance.now();const r=canvas.requestPointerLock();locking=true;if(r&&r.catch)r.catch(()=>{try{canvas.setPointerCapture(e.pointerId);}catch(_){}});}catch(_){locking=false;}}
   if(!locking){try{canvas.setPointerCapture(e.pointerId);}catch(_){}}
   updateHud();
 });

@@ -18,7 +18,7 @@ sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-85,righ
 scene.add(sun);
 const fill=new THREE.DirectionalLight(0xbcd2ff,0.35);fill.name='Fill';fill.position.set(60,80,-50);scene.add(fill);
 function pitchTexture(mode){
-  const W=2048,H=Math.round(2048*88/132),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+  const W=window.PITCH_W||2048,H=Math.round(W*88/132),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
   const sx=W/132,X=x=>(x+66)*sx,Z=z=>(z+44)*sx;
   if(mode!=='lines')for(let i=0;i<14;i++){g.fillStyle=i%2?'#2b6f38':'#307a3e';const w=132/14;g.fillRect(Math.floor(X(-66+i*w)),0,Math.ceil(w*sx)+1,H);}
   if(mode!=='lines')for(let i=0;i<46000;i++){const v=Math.random();g.fillStyle=v<0.5?'rgba(0,0,0,0.07)':'rgba(255,255,255,0.045)';g.fillRect(Math.random()*W,Math.random()*H,1+Math.random()*2.5,1);}

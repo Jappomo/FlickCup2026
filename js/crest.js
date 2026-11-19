@@ -94,22 +94,22 @@ function renderCrest(){
   el.innerHTML=`<div class="cr-wrap">
     <input class="mc-name cr-name" id="cr-name" maxlength="16" autocomplete="off" spellcheck="false" aria-label="Club name" placeholder="${esc(KITS[kitSel[crestTeam]].name)}" value="${esc(q.name||'')}">
     <div class="cr-left">
-      <div class="cr-big"><img src="${crestUrl(c,320)}" alt="Your crest"></div>
-      <div class="cr-col"><p class="h">Preferred color</p><div class="kitrow" id="cr-kitc" role="group" aria-label="Preferred color">${KITS.map((k,i)=>`<button class="sw" type="button" data-kit="${i}" title="${esc(k.name)}" aria-label="Preferred color ${esc(k.name)}" aria-pressed="${kitSel[crestTeam]===i}"${crestKitOff(i)?' disabled':''} style="background:${k.ui}"><i style="background:#${k.shorts.toString(16).padStart(6,'0')}"></i></button>`).join('')}</div></div>
-      <div class="seg cr-acts"><button class="chip" type="button" id="cr-rand">Surprise me</button><button class="chip" type="button" id="cr-kit">Kit colours</button></div></div>
+      <div class="cr-big"><img src="${crestUrl(c,512)}" alt="Your crest"></div></div>
     <div class="cr-right">
       <div class="mc-sec"><p class="h">Shield</p><div class="cr-row">${row('Shield','s',false)}</div></div>
       <div class="mc-sec"><p class="h">Pattern</p><div class="cr-row">${row('Pattern','p',true)}</div></div>
       <div class="mc-sec"><p class="h">Charge</p><div class="cr-row">${row('Charge','c',true)}</div></div>
       <div class="mc-sec"><p class="h">Colours</p><div class="cr-cols"><div class="cr-slots seg">${CREST_SLOTS.map(([k,l])=>`<button class="chip" type="button" data-slot="${k}" aria-pressed="${crestSlot===k}"><i style="background:${crestSwatch(c[k])}"></i>${l}</button>`).join('')}</div>
-        <div class="cr-pal">${codes.map(i=>`<button class="cr-sw${c[crestSlot]===i?' on':''}${i>=nc?' grad':''}" type="button" data-col="${i}" title="${esc(crestCodeName(i))}" aria-label="${esc(crestCodeName(i))}" aria-pressed="${c[crestSlot]===i}" style="background:${crestSwatch(i)}"></button>`).join('')}</div></div></div>
+        <div class="cr-pal">${codes.map(i=>`<button class="cr-sw${c[crestSlot]===i?' on':''}${i>=nc?' grad':''}" type="button" data-col="${i}" title="${esc(crestCodeName(i))}" aria-label="${esc(crestCodeName(i))}" aria-pressed="${c[crestSlot]===i}" style="background:${crestSwatch(i)}"></button>`).join('')}</div>
+        <div class="seg cr-acts"><button class="chip" type="button" id="cr-rand">Surprise me</button><button class="chip" type="button" id="cr-kit">Kit colours</button></div></div></div>
     </div></div>`;
   el.querySelectorAll('.cr-t').forEach(b=>b.onclick=()=>{const card=crestLocked(b.dataset.g,+b.dataset.v);
     if(card){const C=colOf(card.collection);hobbyToast(`Needs the Album card "${card.title}" (${C.name} #${card.no}).`);sfx('clack',10);return;}crestSet(b.dataset.k,+b.dataset.v);});
   el.querySelectorAll('[data-slot]').forEach(b=>b.onclick=()=>{crestSlot=b.dataset.slot;renderCrest();});
   el.querySelectorAll('[data-col]').forEach(b=>b.onclick=()=>crestSet(crestSlot,+b.dataset.col));
   el.querySelectorAll('#cr-team [data-team]').forEach(b=>b.onclick=()=>{crestTeam=+b.dataset.team;renderCrest();});
-  // the club's name and preferred colour (moved here from Tactics, 3 Nov 2026)
+  // the club's name (moved here from Tactics, 3 Nov 2026). The preferred colour left this page on 19 Nov 2026: the kit is
+  // picked on the Kick-off screen and in The Ground > Kit; Surprise me and Kit colours moved under Colours.
   {const ni=$('#cr-name'),team=crestTeam;ni.oninput=()=>{mySquads[team].name=cleanSquadName(ni.value);saveSquads();if(!S.running)updateHud();if(net.named)net.named.presence({sq:serSquad(mySquads[0])}).catch(()=>{});};}
   el.querySelectorAll('#cr-kitc [data-kit]').forEach(b=>b.onclick=()=>{const team=crestTeam,i=+b.dataset.kit;kitSel[team]=i;mySquads[team].kit=i;if(kitSel[1-team]===i)kitSel[1-team]=(i+1)%KITS.length;
     saveSquads();renderKits();if(!S.running){S.kits=kitSel.slice();applyKits();}renderCrest();sfx('tock',14);});

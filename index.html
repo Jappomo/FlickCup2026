@@ -747,7 +747,7 @@ body.padmode #np-next .npg{display:inline-grid}
 .title{position:fixed;inset:0;z-index:60;display:grid;grid-template-rows:1fr auto;cursor:pointer;user-select:none;-webkit-user-select:none;color:#fff;
   background:radial-gradient(ellipse 75% 65% at 50% 46%,rgba(6,16,58,.3) 0%,rgba(6,16,58,.42) 55%,rgba(3,10,44,.92) 100%),linear-gradient(180deg,rgba(3,10,44,.55) 0%,rgba(3,10,44,0) 28%,rgba(3,10,44,0) 62%,rgba(3,10,44,.85) 100%)}
 .title[hidden]{display:none}
-html.titleon body>*:not(#title):not(#c):not(script):not(#svg-defs){visibility:hidden!important}
+html.titleon body>*:not(#title):not(#c):not(script):not(#svg-defs):not(#splash){visibility:hidden!important}
 .t-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(18px,calc(4*var(--vh)),44px);padding:24px 16px;text-align:center}
 .t-logo{display:flex;flex-direction:column;align-items:center;gap:6px;animation:tIn .9s cubic-bezier(.2,.9,.25,1) both}
 .t-mark{width:clamp(64px,calc(9*var(--vw)),104px);aspect-ratio:1;display:grid;place-items:center;background:var(--accent);box-shadow:inset 8px 0 0 var(--orange),0 18px 50px rgba(42,92,224,.45);font-family:var(--f-display);font-weight:900;font-style:italic;font-size:clamp(34px,calc(4.8*var(--vw)),56px);margin-bottom:10px}
@@ -993,7 +993,10 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 @keyframes rareglow{from{box-shadow:0 0 0 2px var(--rc),0 8px 18px rgba(0,0,0,.4)}to{box-shadow:0 0 0 2px var(--rc),0 0 22px var(--rc),0 8px 18px rgba(0,0,0,.4)}}
 @media (prefers-reduced-motion:reduce){.acard.r-uncommon::after,.pk.r-uncommon .pk-front::after,.acard.r-rare{animation:none}}
 </style>
-<link rel="stylesheet" href="css/retro.css?v=20261104f">
+<link rel="stylesheet" href="css/retro.css?v=20261119e">
+<link rel="stylesheet" href="css/menus2.css?v=20261119e">
+<link rel="stylesheet" href="css/season.css?v=20261119b">
+<link rel="stylesheet" href="css/menubg.css?v=20261119a">
 
 <script>/* UI scale before the first paint (js/uiscale.js keeps it up to date) */(function(){var t=matchMedia('(pointer:coarse)').matches&&!matchMedia('(pointer:fine)').matches,u=t?140:100;try{u=(JSON.parse(localStorage.getItem('baize.settings')||'{}').ui)||u;}catch(e){}var z=Math.min(Math.min(innerWidth/1600,innerHeight/900)*u/100,innerWidth/1480);document.documentElement.style.setProperty('--uiz',Math.max(z,0.5).toFixed(4));document.documentElement.style.setProperty('--mz',Math.min(innerWidth/1600,innerHeight/900).toFixed(4));})();</script>
 <section class="title" id="title" role="button" tabindex="0" aria-label="Flick Cup 2026. Press any button to start">
@@ -1035,6 +1038,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
       <button role="menuitemradio" data-cam="0" aria-checked="false"><i></i><b>Vertical</b><small>Behind your goal, looking up the pitch</small></button>
       <button role="menuitemradio" data-cam="1" aria-checked="false"><i></i><b>Broadcast</b><small>Side-on TV view across the pitch</small></button>
       <button role="menuitemradio" data-cam="3" aria-checked="false"><i></i><b>Eagle Eye</b><small>Straight down over the whole table</small></button>
+      <button role="menuitemradio" data-cam="4" aria-checked="false"><i></i><b>Follow the Ball</b><small>Close behind the ball, wherever it goes</small></button>
     </div>
   </div>
   <button class="pill" id="btn-menu"><span class="glyph" id="g-menu">Esc</span><span class="lbl">Pause</span></button>
@@ -1087,7 +1091,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
       <button class="tab" role="tab" data-tab="balance" aria-selected="false">Balancing</button>
       <span class="glyph" id="g-rb" hidden>RB</span>
     </nav>
-    <div class="hub-right"><span class="hobby" id="hobby" title="Hobby: earn it by playing, spend it in The Ground"><svg class="hb-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#f6c443" stroke="#9a6d12" stroke-width="1.6"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#9a6d12" stroke-width="1.2" opacity=".6"/><path d="M9.2 7.5v9M14.8 7.5v9M9.2 12h5.6" stroke="#6b4a08" stroke-width="2" stroke-linecap="round"/></svg><b id="hobby-n">0</b></span><button class="ghost iconb" id="btn-sound" aria-label="Mute" title="Mute"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><g class="on"><path d="M15.2 9a4.2 4.2 0 0 1 0 6M17.6 6.6a7.6 7.6 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g><g class="off"><path d="M15.5 9.5l5 5M20.5 9.5l-5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g></svg></button></div>
+    <div class="hub-right"><span class="hobby" id="hobby" title="Hobby: earn it by playing, spend it in The Ground"><svg class="hb-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#f6c443" stroke="#9a6d12" stroke-width="1.6"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#9a6d12" stroke-width="1.2" opacity=".6"/><path d="M9.2 7.5v9M14.8 7.5v9M9.2 12h5.6" stroke="#6b4a08" stroke-width="2" stroke-linecap="round"/></svg><span class="hb-t"><small>Hobby</small><b id="hobby-n">0</b></span></span></div>
 <div class="htoast" id="htoast" hidden></div>
   </header>
   <main class="hub-main">
@@ -1427,7 +1431,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
   <linearGradient id="tokGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6dc8a"/><stop offset="1" stop-color="#b98a2a"/></linearGradient>
   <linearGradient id="tokSel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffcc00"/></linearGradient>
 </defs></svg>
-<div class="np" id="np" aria-live="polite"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="nt"><span class="lab" id="np-lab">Now playing</span><span class="ttl" id="np-ttl"></span><span class="art" id="np-art"></span></span><button id="np-next" aria-label="Next track"><span class="glyph npg" aria-hidden="true">R3</span>Next</button></div>
+<div class="np" id="np" aria-live="polite"><button class="ghost iconb" id="btn-sound" aria-label="Mute" title="Mute"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><g class="on"><path d="M15.2 9a4.2 4.2 0 0 1 0 6M17.6 6.6a7.6 7.6 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g><g class="off"><path d="M15.5 9.5l5 5M20.5 9.5l-5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g></svg></button><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="nt"><span class="lab" id="np-lab">Now playing</span><span class="ttl" id="np-ttl"></span><span class="art" id="np-art"></span></span><button id="np-next" aria-label="Next track"><span class="glyph npg" aria-hidden="true">R3</span>Next</button></div>
 
 <section class="hub" id="ft" hidden>
   <div class="hub-bg" aria-hidden="true"><svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="hubFade2" x1="0" y1="0" x2="0" y2="1"><stop offset="0.55" stop-color="#1a0b66" stop-opacity="0"/><stop offset="1" stop-color="#140852" stop-opacity="0.85"/></linearGradient></defs><g fill="none" stroke-linecap="round">
@@ -1451,26 +1455,27 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <div id="rotate" role="alert"><div><i aria-hidden="true">⟳</i>Turn your device sideways to play</div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="lib/three-post.js?v=20261118a"></script>
 <!-- game code: classic scripts, loaded in this order (they share one scope) -->
 <!-- ?v= on every local file: bump it with each release, so a browser never mixes cached old files with new ones -->
 <script src="js/core.js?v=20261104s"></script>
 <script src="js/shaders.js?v=20261024h"></script>
-<script src="js/audio.js?v=20261024h"></script>
+<script src="js/audio.js?v=20261119c"></script>
 <script src="js/physics.js?v=20261024h"></script>
 <script src="js/rules.js?v=20261104s"></script>
-<script src="js/scene.js?v=20261024h"></script>
-<script src="js/models.js?v=20261024h"></script>
-<script src="js/camera.js?v=20261024h"></script>
-<script src="js/input.js?v=20261024h"></script>
+<script src="js/scene.js?v=20261118a"></script>
+<script src="js/models.js?v=20261119a"></script>
+<script src="js/camera.js?v=20261118a"></script>
+<script src="js/input.js?v=20261118a"></script>
 <script src="js/cpu.js?v=20261027a"></script>
 <script src="js/net.js?v=20261024h"></script>
 <script src="js/hud.js?v=20261104s"></script>
 <script src="js/tournament.js?v=20261024h"></script>
 <script src="js/menus.js?v=20261103b"></script>
-<script src="js/customize.js?v=20261104f"></script>
+<script src="js/customize.js?v=20261119d"></script>
 <script src="js/settings.js?v=20261024h"></script>
 <script src="js/controls.js?v=20261024h"></script>
-<script src="js/loop.js?v=20261104s"></script>
+<script src="js/loop.js?v=20261118a"></script>
 <script src="js/practice.js?v=20261024h"></script>
 <script src="js/training.js?v=20261028a"></script>
 <script src="js/data.js?v=20261104g"></script>
@@ -1478,7 +1483,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="js/kickoff.js?v=20261024h"></script>
 <script src="js/online.js?v=20261024h"></script>
 <script src="js/album.js?v=20261024h"></script>
-<script src="js/crest.js?v=20261103c"></script>
+<script src="js/crest.js?v=20261119a"></script>
 <script src="js/kitpattern.js?v=20261104a"></script>
 <script src="js/vfx.js?v=20261024h"></script>
 <script src="js/scenery.js?v=20261103a"></script>
@@ -1488,8 +1493,17 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="js/events.js?v=20261103a"></script>
 <script src="js/scenarios.js?v=20261104s"></script>
 <script src="js/rulesdata.js?v=20261104s"></script>
+<script src="js/graphics.js?v=20261119a"></script>
 <script src="js/ui.js?v=20261105b"></script>
 <script src="js/uiscale.js?v=20261024h"></script>
-<script src="js/start.js?v=20261024h"></script>
+<script src="js/touch.js?v=20261118a"></script>
+<script src="js/setmenu.js?v=20261119b"></script>
+<script src="js/tactics2.js?v=20261119a"></script>
+<script src="js/tablepage.js?v=20261119d"></script>
+<script src="js/credits.js?v=20261119d"></script>
+<script src="js/seasonmap.js?v=20261119a"></script>
+<script src="js/season.js?v=20261119b"></script>
+<script src="js/menubg.js?v=20261119a"></script>
+<script src="js/start.js?v=20261119a"></script>
 
 </html>

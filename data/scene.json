@@ -76,5 +76,225 @@
   "materials": {},
   "camera": {},
   "scenes": {},
-  "add": []
+  "presets": {
+    "Night Time": {
+      "scene": "match",
+      "lights": {
+        "Sky": {
+          "color": "#4a5a80",
+          "intensity": 0.14,
+          "ground": "#0a0f0a"
+        },
+        "Sun": {
+          "color": "#9fb4ff",
+          "intensity": 0.06
+        },
+        "Fill": {
+          "color": "#6a7cff",
+          "intensity": 0
+        }
+      },
+      "add": [
+        {
+          "id": "a9",
+          "kind": "light",
+          "name": "Floodlight 1_3",
+          "parent": "",
+          "p": [
+            -70,
+            85,
+            -50
+          ],
+          "light": {
+            "type": "spot",
+            "color": "#f4f6ff",
+            "intensity": 2.53,
+            "angle": 50,
+            "penumbra": 0.45,
+            "decay": 1.15,
+            "distance": 143,
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "shadow": true
+          }
+        },
+        {
+          "id": "a10",
+          "kind": "light",
+          "name": "Floodlight 2_3",
+          "parent": "",
+          "p": [
+            70,
+            85,
+            -50
+          ],
+          "light": {
+            "type": "spot",
+            "color": "#f4f6ff",
+            "intensity": 1.15,
+            "angle": 50,
+            "penumbra": 0.45,
+            "decay": 1.15,
+            "distance": 147,
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "shadow": true
+          }
+        },
+        {
+          "id": "a11",
+          "kind": "light",
+          "name": "Floodlight 3_3",
+          "parent": "",
+          "p": [
+            -70,
+            85,
+            50
+          ],
+          "light": {
+            "type": "spot",
+            "color": "#f4f6ff",
+            "intensity": 2.48,
+            "angle": 50,
+            "penumbra": 0.45,
+            "decay": 1.15,
+            "distance": 143,
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "shadow": true
+          }
+        },
+        {
+          "id": "a12",
+          "kind": "light",
+          "name": "Floodlight 4_3",
+          "parent": "",
+          "p": [
+            70,
+            85,
+            50
+          ],
+          "light": {
+            "type": "spot",
+            "color": "#f4f6ff",
+            "intensity": 2.53,
+            "angle": 50,
+            "penumbra": 0.45,
+            "decay": 1.15,
+            "distance": 143,
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "shadow": true
+          }
+        }
+      ],
+      "env": {
+        "bg": "#02040a",
+        "fog": {
+          "color": "#02040a",
+          "near": 220,
+          "far": 520
+        },
+        "exposure": 1.1
+      }
+    },
+    "Sunset": {
+      "scene": "match",
+      "lights": {
+        "Sky": {
+          "color": "#ffcf9e",
+          "intensity": 0.5,
+          "ground": "#2a1a10"
+        },
+        "Sun": {
+          "color": "#ff9a4a",
+          "intensity": 1.35,
+          "p": [
+            -120,
+            45,
+            40
+          ]
+        },
+        "Fill": {
+          "color": "#7a8cff",
+          "intensity": 0.28
+        }
+      },
+      "add": [],
+      "env": {
+        "bg": "#2b1a2e",
+        "fog": {
+          "color": "#3a2230",
+          "near": 240,
+          "far": 560
+        },
+        "exposure": 1.1
+      }
+    },
+    "DustyRoom": {
+      "scene": "match",
+      "lights": {
+        "Sky": {
+          "color": "#fff1e0",
+          "intensity": 0.6,
+          "ground": "#3a2a20"
+        },
+        "Sun": {
+          "color": "#ffe2b8",
+          "intensity": 0.55,
+          "p": [
+            -120,
+            45,
+            40
+          ]
+        },
+        "Fill": {
+          "color": "#ffd9a8",
+          "intensity": 0.25
+        }
+      },
+      "add": [
+        {
+          "id": "a1",
+          "kind": "light",
+          "name": "Ceiling lamp",
+          "parent": "",
+          "p": [
+            0,
+            95,
+            0
+          ],
+          "light": {
+            "type": "point",
+            "color": "#ffcc88",
+            "intensity": 1.1,
+            "distance": 0,
+            "decay": 1,
+            "shadow": true
+          }
+        }
+      ],
+      "env": {
+        "bg": "#1b1410",
+        "fog": {
+          "color": "#1b1410",
+          "near": 88,
+          "far": 557
+        },
+        "exposure": 1
+      }
+    }
+  }
 }

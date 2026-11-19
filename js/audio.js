@@ -34,6 +34,7 @@ function sfx(k,v){
   else if(k==='net'){noise(0.35,0.25,600,0.7,0.02);}
   else if(k==='whistle'){[0,0.18].forEach(d=>setTimeout(()=>{tone(2750,2650,0.14,0.12,'sine');noise(0.14,0.05,2800,8);},d*1000));}
   else if(k==='goal'){noise(1.8,0.35,900,0.5,0.25);noise(1.4,0.18,2200,0.8,0.15);setTimeout(()=>sfx('whistle'),200);}
+  else if(k==='coin'){[[1320,0,0.07],[1980,0.07,0.32]].forEach(([f,d,len])=>setTimeout(()=>{tone(f,f,len,0.16,'square');tone(f*2,f*2,len*0.8,0.05,'sine');},d*1000));noise(0.05,0.12,5200,3);} // shop till (19 Nov 2026)
   else if(k==='moment'){tone(520,1040,0.25,0.18,'triangle');setTimeout(()=>tone(780,1560,0.3,0.16,'triangle'),120);noise(0.8,0.15,1500,0.6,0.1);}
 }
 
@@ -66,7 +67,9 @@ const music=(()=>{
     d.el.onended=()=>{if(d===decks[deck])next();};
   }
   function pickRandom(){const list=enabled().filter(t=>t!==lastTrack);const pool=list.length?list:enabled();return pool.length?pool[Math.floor(Math.random()*pool.length)]:null;}
-  function next(){const t=pickRandom();if(t)play(t);else halt();}
+  // the very first song a new player hears is We Are One (18 Nov 2026); after that the playlist is random
+  function firstSong(){if(store.get('baize.firstsong'))return null;const t=enabled().find(x=>/^we are one$/i.test((x.title||'').trim()));if(t)store.set('baize.firstsong','1');return t||null;}
+  function next(){const t=firstSong()||pickRandom();if(t)play(t);else halt();}
   function halt(){if(cur<0)return;stop(decks[deck],2.2);cur=-1;hideNP();renderTracks();}
   function wanted(){return !$('#hub').hidden||!$('#ft').hidden||(SET.inMatch&&S.running);}
   function showNP(t){
@@ -79,8 +82,14 @@ const music=(()=>{
   function hideNP(){$('#np').classList.remove('on');}
   return{
     kick(){if(!AC)return;if(wanted()&&cur<0)next();},
-    // called whenever the menu opens or closes
-    menu(open){if(!AC)return;if(open){next();}else if(!SET.inMatch)halt();else{clearTimeout(npT);npT=setTimeout(hideNP,2500);}},
+    // called whenever a menu screen (the hub or full time) opens or closes. A track already playing keeps playing, so
+    // moving between menu screens (pause, concede, full time, main menu) never changes the song. Closing the menu
+    // stops it only when music is off during matches and the match goes on (a conceded or finished match goes to
+    // the full-time screen, so the song carries on there).
+    menu(open){if(!AC)return;
+      if(open){if(cur>=0){clearTimeout(npT);showNP(lastTrack);}else next();}
+      else if(!SET.inMatch&&S.phase!=='end')halt();
+      else{clearTimeout(npT);npT=setTimeout(hideNP,2500);}},
     next,halt,play,
     inMatch(){return $('#hub').hidden&&$('#ft').hidden&&S.running;},
     current(){return cur>=0?lastTrack:null;},

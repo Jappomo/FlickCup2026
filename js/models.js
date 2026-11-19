@@ -131,6 +131,16 @@ function lookPick(part,id,optional){const L=LOOK[part];if(!L.length)return null;
 const lookStr=o=>LOOK_PARTS.map(k=>o[k]||'').join('|');
 function parseLookStr(v){const p=String(v||'').split('|'),o={};LOOK_PARTS.forEach((k,i)=>o[k]=(p[i]||'').replace(/[^0-9]/g,'').slice(0,6));return o;}
 function activeLook(){return S.mode==='online'&&S.running&&S.lookV?parseLookStr(S.lookV):LOOKSEL;}
+// Banners sit on the table rim (19 Nov 2026): where a banner's spot is sunk into the frame or the side pads, it is
+// lifted to stand on the first surface under it (rays from just above its top, so roofs and stands above are ignored).
+function lookSeatBanners(g,tc){g.updateMatrixWorld(true);const rc=new THREE.Raycaster(),dn=new THREE.Vector3(0,-1,0),solid=[];
+  tc.traverse(o=>{if(!o.isMesh)return;for(let p=o;p&&p!==tc;p=p.parent)if(/^Loc_Banner/i.test(p.name||''))return;solid.push(o);});
+  tc.traverse(loc=>{if(!/^Loc_Banner/i.test(loc.name||'')||!loc.children.length)return;const b=new THREE.Box3().setFromObject(loc);if(b.isEmpty())return;
+    const h=b.max.y-b.min.y||0.01,c=b.getCenter(new THREE.Vector3()),sz=b.getSize(new THREE.Vector3());let top=-Infinity;
+    [[0,0],[-0.4,0],[0.4,0],[0,-0.4],[0,0.4]].forEach(([fx,fz])=>{rc.set(new THREE.Vector3(c.x+sz.x*fx,b.max.y+h*0.5,c.z+sz.z*fz),dn);rc.far=h*3;
+      const hit=rc.intersectObjects(solid,false)[0];if(hit&&hit.point.y>top)top=hit.point.y;});
+    const dy=top-b.min.y;if(!(dy>h*0.02)||dy>h*2.5)return;
+    const a=loc.parent.worldToLocal(loc.getWorldPosition(new THREE.Vector3())),w=loc.getWorldPosition(new THREE.Vector3());w.y+=dy+h*0.01;loc.position.add(loc.parent.worldToLocal(w).sub(a));loc.updateMatrixWorld(true);});}
 function buildLookGroup(sel){
   const g=new THREE.Group(),f=lookPick('field',sel.field),t=lookPick('table',sel.table);
   if(f)g.add(f.node.clone(true));
@@ -139,6 +149,7 @@ function buildLookGroup(sel){
     const tr=lookPick('trinket',sel.trinket,true),bn=lookPick('banner',sel.banner,true),spots=[];
     tc.traverse(o=>{const n=o.name||'';if(tr&&/^Loc_Trinket/i.test(n))spots.push([o,tr]);if(bn&&/^Loc_Banner/i.test(n))spots.push([o,bn]);});
     spots.forEach(([o,v])=>o.add(v.node.clone(true)));
+    if(bn)lookSeatBanners(g,tc);
   }
   prepVisual(g);g.traverse(o=>{if(o.isMesh&&/field|cloth|surround/i.test(o.name))o.castShadow=false;});
   return {g,hasField:!!f,hasTable:!!t};

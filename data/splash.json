@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "on": true,
+  "screens": [
+    {
+      "name": "Engine",
+      "logo": "img/ui/splash-stacked-2x-copy.png?v=mwmvllmb",
+      "text": "Distal",
+      "bg": "#000000",
+      "size": 44,
+      "delay": 150,
+      "fadeIn": 700,
+      "hold": 1600,
+      "fadeOut": 700,
+      "zoom": 4,
+      "skippable": true
+    },
+    {
+      "name": "Developer",
+      "logo": "img/ui/splash-v2.png?v=mwmvfbmq",
+      "text": "Lost Tail Games",
+      "bg": "#000000",
+      "size": 34,
+      "delay": 150,
+      "fadeIn": 700,
+      "hold": 2000,
+      "fadeOut": 700,
+      "zoom": 4,
+      "skippable": true
+    }
+  ]
+}

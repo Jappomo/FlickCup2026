@@ -207,9 +207,13 @@ function priceOf(part,id){const n=id!=null&&variantNode(part,id),p=n&&n.userData
 function syncHobby(){const h=$('#hobby');h.hidden=!ecoOn();$('#hobby-n').textContent=(HOBBY.n||0).toLocaleString();}
 function hobbyToast(t,good){const el=$('#htoast');el.textContent=t;el.className='htoast'+(good?' good':'');el.hidden=false;clearTimeout(el._t);el._t=setTimeout(()=>{el.hidden=true;},2600);}
 function earn(n,why){if(!ecoOn()||!(n>0))return 0;HOBBY.n=(HOBBY.n||0)+n;syncHobby();const h=$('#hobby');h.classList.remove('pop');void h.offsetWidth;h.classList.add('pop');if(why)hobbyToast(`+${n} Hobby · ${why}`,true);return n;}
+// Buying (19 Nov 2026): no pop-up. A till sound and the Hobby counter rolls down; short of Hobby, the counter shakes red.
+function hobbyFx(cls){const h=$('#hobby');if(!h)return;h.classList.remove('pop','spend','short');void h.offsetWidth;h.classList.add(cls);}
+function hobbyRoll(from,to){const el=$('#hobby-n');if(!el)return;const t0=performance.now(),T=550;cancelAnimationFrame(el._r);
+  const f=t=>{const k=Math.min(1,(t-t0)/T),v=Math.round(from+(to-from)*(1-Math.pow(1-k,3)));el.textContent=v.toLocaleString();if(k<1)el._r=requestAnimationFrame(f);};el._r=requestAnimationFrame(f);}
 function buy(part,id){if(owns(part,id))return true;const p=priceOf(part,id);
-  if((HOBBY.n||0)<p){hobbyToast(`Not enough Hobby: this costs ${p}, you have ${HOBBY.n||0}.`);sfx('clack',10);return false;}
-  HOBBY.n=(HOBBY.n||0)-p;OWNED[part]=[...(OWNED[part]||[]),id];store.set('baize.owned',JSON.stringify(OWNED));syncHobby();hobbyToast(`Unlocked for ${p} Hobby`,true);sfx('tock',30);return true;}
+  if((HOBBY.n||0)<p){hobbyFx('short');sfx('clack',10);return false;}
+  const was=HOBBY.n||0;HOBBY.n=was-p;OWNED[part]=[...(OWNED[part]||[]),id];store.set('baize.owned',JSON.stringify(OWNED));syncHobby();hobbyRoll(was,HOBBY.n);hobbyFx('spend');sfx('coin');return true;}
 // a locked item: its price, or the Album card it needs (js/album.js)
 const needCard=(part,id)=>typeof cardLock==='function'?cardLock(part,id):null;
 function lockTag(part,id){const c=needCard(part,id);return c?`<span class="price cardtag" title="${String(c.title).replace(/"/g,'&quot;')}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2.2" fill="#f6c443" stroke="#6b4a08" stroke-width="1.5"/><path d="M9 8h6M9 12h6M9 16h3" stroke="#6b4a08" stroke-width="1.6" stroke-linecap="round"/></svg>Card</span>`:coinTag(priceOf(part,id));}
@@ -249,17 +253,55 @@ function renderLook(rebuild){
       lookPend=null;LOOKSEL[p]=v?v.id:'';saveLook();showLook();renderLook();sfx('tock',30);},off);
   });
   $('#tp-name').textContent=t?t.name:'Classic';
+  // an item to buy (lookPend) is shown on the preview table before it is bought (19 Nov 2026)
   if(initTablePreview()){
     const cv=$('#table-prev'),w=cv.clientWidth||400,h=cv.clientHeight||400;tR.setSize(w,h,false);tCam.aspect=w/h;tCam.updateProjectionMatrix();
-    if(tObj){tScene.remove(tObj);gpuRetire(tObj);}tObj=fitGroup(buildLookGroup(LOOKSEL).g);tObj.name='Table';tScene.add(tObj);try{applySceneData();}catch(e){}
+    if(tObj){tScene.remove(tObj);gpuRetire(tObj);}tObj=fitGroup(buildLookGroup(lookPend&&LOOK_PARTS.includes(lookPend.part)?Object.assign({},LOOKSEL,{[lookPend.part]:lookPend.id}):LOOKSEL).g);tObj.name='Table';tScene.add(tObj);try{applySceneData();}catch(e){}
   }
 }
+// where the trinket stands in the table preview: w = world point (after the turn), x/z = in the unturned table
+const TZ={s:0.05,cp:null,cl:null,v:new THREE.Vector3(),u:new THREE.Vector3(),t:0};
+function tzLocal(w){const c=Math.cos(-tObj.rotation.y),sn=Math.sin(-tObj.rotation.y);return {x:w.x*c+w.z*sn,z:-w.x*sn+w.z*c};}
+function tableTrinketSpot(){if(!tObj)return null;let loc=null;tObj.traverse(o=>{if(!loc&&/^Loc_Trinket/i.test(o.name||'')&&o.children.length)loc=o;});if(!loc)return null;
+  tObj.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(loc),w=b.isEmpty()?loc.getWorldPosition(new THREE.Vector3()):b.getCenter(new THREE.Vector3());
+  const sz=b.isEmpty()?0.05:b.getSize(new THREE.Vector3()).length();return Object.assign({w:w.clone(),s:Math.min(0.4,Math.max(0.02,sz))},tzLocal(w));}
+// the banner view (19 Nov 2026): the camera stands behind the right goal line, fixed, looking down the pitch, as
+// close as it can while every banner stays in frame. Worked out in the table's own space, so it holds whatever the turn.
+const TB_FIT={c:new THREE.PerspectiveCamera(),v:new THREE.Vector3()};
+function tableBannerSpot(){if(!tObj)return null;let goal=null;const bn=new THREE.Box3();
+  tObj.updateMatrixWorld(true);const inv=new THREE.Matrix4().copy(tObj.matrixWorld).invert();
+  tObj.traverse(o=>{const n=o.name||'';if(!goal&&/_Goal_R$/i.test(n))goal=o;if(/^Loc_Banner/i.test(n)&&o.children.length)bn.expandByObject(o);});
+  if(!goal||bn.isEmpty())return null;bn.applyMatrix4(inv);const g=new THREE.Box3().setFromObject(goal).applyMatrix4(inv).getCenter(new THREE.Vector3());
+  const sg=Math.sign(g.x)||1,cl=bn.getCenter(new THREE.Vector3()),look=tObj.localToWorld(cl.clone()),dir=tObj.localToWorld(cl.clone().add(new THREE.Vector3(sg,0.42,0))).sub(look).normalize();
+  const C=TB_FIT.c,fov=40;C.fov=fov;C.aspect=tCam.aspect||1;C.near=0.01;C.far=50;C.updateProjectionMatrix();
+  const pts=[];for(let i=0;i<8;i++)pts.push(tObj.localToWorld(new THREE.Vector3(i&1?bn.max.x:bn.min.x,i&2?bn.max.y:bn.min.y,i&4?bn.max.z:bn.min.z)));
+  let d=0.3;for(;d<8;d+=0.05){C.position.copy(look).addScaledVector(dir,d);C.lookAt(look);C.updateMatrixWorld(true);
+    if(pts.every(p=>{const q=TB_FIT.v.copy(p).project(C);return q.z<1&&Math.abs(q.x)<0.9&&Math.abs(q.y)<0.9;}))break;}
+  return {pos:look.clone().addScaledVector(dir,d),look,fov};}
 // table preview frame (called by the central loop while the table page is open)
+// Close-ups (18-19 Nov 2026): Trinket = the table turns its trinket corner away and the camera looks at it from inside
+// the pitch; Banner = the camera stands behind the goal line, fixed, looking at the banners. The camera always glides
+// to where it should be (no snaps when the item changes or the table is turned by hand).
 function tableTick(){
   if($('#hub').hidden||hubTab!=='custom'||custSec!=='table'||!tR)return;
-  if(!tSpin.drag){tSpin.v*=0.94;tSpin.a+=0.001+tSpin.v*0.002;} // 1/3 of the old turn speed (4 Nov 2026)
+  const now=performance.now(),dt=Math.min(0.05,TZ.t?(now-TZ.t)/1000:0.016);TZ.t=now;
+  const fc=(typeof UI!=='undefined'&&UI.cur)||document.activeElement,on=(id,part)=>(!!(fc&&fc.closest&&fc.closest('#look-'+id))||(typeof TB!=='undefined'&&TB.built&&TB.part===part));
+  const tr=on('trinket','trinket')&&!!LOOKSEL.trinket?tableTrinketSpot():null,bn=!tr&&on('banner','banner')&&!!LOOKSEL.banner?tableBannerSpot():null;
+  // the table: turns slowly on its own, or eases to the angle the close-up needs (a hand turn always wins)
+  if(!tSpin.drag){const want=tr?Math.atan2(-tr.x,tr.z)+Math.PI:bn?0:null;
+    if(want!==null){let d=want-tSpin.a;d=Math.atan2(Math.sin(d),Math.cos(d));tSpin.v=0;tSpin.a+=d*(1-Math.exp(-dt*4.5));}
+    else{tSpin.v*=0.94;tSpin.a+=0.001+tSpin.v*0.002;}} // 1/3 of the old turn speed (4 Nov 2026)
   if(tObj)tObj.rotation.y=tSpin.a;
-  previewCam('tables',tCam);previewDraw(tR,$('#table-prev'),tScene,tCam,1.05);
+  previewCam('tables',tCam);
+  const P=PREVIEW_CAMS.tables,pos=TZ.v.fromArray(P.pos),look=TZ.u.fromArray(P.look);
+  if(tr){TZ.s=tr.s;const L=tr.w;look.copy(L);pos.set(L.x,L.y+TZ.s*2.2+0.03,L.z+TZ.s*3.2+0.06);}
+  else if(bn){pos.copy(bn.pos);look.copy(bn.look);}
+  const fov=bn?bn.fov:P.fov;
+  if(!TZ.cp){TZ.cp=pos.clone();TZ.cl=look.clone();}
+  const k=1-Math.exp(-dt*(tr||bn?4:3));TZ.cp.lerp(pos,k);TZ.cl.lerp(look,k);TZ.f=(TZ.f||fov)+(fov-(TZ.f||fov))*k;
+  if(Math.abs(tCam.fov-TZ.f)>0.01){tCam.fov=TZ.f;tCam.updateProjectionMatrix();}
+  tCam.position.copy(TZ.cp);tCam.lookAt(TZ.cl);
+  previewDraw(tR,$('#table-prev'),tScene,tCam,1.05);
 }
 window.addEventListener('resize',()=>{if(tR&&hubTab==='custom'&&custSec==='table')renderLook();});
 window.addEventListener('resize',()=>{if(prevR&&hubTab==='custom')sizePreview();});

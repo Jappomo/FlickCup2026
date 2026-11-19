@@ -4,9 +4,9 @@
 'use strict';
 /* ================= camera ================= */
 // camera presets: data/scene.json (camera) can override these, see applySceneData
-const CAMS={fov:42,vertical:{el:0.98},broadcast:{el:0.9},eagle:{el:1.42},follow:{dist:34,height:0.62,back:0.72,ahead:12}};
+const CAMS={fov:42,vertical:{el:0.98},broadcast:{el:0.9},eagle:{el:1.42},follow:{dist:34,height:0.62,back:0.72,ahead:12},ball:{dist:58,height:0.72,back:0.66,lead:0.22,side:0.25}};
 const CAMS_DEF=JSON.parse(JSON.stringify(CAMS));
-const cam={mode:(()=>{const v=+store.get('baize.cam');return v===0||v===1||v===3?v:-1;})(),zoom:1,yaw:0,pitch:0,pos:new THREE.Vector3(-150,120,0),look:new THREE.Vector3(),tPos:new THREE.Vector3(),tLook:new THREE.Vector3()};
+const cam={mode:(()=>{const v=+store.get('baize.cam');return v===0||v===1||v===3||v===4?v:-1;})(),zoom:1,yaw:0,pitch:0,pos:new THREE.Vector3(-150,120,0),look:new THREE.Vector3(),tPos:new THREE.Vector3(),tLook:new THREE.Vector3()};
 function viewTeam(){if(S.mode==='practice'||S.mode==='tutorial')return 0;if(S.mode==='online')return net.myTeam==null?0:net.myTeam;if(S.mode==='cpu')return 1-cpuTeam;return S.running?S.poss:0;}
 function camMode(){if(cam.mode>=0)return cam.mode;return innerWidth>innerHeight*1.15?1:0;}
 function computeCam(){
@@ -25,6 +25,10 @@ function computeCam(){
     const D=(wide?Math.max((HX+8)/tanH,(HZ+8)/tanV):Math.max((HZ+8)/tanH,(HX+8)/tanV))*cam.zoom;
     cam.tLook.set(0,0,0);
     if(wide)cam.tPos.set(0,D*Math.sin(el),s*D*Math.cos(el));else cam.tPos.set(-d*D*Math.cos(el),D*Math.sin(el),0);
+  }else if(mode===4){
+    // Follow the Ball: behind the ball on the side you attack from, looking a little ahead of where it is going
+    const B=CAMS.ball,D=B.dist*cam.zoom,lx=clamp(ball.x+(ball.vx||0)*B.lead,-HX,HX),lz=clamp(ball.z+(ball.vz||0)*B.lead,-HZ,HZ);
+    cam.tLook.set(lx,0,lz);cam.tPos.set(lx-d*D*B.back,D*B.height,lz*(1-B.side));
   }else{
     const id=sel>=0?sel:(S.poss*10+8),b=bodies[id];let ux=ball.x-b.x,uz=ball.z-b.z;
     if(aimShow&&aimShow.fig===id){ux=aimShow.dx;uz=aimShow.dz;}
@@ -51,7 +55,7 @@ function updateCamera(dt,snap){
 }
 function resize(){renderer.setSize(innerWidth,innerHeight,false);camera.fov=CAMS.fov;camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}
 window.addEventListener('resize',resize);resize();
-const camNames={0:'Vertical',1:'Broadcast',3:'Eagle Eye'};
+const camNames={0:'Vertical',1:'Broadcast',3:'Eagle Eye',4:'Follow the Ball'};
 function resetCam(){cam.yaw=0;cam.pitch=0;cam.zoom=1;flashSub('Camera reset · '+camNames[camMode()]);}
 function setCamStyle(m){cam.mode=m;store.set('baize.cam',String(m));closeCamMenu();resetCam();}
 function renderCamMenu(){const cur=camMode();document.querySelectorAll('#cam-menu [data-cam]').forEach(b=>{const on=+b.dataset.cam===cur;b.setAttribute('aria-checked',String(on));b.querySelector('i').textContent=on?'✓':'';});}

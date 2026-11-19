@@ -1,0 +1,8 @@
+/* Menu backgrounds (19 Nov 2026, js/menubg.js): the picture behind the menus, the UI stays the same */
+html[data-menubg=floodlights] .hub-bg{background:url(menu-bg-floodlights.svg?v=20261119a) center/cover no-repeat,var(--n1)}
+html[data-menubg=chalk] .hub-bg{background:url(menu-bg-chalk.svg?v=20261119a) center/cover no-repeat,var(--n1)}
+html[data-menubg=baize] .hub-bg{background:url(menu-bg-baize.svg?v=20261119a) center/cover no-repeat,var(--n1)}
+html[data-menubg=programme] .hub-bg{background:url(menu-bg-programme.svg?v=20261119a) center/cover no-repeat,var(--n1)}
+html[data-menubg=europe] .hub-bg{background:url(menu-bg-europe.svg?v=20261119a) center/cover no-repeat,var(--n1)}
+.menubg{margin-top:14px}
+.menubg .seg{flex-wrap:wrap}

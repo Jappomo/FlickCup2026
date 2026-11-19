@@ -11,11 +11,23 @@
     {
       "sel": "#ball-grid",
       "w": 359
+    },
+    {
+      "sel": "#set-home",
+      "w": 1493
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "w": 270
     }
   ],
-  "layoutCss": "#ball-grid{width:359px!important}",
+  "layoutCss": "#ball-grid{width:359px!important}\n#set-home{width:1493px!important}\n#set-title > h2.mc-name{width:270px!important}",
   "nav": {
     "groups": [
+      {
+        "sel": "#set-home",
+        "type": "row"
+      },
       {
         "sel": ".seg,.kitrow,.field,.cta,.kopbtns,.starbtns,.kitview,.pc-head,.bal-pw",
         "type": "row"

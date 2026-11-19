@@ -1,0 +1,92 @@
+/* Season: Road to the Cup (19 Nov 2026, js/season.js). The panel fills the whole menu area under the tabs. */
+#hub .panel[data-panel=season]{padding:0}
+#hub.paused-match .tab[data-tab=season]{display:none}
+.tab[data-tab=season][hidden]{display:none}
+.se-wrap{position:relative;margin:-10px -40px -14px;width:1600px;height:758px;overflow:hidden;color:var(--cream);
+  background:radial-gradient(900px 640px at 40% 50%,#132a4c,#0a1729 70%,#060e1b);box-shadow:0 -24px 30px -10px #0a1729}
+.se-lab{margin:0;font:800 italic 14px var(--f-display);letter-spacing:.2em;text-transform:uppercase;color:var(--mus)}
+.se-t{margin:0;font:900 italic 58px/1 var(--f-display);text-transform:uppercase;letter-spacing:.02em;color:var(--cream);text-shadow:0 3px 0 rgba(5,12,24,.7)}
+.se-bar{display:flex;align-items:center;gap:14px;margin-top:10px}
+.se-bar b{font:800 italic 22px var(--f-display);text-transform:uppercase}
+.se-bar small{font-size:13px;color:var(--cream2)}
+.se-xp{width:260px;height:12px;background:rgba(241,228,198,.12);border-radius:6px;overflow:hidden}
+.se-xp i{display:block;height:100%;background:linear-gradient(90deg,#e0a21f,#f6c652)}
+
+/* season page: the three tiers */
+.se-home{position:absolute;inset:0;padding:18px 60px}
+.se-cards{display:flex;gap:20px;margin-top:28px}
+.se-card{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;padding:18px 20px;border:0;cursor:pointer;color:var(--cream);text-align:left;
+  background:var(--grain),rgba(10,23,41,.78);box-shadow:inset 0 0 0 1px rgba(241,228,198,.12)}
+.se-card.cur{box-shadow:inset 0 0 0 4px var(--mus)}
+.se-card.se-shut{opacity:.78}
+.se-card:hover,.se-card.ui-on{background:var(--grain),rgba(20,46,82,.85)}
+.se-card.ui-on{scale:none;filter:none;box-shadow:inset 0 0 0 4px #fff}
+.se-ch{display:flex;justify-content:space-between;align-items:flex-start}
+.se-ch small{display:block;font:800 italic 13px var(--f-display);letter-spacing:.2em;text-transform:uppercase;color:var(--mus)}
+.se-ch b{display:block;font:900 italic 40px/1 var(--f-display);text-transform:uppercase}
+.se-ch em{font:800 italic 24px var(--f-display);font-style:italic}
+.se-mini{position:relative;display:block;height:250px;overflow:hidden;background:rgba(5,12,24,.25)}
+.se-mini svg{display:block}
+.se-row{display:flex;justify-content:space-between;gap:6px}
+.se-dot{position:relative;flex:none;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#1e4675;border:2px solid rgba(241,228,198,.28);overflow:hidden}
+.se-dot.se-epic{background:#4a3590}
+.se-dot.se-got{border-color:#2f8f45}.se-dot.se-now{border-color:var(--mus);box-shadow:0 0 12px rgba(242,182,50,.6)}.se-dot.se-next{border-color:rgba(241,228,198,.6)}
+.se-dot.se-lock{filter:grayscale(.7) brightness(.55)}
+.se-dot>svg,.se-dot>img,.se-dot .se-ic-c svg{width:28px;height:28px;object-fit:contain}
+.se-cf{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--cream2)}
+.se-cf b{font:800 italic 15px var(--f-display);text-transform:uppercase;color:var(--mus)}
+.se-card.se-shut .se-cf b{color:var(--cream2)}
+
+/* tier page: the map */
+.se-tier{position:absolute;inset:0}
+.se-map{position:absolute;inset:0}
+.se-svg{position:absolute;left:0;top:0}
+.se-fade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 62%,rgba(10,23,41,.9) 72%)}
+.se-th{position:absolute;left:60px;width:560px;pointer-events:none}
+.se-th.top{top:18px}.se-th.bottom{bottom:30px}
+.se-stad{position:absolute;color:var(--cream);pointer-events:none;line-height:0}
+.se-stad svg{width:100%;height:auto}
+.se-stad.se-now{color:var(--mus)}.se-stad.se-lock{color:rgba(241,228,198,.45)}
+.se-city{position:absolute;pointer-events:none;font-family:var(--f-display);font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;color:#fff;
+  text-shadow:0 2px 0 #0a1729,0 0 6px #0a1729}
+.se-city.se-lock{color:rgba(241,228,198,.6)}
+.se-m{position:absolute;padding:0;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 35%,#1e4675,#0f2240);border:3px solid rgba(241,228,198,.6)}
+.se-m.se-epic{background:radial-gradient(circle at 50% 35%,#4a3590,#22184a)}
+.se-m.se-got{border-color:#2f8f45;opacity:.8}
+.se-m.se-now{border-color:var(--mus);box-shadow:0 0 0 4px rgba(242,182,50,.35),0 0 26px rgba(242,182,50,.55);animation:sePulse 1.6s ease-in-out infinite}
+.se-m.se-lock{border-color:rgba(241,228,198,.28)}
+.se-m.se-lock .se-mi{filter:grayscale(.7) brightness(.55)}
+.se-m.sel{outline:3px solid #fff;outline-offset:4px}
+.se-m.ui-on{scale:1.08;filter:none;outline:3px solid #fff;outline-offset:4px}
+.se-mi{width:62%;height:62%;display:flex;align-items:center;justify-content:center;border-radius:50%;overflow:hidden}
+.se-mi>svg,.se-mi>img,.se-mi .se-ic-c,.se-mi .se-ic-c svg{width:100%;height:100%;object-fit:contain}
+.se-ic-c{display:flex;color:var(--mus)}
+.se-mk{position:absolute;right:-6px;top:-6px;width:22px;height:22px;border-radius:50%;background:#0a1729;border:2px solid var(--mus);display:flex;align-items:center;justify-content:center}
+.se-mk.ok{background:#2f8f45;border-color:#0a1729}
+.se-mk svg{width:11px;height:11px}
+.se-cupb{position:absolute;left:50%;top:-30%;width:46%;height:46%;transform:translateX(-50%);filter:drop-shadow(0 2px 0 #0a1729)}
+.se-cupb svg{width:100%;height:100%}
+@keyframes sePulse{50%{box-shadow:0 0 0 7px rgba(242,182,50,.18),0 0 30px rgba(242,182,50,.7)}}
+
+/* tier page: the picked stop */
+.se-det{position:absolute;right:40px;top:16px;bottom:16px;width:420px;box-sizing:border-box;padding:18px 22px;display:flex;flex-direction:column;gap:10px;
+  background:radial-gradient(300px 220px at 50% 45%,rgba(47,106,163,.5),transparent 70%),var(--grain),rgba(10,23,41,.92);box-shadow:inset 0 0 0 1px rgba(241,228,198,.12)}
+.se-det.se-epic{background:radial-gradient(300px 220px at 50% 45%,rgba(138,63,209,.45),transparent 70%),var(--grain),rgba(10,23,41,.92)}
+.se-det .se-lab{display:flex;justify-content:space-between;align-items:center}
+.se-stadi{width:46px;color:var(--mus);line-height:0}.se-stadi svg{width:100%;height:auto}
+.se-det h3{margin:0;font:900 italic 46px/.95 var(--f-display);text-transform:uppercase}
+.se-big{position:relative;flex:1;display:flex;align-items:center;justify-content:center}
+.se-big>svg,.se-big>img,.se-big .se-ic-c svg{width:160px;height:160px;object-fit:contain}
+.se-big .se-cupb{top:6%;width:64px;height:64px}
+.se-rw{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.se-rw b{font:800 italic 28px/1.05 var(--f-display);text-transform:uppercase}
+.se-tag{flex:none;font:800 italic 11px var(--f-display);letter-spacing:.14em;text-transform:uppercase;padding:2px 9px;border-radius:10px;background:#2a4d78;color:var(--cream)}
+.se-tag.se-epic{background:#8a3fd1;color:#fff}
+.se-act{display:flex;justify-content:flex-end;align-items:center;min-height:50px}
+.se-act .se-claim{font-size:18px;padding:8px 22px;min-height:0}
+.se-ok{font:800 italic 22px var(--f-display);text-transform:uppercase;color:#2f8f45}
+.se-need{font:800 italic 20px var(--f-display);text-transform:uppercase;color:var(--cream2)}
+/* eight tabs fit beside the logo */
+#hub .tabs:has(.tab[data-tab=season]:not([hidden])){gap:24px}
+#hub>.hub-top{z-index:3}

@@ -138,6 +138,30 @@ html.ui-menu #hub [data-panel=settings]:not([hidden]){display:grid;grid-template
 [data-panel=settings] .set-grid.sub-one{max-width:none;margin:0;height:100%;min-height:0}
 [data-panel=settings] .set-grid [data-sub].on{max-height:100%;box-sizing:border-box;display:flex!important;flex-direction:column;min-height:0}
 html.ui-menu #hub [data-panel=settings]:not([hidden]){grid-template-rows:minmax(0,1fr)}
+/* Settings like My Club and The Ground (19 Nov 2026, js/setmenu.js): cards first, then one page at a time with the
+   page name big on top, dots for where you are, and edge tabs (LT / RT) naming the previous and next page */
+html.ui-menu #hub [data-panel=settings]:not([hidden]){display:flex!important;flex-direction:column;position:relative}
+#hub [data-panel=settings] #set-sub{display:none!important}
+#hub #set-home:not([hidden]){flex:1 1 auto;min-height:0;display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:28px;padding:24px 14px 34px}
+#hub [data-panel=settings].set-page{padding:0 96px}
+#hub [data-panel=settings].mc-home .set-grid{display:none!important}
+#set-title{display:flex;align-items:flex-end;gap:24px;margin:6px 0 4px;min-width:0}
+#set-title .mc-name{flex:1 1 auto;min-width:0}
+.set-dots{display:flex;gap:10px;padding:0 4px 22px}
+.set-dots i{display:block;width:38px;height:9px;background:rgba(241,228,198,.18);transform:skewX(-20deg);transition:background .2s,width .2s}
+.set-dots i.on{width:64px;background:var(--mus)}
+#hub [data-panel=settings].set-page .set-grid{flex:1 1 auto;min-height:0}
+.set-edge{position:absolute;top:50%;z-index:3;width:84px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;box-shadow:none;color:var(--cream);cursor:pointer;transform:translateY(-50%);opacity:.55;transition:opacity .18s,transform .18s cubic-bezier(.2,.8,.2,1)}
+.set-edge[hidden]{display:none}
+.set-prev{left:4px}
+.set-next{right:4px}
+.set-edge .se-arrow{font-size:26px;line-height:1;color:var(--mus)}
+.set-edge .se-name{font:800 italic 15px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.06em;text-align:center;max-width:84px}
+.set-edge .glyph{margin:0;transform:scale(.85)}
+.set-edge:hover{opacity:1}
+.set-prev:hover{transform:translate(-4px,-50%)}
+.set-next:hover{transform:translate(4px,-50%)}
+.set-edge:active{transform:translateY(-50%) scale(.96)}
 .srow{padding:10px 14px;margin:0 -14px;border-top:1px solid rgba(241,228,198,.1)}
 .srow:nth-of-type(odd){background:rgba(5,12,24,.22)}
 .srow label,.srow .sl{font:800 italic 21px var(--f-display);letter-spacing:.03em;color:var(--cream)}
@@ -216,6 +240,8 @@ html.ui-menu #hub [data-panel=settings]:not([hidden]){grid-template-rows:minmax(
 @keyframes uiShake{20%,60%{translate:-6px 0}40%,80%{translate:6px 0}}
 :is(button,.tile).ui-on{scale:1.04;filter:brightness(1.12);z-index:2}
 .modes .tile.ui-on{scale:1.03}
+/* full-width list rows stay inside their frame when focused or hovered: no grow, a lighter row instead (19 Nov 2026) */
+.t2-row.ui-on,.tb-part.ui-on{scale:none;filter:none;background:rgba(30,70,117,.6)}
 :is(button,.tile,.srow,.tog){transition:scale .14s cubic-bezier(.2,.9,.3,1.3),filter .14s}
 .ui-press{animation:uiPress .17s ease-out}
 .ui-deny{animation:uiShake .32s ease-out}
@@ -539,6 +565,12 @@ html:not([data-dev=pad]) #hub .ko-carousel .ko-arr .pg{display:none}
 #hub .cr-col .h{margin:0}
 #hub #cr-kitc{display:flex;flex-wrap:wrap;gap:9px}
 #hub .cr-acts{margin-top:2px}
+/* 19 Nov 2026: the crest alone on the left, bigger and centred on the editor; Surprise me / Kit colours under Colours */
+#hub .cr-wrap{grid-template-columns:clamp(300px,30%,500px) minmax(0,1fr)}
+#hub .cr-left{align-items:center;justify-content:center;align-self:center;margin-top:16px}
+#hub .cr-big{width:100%;max-width:460px}
+#hub .cr-big img{width:96%;height:96%}
+#hub .cr-right .cr-acts{margin:12px 0 4px;display:flex;gap:8px;flex-wrap:wrap}
 #hub .cr-right{display:flex;flex-direction:column;justify-content:center;gap:0;margin-top:16px;align-self:center}
 #hub .cr-t{padding:5px}
 #hub .cr-t img{width:50px;height:50px}
@@ -653,3 +685,6 @@ html:not([data-dev=pad]) #hub .ko-carousel .ko-arr .pg{display:none}
 #hub #tracks{grid-template-columns:minmax(0,1fr)!important;max-width:900px;margin:0 auto;width:100%}
 #hub .cust-music:not([hidden]){max-width:1000px;margin:0 auto}
 #hub .cust-music .note{display:none}
+/* the playlist scrolls inside its box (19 Nov 2026) */
+#hub .cust-music>.cardbox{max-height:100%;box-sizing:border-box;overflow:hidden}
+#hub #tracks{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--mus) rgba(0,0,0,.25);padding-right:8px;box-sizing:border-box}

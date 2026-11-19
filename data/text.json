@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "text": [
+    {
+      "sel": "button[data-tab=\"balance\"]",
+      "from": "Develop",
+      "to": "Developer "
+    },
+    {
+      "sel": "button[data-tab=\"balance\"]",
+      "from": "Developer",
+      "to": "Balancing"
+    },
+    {
+      "sel": "button[data-tab=\"balance\"]",
+      "from": "S",
+      "to": "B"
+    },
+    {
+      "sel": "button[data-tab=\"balance\"]",
+      "from": "B",
+      "to": "Balanci"
+    },
+    {
+      "sel": "button[data-tab=\"balance\"]",
+      "from": "Bal",
+      "to": "Bala"
+    },
+    {
+      "sel": "button[data-tab=\"balance\"]",
+      "from": "Balanc",
+      "to": "Balancin"
+    },
+    {
+      "sel": "button[data-tab=\"balance\"]",
+      "from": "Balancin",
+      "to": "Balancing"
+    },
+    {
+      "sel": "button[data-tab=\"balance\"]",
+      "from": "Bala",
+      "to": "Bal"
+    },
+    {
+      "sel": "button[data-tab=\"balance\"]",
+      "from": "Balanci",
+      "to": "Balanc"
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "from": "M",
+      "to": "Ma"
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "from": "MAPP",
+      "to": "Ma"
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "from": "Ma",
+      "to": "M"
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "from": "Map",
+      "to": "Mapping"
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "from": "Mappin",
+      "to": "BUTT"
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "from": "BUTTO",
+      "to": "BU"
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "from": "BUT",
+      "to": "LAYUOUT"
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "from": "LA",
+      "to": "LAYU"
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "from": "LAYUOU",
+      "to": "LAYU"
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "from": "LAYUO",
+      "to": "LAYOUT"
+    },
+    {
+      "sel": "#set-title > h2.mc-name",
+      "from": "LAYOU",
+      "to": "LAYOUT"
+    }
+  ]
+}

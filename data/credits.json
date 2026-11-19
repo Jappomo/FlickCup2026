@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "game": "Flick Cup 2026",
+  "subtitle": "Table football",
+  "developer": "Lost Tail Games",
+  "engine": "Distal Egine",
+  "end": "",
+  "roll": 28,
+  "sections": [
+    {
+      "title": "Made by",
+      "music": false,
+      "rows": [
+        [
+          "Developer",
+          "Lost Tail Games"
+        ],
+        [
+          "Game design, art and code",
+          "Giacomo Liberio"
+        ]
+      ]
+    },
+    {
+      "title": "Engine",
+      "music": false,
+      "rows": [
+        [
+          "Editor and tools",
+          "Distal"
+        ]
+      ]
+    },
+    {
+      "title": "Music",
+      "music": false,
+      "rows": []
+    },
+    {
+      "title": "Thanks",
+      "music": false,
+      "rows": [
+        [
+          "Everyone who played the early builds",
+          "Thank you"
+        ]
+      ]
+    }
+  ]
+}

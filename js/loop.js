@@ -59,7 +59,7 @@ function frame(now){
   drawAim(sim.running?null:aimShow);
   updateCamera(dt,false);
   if(TITLE.on||TITLE.leaving)titleCam(now);
-  if(mainOnScreen())renderer.render(scene,camera);
+  if(mainOnScreen()){if(typeof gfxRender==='function')gfxRender(dt);else renderer.render(scene,camera);}
   previewFrame();
   gpuSweep();
 }
