@@ -37,6 +37,7 @@ const KEY_ACTIONS=[
   {id:'keeper',name:'Keeper out',def:'KeyG'},{id:'skip',name:'Skip block',def:'Space'},{id:'nextFig',name:'Next figure (Shift: previous)',def:'Tab'},
   {id:'curlL',name:'Curl left',def:'KeyQ'},{id:'curlR',name:'Curl right',def:'KeyE'},{id:'music',name:'Next song',def:'KeyN'},
   {id:'spot1',name:'Set-piece spot 1',def:'Digit1'},{id:'spot2',name:'Set-piece spot 2',def:'Digit2'},{id:'spot3',name:'Set-piece spot 3',def:'Digit3'},
+  {id:'camF',name:'Camera forward',def:'KeyW'},{id:'camB',name:'Camera back',def:'KeyS'},{id:'camL',name:'Camera left',def:'KeyA'},{id:'camR',name:'Camera right',def:'KeyD'},
 ];
 // The mapping is set in Distal (Settings > Control mapping) and saved in data/controls.json; these are the defaults.
 // platforms.<p>.buttons: action -> physical button (browser standard mapping) on that controller.
@@ -156,7 +157,7 @@ function ctlMapRender(){const box=document.querySelector('#hub .ctl-map');if(!bo
     ['Pick a figure','Click it, or '+k('nextFig'),g('prev')],['Moment',k('moment'),g('moment')],
     ['Curl (Finesse)',k('curlL')+' / '+k('curlR'),g('rtrig')+' switches it'],['Slide keeper (block)','Drag him, or '+k('curlL')+' / '+k('curlR'),'Hold '+g('next')+' + left stick'],
     ['Skip block',k('skip'),g('back')],['Keeper out / back',k('keeper'),'Hold '+g('next')+' + '+g('camera')],['Set-piece spot',k('spot1')+' / '+k('spot2')+' / '+k('spot3'),g('moment')+' / '+g('confirm')+' / '+g('back')],
-    ['Turn the camera','Hold middle mouse and drag','Right stick'],['Zoom','Mouse wheel','Hold '+g('next')+' + right stick'],
+    ['Turn the camera','Hold middle mouse and drag','Right stick'],['Move the camera',(SET.wasd===false?'Off (Settings > Controls) · ':'')+k('camF')+' '+k('camL')+' '+k('camB')+' '+k('camR')+' (Shift: faster)','–'],['Zoom','Mouse wheel','Hold '+g('next')+' + right stick'],
     ['Reset camera',k('camera'),R3],['Camera views','The arrow next to Reset cam','Hold '+R3],['Frame the ball','Hold F','–'],
     ['Last plays','Click Last plays',DN+': open, again for more, hold to close'],['Pause',k('menu'),g('menu')],['Next song',k('music'),R3+' in the menus'],
     ['Menu tabs','Click, or Q / E',g('prev')+' / '+g('next')],['Sub-menus','Click, or Z / C',g('ltrig')+' / '+g('rtrig')],

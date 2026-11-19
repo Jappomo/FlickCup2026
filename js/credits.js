@@ -33,7 +33,8 @@ function splashScreens(){const C=creditsInfo(),D=SPLASH.data,n=(v,d,lo,hi)=>{v=+
   const list=D&&Array.isArray(D.screens)&&D.screens.length?D.screens:[{name:'Engine',text:C.engine,sub:'Made with'},{name:'Developer',text:C.developer,sub:'A game by'}];
   return list.map(x=>{const o=Object.assign({},SPLASH_SCREEN_DEF,x||{});return {name:String(o.name||''),logo:String(o.logo||''),text:String(o.text||o.name||''),sub:String(o.sub||''),
     bg:/^#[0-9a-f]{3,8}$/i.test(o.bg)?o.bg:SPLASH_SCREEN_DEF.bg,size:n(o.size,34,2,100),delay:n(o.delay,150,0,10000),fadeIn:n(o.fadeIn,700,0,10000),hold:n(o.hold,1600,0,30000),fadeOut:n(o.fadeOut,700,0,10000),zoom:n(o.zoom,4,-50,100),skippable:o.skippable!==false};});}
-function splashWanted(){const B=window.FLICK_BUILD;if(SPLASH.data&&SPLASH.data.on===false&&!/[?&]splash\b/.test(location.search))return false;return (!!B&&B.splash!==false)||/[?&]splash\b/.test(location.search);}
+function splashWanted(){const w=splashWanted0();if(!w)document.documentElement.classList.remove('presplash');return w;}
+function splashWanted0(){const B=window.FLICK_BUILD;if(SPLASH.data&&SPLASH.data.on===false&&!/[?&]splash\b/.test(location.search))return false;return (!!B&&B.splash!==false)||/[?&]splash\b/.test(location.search);}
 function splashRun(done){SPLASH.done=done;
   // the title screen's input gate: while TITLE.on the menus ignore presses, and a press calls titleGo (which skips here)
   TITLE.on=true;TITLE.splash=true;$('#hub').hidden=true;document.documentElement.classList.add('titleon');
@@ -74,7 +75,7 @@ function splashFrame(now,once){const S=SPLASH.list&&SPLASH.list[SPLASH.i];if(!SP
 // a press (key, button, click): the screen fades out now, if it may be skipped
 function splashSkip(){const S=SPLASH.el&&SPLASH.list&&SPLASH.list[SPLASH.i];if(!S||!S.skippable||SPLASH.skip)return;
   const t=SPLASH.tc,r=splashAt(S,t);SPLASH.skip=1;SPLASH.skipAt=t;SPLASH.skipFrom=Math.max(0.001,r.a);}
-function splashEnd(){const el=SPLASH.el;SPLASH.el=null;cancelAnimationFrame(SPLASH.raf);TITLE.splash=false;TITLE.on=false;
+function splashEnd(){const el=SPLASH.el;SPLASH.el=null;document.documentElement.classList.remove('presplash');cancelAnimationFrame(SPLASH.raf);TITLE.splash=false;TITLE.on=false;
   if(el){el.classList.add('out');setTimeout(()=>el.remove(),600);}
   const d=SPLASH.done;SPLASH.done=null;if(d)d();}
 

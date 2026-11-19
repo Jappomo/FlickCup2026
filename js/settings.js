@@ -73,6 +73,7 @@ bindToggle('gfx-shadows','shadows',()=>{SET.q='custom';applyGraphics();});
 bindToggle('gfx-guides','guides',()=>{});
 bindToggle('gfx-calm','calm',applyGraphics);
 bindToggle('ctl-lock','lock',()=>{});
+if(SET.wasd===undefined)SET.wasd=true;bindToggle('ctl-wasd','wasd',()=>{if(typeof ctlMapRender==='function')ctlMapRender();});
 bindRange('ctl-msens','o-msens','msens',pct,()=>{});bindRange('ctl-csens','o-csens','csens',pct,()=>{});bindToggle('ctl-invy','invY',()=>{});
 bindRange('ctl-dz','o-dz','dz',pct,()=>{});bindRange('ctl-rspeed','o-rspeed','rspeed',pct,()=>{});bindToggle('ctl-rumble','rumble',()=>{});
 syncMuteBtn();syncHobby();renderTracks();applyGraphics();

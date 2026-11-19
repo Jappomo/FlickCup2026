@@ -5,6 +5,11 @@
 <meta name="description" content="Flick Cup: table football with pull-and-flick controls.">
 <title>Flick Cup 2026</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<script>/* 19 Nov 2026: when the splash will play, hide the page from the first paint (the title screen used to show while
+   the scripts loaded, before the splash started). js/credits.js removes the class when the splash ends. */
+(function(){var B=window.FLICK_BUILD,q=location.search;if(/[?&]distal=/.test(q))return;
+if((B&&B.splash!==false)||/[?&]splash\b/.test(q)){document.documentElement.className+=' presplash';setTimeout(function(){if(!document.getElementById('splash'))document.documentElement.classList.remove('presplash');},30000);}})();</script>
+<style>html.presplash,html.presplash body{background:#000!important}html.presplash body>*:not(#splash){visibility:hidden!important}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Barlow:wght@400;500;600;700&display=swap">
@@ -1399,6 +1404,7 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
             <div class="srow" title="How fast the camera turns when you orbit it."><label for="ctl-csens">Camera sensitivity</label><div class="rng"><input type="range" id="ctl-csens" min="40" max="250" step="5"><output id="o-csens"></output></div></div>
             <div class="srow"><label for="ctl-invy">Invert camera up and down</label><span class="tog"><input type="checkbox" id="ctl-invy"><i></i></span></div>
             <div class="srow" title="Hides the cursor while you pull, so the edge of the screen never cuts your pull short. A small ring shows where your mouse is. Press Esc to cancel the flick."><label for="ctl-lock">Lock mouse while aiming</label><span class="tog"><input type="checkbox" id="ctl-lock"><i></i></span></div>
+            <div class="srow" title="During a match W A S D slide the camera over the table (Shift: faster). Reset cam brings it back."><label for="ctl-wasd">Move the camera with WASD</label><span class="tog"><input type="checkbox" id="ctl-wasd"><i></i></span></div>
             <div class="srow" title="How far the stick must move before it counts. Raise it if your stick drifts."><label for="ctl-dz">Stick dead zone</label><div class="rng"><input type="range" id="ctl-dz" min="5" max="40" step="1"><output id="o-dz"></output></div></div>
             <div class="srow" title="Speed of the right-stick pointer in the menus."><label for="ctl-rspeed">Menu pointer speed</label><div class="rng"><input type="range" id="ctl-rspeed" min="40" max="250" step="5"><output id="o-rspeed"></output></div></div>
             <div class="srow" title="Rumble on flicks, hits and goals, when the controller supports it."><label for="ctl-rumble">Controller vibration</label><span class="tog"><input type="checkbox" id="ctl-rumble"><i></i></span></div>
@@ -1465,16 +1471,16 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="js/rules.js?v=20261104s"></script>
 <script src="js/scene.js?v=20261118a"></script>
 <script src="js/models.js?v=20261119a"></script>
-<script src="js/camera.js?v=20261118a"></script>
-<script src="js/input.js?v=20261118a"></script>
+<script src="js/camera.js?v=20261119w"></script>
+<script src="js/input.js?v=20261119w"></script>
 <script src="js/cpu.js?v=20261027a"></script>
 <script src="js/net.js?v=20261024h"></script>
 <script src="js/hud.js?v=20261104s"></script>
 <script src="js/tournament.js?v=20261024h"></script>
 <script src="js/menus.js?v=20261103b"></script>
 <script src="js/customize.js?v=20261119d"></script>
-<script src="js/settings.js?v=20261024h"></script>
-<script src="js/controls.js?v=20261024h"></script>
+<script src="js/settings.js?v=20261119w"></script>
+<script src="js/controls.js?v=20261119w"></script>
 <script src="js/loop.js?v=20261118a"></script>
 <script src="js/practice.js?v=20261024h"></script>
 <script src="js/training.js?v=20261028a"></script>
@@ -1496,11 +1502,13 @@ body.padmode .ko-arr .pg{display:inline-grid}body.padmode .ko-arr .kg{display:no
 <script src="js/graphics.js?v=20261119a"></script>
 <script src="js/ui.js?v=20261105b"></script>
 <script src="js/uiscale.js?v=20261024h"></script>
-<script src="js/touch.js?v=20261118a"></script>
+<script src="js/touch.js?v=20261119w"></script>
 <script src="js/setmenu.js?v=20261119b"></script>
+<script src="js/nostalgia.js?v=20261119a"></script>
+<script src="js/spotkeys.js?v=20261119a"></script>
 <script src="js/tactics2.js?v=20261119a"></script>
 <script src="js/tablepage.js?v=20261119d"></script>
-<script src="js/credits.js?v=20261119d"></script>
+<script src="js/credits.js?v=20261119e"></script>
 <script src="js/seasonmap.js?v=20261119a"></script>
 <script src="js/season.js?v=20261119b"></script>
 <script src="js/menubg.js?v=20261119a"></script>

@@ -155,7 +155,7 @@ window.addEventListener('keydown',e=>{
   if(S.phase==='attack'&&S.armed==='finesse'&&S.armedTeam===S.active){if(e.code===KEY('curlL'))setCurl(-1);if(e.code===KEY('curlR'))setCurl(1);}
 });
 window.addEventListener('keyup',e=>{keys[e.code]=false;});
-window.addEventListener('blur',()=>{keys.KeyF=false;});
+window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false;});
 function setCurl(s){curlSign=s;$('#curl-l').setAttribute('aria-pressed',String(s<0));$('#curl-r').setAttribute('aria-pressed',String(s>0));}
 
 /* ================= gamepad: Skate-style right stick ================= */

@@ -1,6 +1,6 @@
 {
  "version": 1,
- "about": "Control mapping, edited in Distal > Settings > Control mapping. platforms.<p>.buttons: action -> physical button number (browser standard mapping: 0 bottom, 1 right, 2 left, 3 top face button, 4/5 bumpers, 6/7 triggers, 8 View, 9 Menu, 10/11 stick clicks, 12-15 D-pad up, down, left, right). keys: action -> keyboard code.",
+ "about": "Control mapping, edited in Distal > Settings > Control mapping. platforms.<p>.buttons: action -> physical button number (browser standard mapping: 0 bottom, 1 right, 2 left, 3 top face button, 4/5 bumpers, 6/7 triggers, 8 View, 9 Menu, 10/11 stick clicks, 12-15 D-pad up, down, left, right). keys: action -> keyboard code. schemes.defaults: the control scheme a build starts with (mouse, pad, touch, nostalgia) per build: web, touch (the web game on a touch-only device), windows, steamdeck; a player's own pick in Settings > Controls wins. schemes.nostalgia: the Nostalgia slide, speeds in ring radii per second (slow, soft = soft touch below, full = the max power set, over = how much faster gives the strongest power flick), aim = how much the slide angle bends the flick, wobble = spread from a wobbly slide.",
  "platforms": {
   "xbox": {
    "buttons": {
@@ -79,6 +79,26 @@
   "music": "KeyN",
   "spot1": "Digit1",
   "spot2": "Digit2",
-  "spot3": "Digit3"
+  "spot3": "Digit3",
+  "camF": "KeyW",
+  "camB": "KeyS",
+  "camL": "KeyA",
+  "camR": "KeyD"
+ },
+ "schemes": {
+  "defaults": {
+   "web": "mouse",
+   "touch": "touch",
+   "windows": "mouse",
+   "steamdeck": "pad"
+  },
+  "nostalgia": {
+   "slow": 1,
+   "soft": 3,
+   "full": 8,
+   "over": 8,
+   "aim": 0.6,
+   "wobble": 0.35
+  }
  }
 }

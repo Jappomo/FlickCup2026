@@ -32,7 +32,7 @@ function applyTouch(){
   if(TOUCH.on){if(!SET.touchUi){SET.touchUi=1;if((SET.ui||100)<140){SET.ui=140;try{const r=$('#gfx-ui');if(r){r.value=140;r.dispatchEvent(new Event('input'));}}catch(e){}}saveSet();applyUiScale();}
     lastInput='';setInput('touch');if(ptr.on&&ptr.mode==='pull'&&ptr.lockReq)cancelPull();}
   else if(was)setInput('pointer');
-  ['ctl-lock','ctl-dz','ctl-rspeed','ctl-rumble'].forEach(id=>{const r=$('#'+id);const row=r&&r.closest('.srow');if(row)row.hidden=TOUCH.on;});
+  ['ctl-lock','ctl-wasd','ctl-dz','ctl-rspeed','ctl-rumble'].forEach(id=>{const r=$('#'+id);const row=r&&r.closest('.srow');if(row)row.hidden=TOUCH.on;});
   const ms=document.querySelector('label[for="ctl-msens"]');if(ms)ms.textContent=TOUCH.on?'Pull sensitivity':'Mouse pull sensitivity';
   const t=$('#ctl-touch');if(t){t.checked=TOUCH.on;t.disabled=UI_TOUCH;}
   if(typeof updateHud==='function')try{updateHud();}catch(e){}}
